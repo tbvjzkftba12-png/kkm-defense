@@ -1515,6 +1515,8 @@ function toggleGameSpeed(){
     const btn = document.getElementById('speed-toggle-btn');
     if(btn) btn.textContent = '⚡ 게임 속도: ' + gameSpeedMul + 'x';
     showToast('⚡ 게임 속도 ' + gameSpeedMul + '배', '#f1c40f', '#2a2200');
+    // 배속 변경 시 몹 스폰 간격 즉시 재적용
+    if(isPlaying && !isGameOver && !isPaused) restartSpawnInterval();
 }
 // 흔함 유닛 종류별 소환 기준점 (유닛이름→{x,y})
 let spawnAnchors = {}; // 각 흔함 유닛별 집결지
@@ -2622,8 +2624,8 @@ class Unit {
                     pd.vanished=false; pd.hitCount=0;
                     this.maxCd = 20;
                     this.cd = 0;
-                    // 미션9: 제주도 복귀 카운트 (꽝 포함)
-                    missionGehaReturnMap[this.id] = (missionGehaReturnMap[this.id]||0) + 1;
+                    // 미션9: 제주도 복귀 카운트 (꽝 포함, 합산)
+                    missionGehaReturnMap['total'] = (missionGehaReturnMap['total']||0) + 1;
                     checkMission(9);
                     // 보상 결정: 50% 흔함 / 40% 꽝 / 10% 안흔함
                     const r = Math.random();
@@ -3093,7 +3095,7 @@ class Unit {
                         setTimeout(()=>{
                             legendBuffActive.codeDeployBuff=false;
                             for(let u2 of units) u2.damage=Math.round(u2.damage/1.15);
-                        }, 10000);
+                        }, Math.round(10000/gameSpeedMul));
                     }
                 }
                 // 2등 항해사 병선: 흔함 제외, 전설 미만 유닛 보유 1마리당 공격력 +10% / 깔봄 - 방어력 영구-10 10%
@@ -3198,7 +3200,7 @@ class Unit {
                             if(step<=10){ this.x+=(targetX-origX)/10; this.y+=(targetY-origY)/10; }
                             else if(step<=20){ this.x+=(origX-targetX)/10; this.y+=(origY-targetY)/10; }
                             else{ this.x=origX; this.y=origY; clearInterval(runwayInt); }
-                        },60);
+                        }, Math.round(60/gameSpeedMul));
                         meleeAnims.push({type:'text_pop',x:this.x,y:this.y-20,life:20,maxLife:20,color:'#9b59b6',text:'런웨이!',big:true});
                     }
                 }
@@ -3276,7 +3278,7 @@ class Unit {
                                 attackLines.push({sx:me.x, sy:me.y, tx:currentTarget.x, ty:currentTarget.y, color:'#e74c3c', tier:'전설', alpha:1, life:6});
                                 meleeAnims.push({type:'damage_text', x:currentTarget.x+(Math.random()-0.5)*16, y:currentTarget.y-25-hitCount*3, life:35, maxLife:35, color:'#ff3030', text:dmg, vy:-1.8, fixed:false});
                                 hitCount++;
-                                setTimeout(doHit, 100); // 초당 10타 = 100ms 간격
+                                setTimeout(doHit, Math.round(100/gameSpeedMul)); // 초당 10타 = 100ms 간격
                             };
                             meleeAnims.push({type:'text_pop',x:target.x,y:target.y-30,life:30,maxLife:30,color:'#e74c3c',text:'🪖 특수부대 돌격!',big:true});
                             doHit();
@@ -3294,7 +3296,7 @@ class Unit {
                         pdL.nightShift=true;
                         this.maxCd=4;
                         meleeAnims.push({type:'text_pop',x:this.x,y:this.y-20,life:20,maxLife:20,color:'#9b59b6',text:'🌙야근!',big:false});
-                        setTimeout(()=>{ if(this.maxCd===4) this.maxCd=12; pdL.nightShift=false; },5000);
+                        setTimeout(()=>{ if(this.maxCd===4) this.maxCd=12; pdL.nightShift=false; }, Math.round(5000/gameSpeedMul));
                     }
                 }
                 // 연진이 만난 병훈: 5% 완전정지 / 10% 아군공격력+30%+마나+20
@@ -3314,7 +3316,7 @@ class Unit {
                         setTimeout(()=>{
                             legendBuffActive.yeonjinBuff=false;
                             for(let u2 of units) u2.removeDmgBuff('yeonjin');
-                        }, 10000);
+                        }, Math.round(10000/gameSpeedMul));
                     }
                 }
                 // 공무원 다훈: 5% 텔레포트 → 최다 밀집 지점
@@ -3327,13 +3329,13 @@ class Unit {
                             e.hp-=_paperDmg;
                             // 유닛별 슬롯: 같은 다훈은 중첩 안 됨, 다른 다훈은 누적됨
                             if(applyArmorDebuff(e, this, "minwon", -20)){
-                                setTimeout(()=>{ removeArmorDebuff(e, this, "minwon"); }, 2000);
+                                setTimeout(()=>{ removeArmorDebuff(e, this, "minwon"); }, Math.round(2000/gameSpeedMul));
                             }
                             e.speed=(e.baseSpeed||e.speed)*0.7; e.slowTimer=120;
                             meleeAnims.push({type:'damage_text',x:e.x+(Math.random()-0.5)*14,y:e.y-20,life:32,maxLife:32,color:'#ff3030',text:_paperDmg,vy:-1.5,fixed:false});
                             meleeAnims.push({type:'text_pop',x:e.x,y:e.y-15,life:18,maxLife:18,color:'#2ecc71',text:'📄',big:false});
                             spawnParticles(e.x,e.y,'#2ecc71',4,3);
-                        }, i*80);
+                        }, Math.round(i*80/gameSpeedMul));
                     });
                     meleeAnims.push({type:'text_pop',x:this.x,y:this.y-30,life:25,maxLife:25,color:'#2ecc71',text:'민원 폭탄!',big:true});
                 }
@@ -3359,7 +3361,7 @@ class Unit {
                         meleeAnims.push({type:'text_pop',x:this.x,y:this.y-20,life:25,maxLife:25,color:'#2ecc71',text:'기상!',big:true});
                         const _origCdJam = this.maxCd;
                         this.maxCd = Math.max(2, Math.round(_origCdJam/5));
-                        setTimeout(()=>{ this.maxCd = _origCdJam; }, 3000);
+                        setTimeout(()=>{ this.maxCd = _origCdJam; }, Math.round(3000/gameSpeedMul));
                     }
                 }
             }
@@ -3397,7 +3399,7 @@ class Unit {
                         setTimeout(()=>{
                             this.removeDmgBuff('mental');
                             pdT.mentalActive = false;
-                        }, 10000);
+                        }, Math.round(10000/gameSpeedMul));
                     }
                 }
 
@@ -3455,7 +3457,7 @@ class Unit {
                         setTimeout(()=>{
                             const hx=this.x+(Math.random()-0.5)*200, hy=this.y+(Math.random()-0.5)*200;
                             spawnParticles(hx,hy,'#ff69b4',5,3);
-                        },i*80);
+                        }, Math.round(i*80/gameSpeedMul));
                     }
                     showToast('💕 해나의 응원! 전체 아군 공격력+20% 공속+30% (15초)','#ff69b4','#2d1020');
                     setTimeout(()=>{
@@ -3464,7 +3466,7 @@ class Unit {
                             if(_origCdH[u2.id] !== undefined) u2.maxCd = _origCdH[u2.id];
                         }
                         pdT.hanaBuff = false;
-                    }, 15000);
+                    }, Math.round(15000/gameSpeedMul));
                 }
 
                 // ── 마나 충전 (초월 마나는 아래 공통 블록에서 처리) ──
@@ -3497,7 +3499,7 @@ class Unit {
                         this.removeDmgBuff('mankai');
                         pdB.manKaiActive = false;
                         meleeAnims.push({type:'text_pop',x:this.x,y:this.y-30,life:25,maxLife:25,color:'#aaa',text:'만카이 종료',big:false});
-                    }, 5000);
+                    }, Math.round(5000/gameSpeedMul));
                 }
                 // 만카이 발동 중: 공격마다 범위 120 폭발
                 if(pdB.manKaiActive && target !== mission){
@@ -3527,7 +3529,7 @@ class Unit {
                         this.maxCd = _origCdSmoke;
                         pdB.smokeActive = false;
                         pdB._smokeManaBoost = false;
-                    }, 5000);
+                    }, Math.round(5000/gameSpeedMul));
                 }
 
                 // ── 스킬2: 솔로만세 (500타 누적) ──
@@ -3584,8 +3586,8 @@ class Unit {
                         setTimeout(()=>{
                             pdB.soloLocked = false;
                             this._canMove = true;
-                        }, 5000);
-                    }, 10000);
+                        }, Math.round(5000/gameSpeedMul));
+                    }, Math.round(10000/gameSpeedMul));
                 }
             }
 
@@ -3614,7 +3616,7 @@ class Unit {
                     meleeAnims.push({type:'text_pop',x:this.x,y:this.y-30,life:25,maxLife:25,color:'#9b59b6',text:'야 나와!'});
                     updateInventoryUI();
                     // 소환 후 30초(1800프레임) 뒤 다시 소환 가능
-                    setTimeout(()=>{ if(pd3) pd3.summoned=false; }, 10000);
+                    setTimeout(()=>{ if(pd3) pd3.summoned=false; }, Math.round(10000/gameSpeedMul));
                 }
                 // ROTC상웅 소환체: 스킬 1회 사용 후 사라짐 체크
                 if(this.isSummoned && pd3.name==='받들어총' && pd3.usedSkill){
@@ -3680,7 +3682,7 @@ class Unit {
                         // 10초 후 해제
                         setTimeout(()=>{
                             for(let e of appliedTargets) removeArmorDebuff(e, this, "navyGlobal");
-                        }, 10000);
+                        }, Math.round(10000/gameSpeedMul));
                         meleeAnims.push({type:'text_pop',x:this.x,y:this.y-30,life:25,maxLife:25,color:'#3498db',text:'허언!'});
                     }
                 }
@@ -3766,7 +3768,7 @@ class Unit {
                             for(let k=0;k<3;k++) setTimeout(()=>{
                                 particles.push({type:'ring',x:target.x,y:target.y+18,radius:k*5,maxRadius:35+k*15,
                                     color:'#e8e8e8',alpha:0.9,life:16,maxLife:16});
-                            }, k*60);
+                            }, Math.round(k*60/gameSpeedMul));
                             spawnParticles(target.x,target.y,'#e8e8e8',18,5);
                             spawnParticles(target.x,target.y,'#e74c3c',8,4);
                             screenShake={intensity:2,duration:8};
@@ -4604,7 +4606,7 @@ function spawnUncommonAttackEffect(name, sx, sy, tx, ty, unit){
                     const a=Math.random()*Math.PI*2, sp=2+Math.random()*3;
                     particles.push({type:'spark',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,color:'#aaffcc',alpha:1,life:20+Math.random()*10,maxLife:30});
                 }
-            }, 300);
+            }, Math.round(300/gameSpeedMul));
             break;
         case "허언 병선":
             // 소리치는 모션 → 음파 링 확산
@@ -4616,7 +4618,7 @@ function spawnUncommonAttackEffect(name, sx, sy, tx, ty, unit){
                 setTimeout(()=>{
                     meleeAnims.push({type:'punch', x:tx+(Math.random()-0.5)*10, y:ty+(Math.random()-0.5)*10,
                         life:10, maxLife:10, color:'#e74c3c'});
-                }, i*60);
+                }, Math.round(i*60/gameSpeedMul));
             }
             break;
         case "큰돌맹이":
@@ -4731,7 +4733,7 @@ function spawnLegendAttackEffect(name, sx, sy, tx, ty, unit){
         case '얼굴이 붉어진 승채':
             for(let k=0;k<3;k++) setTimeout(()=>{
                 particles.push({type:'ring',x:tx,y:ty,radius:k*8,maxRadius:40+k*12,color:'#e74c3c',alpha:0.8,life:14,maxLife:14});
-            }, k*60);
+            }, Math.round(k*60/gameSpeedMul));
             spawnParticles(tx,ty,'#e74c3c',8,4);
             unit._redTint=12;
             break;
@@ -5110,10 +5112,10 @@ function triggerLegendManaSkill(unit, lastTarget){
                     attackLines.push({sx:x,sy:y,tx:e.x,ty:e.y,color:'#aaffcc',tier:'전설',alpha:1,life:12});
                     meleeAnims.push({type:'damage_text',x:e.x+(Math.random()-0.5)*16,y:e.y-20,life:32,maxLife:32,color:'#ff3030',text:_bottleDmg,vy:-1.6,fixed:false});
                     meleeAnims.push({type:'text_pop',x:e.x,y:e.y-15,life:12,maxLife:12,color:'#aaffcc',text:'🍶',big:false});
-                }, bottleCount*30);
+                }, Math.round(bottleCount*30/gameSpeedMul));
                 bottleCount++;
             }
-            setTimeout(()=>{ unit._manaSkillActive=false; }, 3000);
+            setTimeout(()=>{ unit._manaSkillActive=false; }, Math.round(3000/gameSpeedMul));
             break;
 
         case '코딩하는 상웅':
@@ -5122,7 +5124,7 @@ function triggerLegendManaSkill(unit, lastTarget){
             meleeAnims.push({type:'text_pop',x,y:y-50,life:60,maxLife:60,color:'#e74c3c',text:'혐오증!!',big:true});
             const origCdC=unit.maxCd;
             unit.maxCd=Math.max(6,Math.round(unit.maxCd/2));
-            setTimeout(()=>{ unit.maxCd=origCdC; unit._shakeAnim=0; unit._manaSkillActive=false; },10000);
+            setTimeout(()=>{ unit.maxCd=origCdC; unit._shakeAnim=0; unit._manaSkillActive=false; }, Math.round(10000/gameSpeedMul));
             showToast('😡 혐오증! 코딩하는 상웅 공속 2배 (10초)','#e74c3c','#2d1010');
             break;
 
@@ -5164,7 +5166,7 @@ function triggerLegendManaSkill(unit, lastTarget){
                     }
                 }
             }
-            setTimeout(()=>{ unit._manaSkillActive=false; }, 1500);
+            setTimeout(()=>{ unit._manaSkillActive=false; }, Math.round(1500/gameSpeedMul));
             break;
 
         case '온몸이 돌이 된 찬희':
@@ -5232,7 +5234,7 @@ function triggerLegendManaSkill(unit, lastTarget){
                     meleeAnims.push({type:'text_pop',x:tx,y:ty-40,life:40,maxLife:40,color:'#ff6600',text:'💥 폭발!',big:true});
                     // 전설 흔들림 제거 (렉 개선)
                     unit._manaSkillActive=false;
-                }, 800);
+                }, Math.round(800/gameSpeedMul));
             }
             break;
 
@@ -5245,7 +5247,7 @@ function triggerLegendManaSkill(unit, lastTarget){
                 setTimeout(()=>{
                     meleeAnims.push({type:'text_pop',x:400+(Math.random()-0.5)*300,y:200+k*40,life:20,maxLife:20,color:'#e74c3c',text:'🖕',big:true});
                     spawnParticles(400+(Math.random()-0.5)*200,150+k*50,'#e74c3c',8,5);
-                }, k*100);
+                }, Math.round(k*100/gameSpeedMul));
             }
             // 효과 적용
             for(let e of enemies){
@@ -5256,7 +5258,7 @@ function triggerLegendManaSkill(unit, lastTarget){
             if(!legendBuffActive.yukBuff){
                 legendBuffActive.yukBuff=true;
                 unit.addDmgBuff('yuk_double', 2); // 버프키 'yuk_double' - 중복불가
-                setTimeout(()=>{ unit.removeDmgBuff('yuk_double'); legendBuffActive.yukBuff=false; unit._manaSkillActive=false; },10000);
+                setTimeout(()=>{ unit.removeDmgBuff('yuk_double'); legendBuffActive.yukBuff=false; unit._manaSkillActive=false; }, Math.round(10000/gameSpeedMul));
             }
             showToast('🖕 전설의 쌍욕! 이속-70%+공격력2배 (10초)','#e74c3c','#2d1010');
             break;
@@ -5270,7 +5272,7 @@ function triggerLegendManaSkill(unit, lastTarget){
                     const colors=['#ff69b4','#f1c40f','#9b59b6','#3498db','#2ecc71'];
                     spawnParticles(px,py,colors[i%5],6,4);
                     particles.push({type:'ring',x:px,y:py,radius:0,maxRadius:20,color:colors[i%5],alpha:0.7,life:15,maxLife:15});
-                }, i*80);
+                }, Math.round(i*80/gameSpeedMul));
             }
             if(!legendBuffActive.fashionShowBuff){
                 legendBuffActive.fashionShowBuff=true;
@@ -5284,7 +5286,7 @@ function triggerLegendManaSkill(unit, lastTarget){
                     for(let u2 of units) u2.damage=Math.round(u2.damage/1.5);
                     legendBuffActive.fashionShowBuff=false;
                     unit._manaSkillActive=false;
-                }, 10000);
+                }, Math.round(10000/gameSpeedMul));
             }
             showToast('👗 패션쇼! 아군공격력+50%+적이속-50% (10초)','#9b59b6','#1a1020');
             break;
@@ -5298,7 +5300,7 @@ function triggerLegendManaSkill(unit, lastTarget){
                     for(let u2 of units) u2.maxCd=Math.round(u2.maxCd*2);
                     legendBuffActive.kiaBuff=false;
                     unit._manaSkillActive=false;
-                }, 10000);
+                }, Math.round(10000/gameSpeedMul));
             }
             showToast('🚗 기아 풀옵션! 전체 공속 2배 (10초)','#f1c40f','#2a2200');
             break;
@@ -5315,7 +5317,7 @@ function triggerLegendManaSkill(unit, lastTarget){
                     for(let u2 of units) if(u2._origRange){u2.range=u2._origRange;delete u2._origRange;}
                     legendBuffActive.marineBuff=false;
                     unit._manaSkillActive=false;
-                }, 10000);
+                }, Math.round(10000/gameSpeedMul));
             }
             showToast('🪖 해병대 전술! 전체 아군 사거리 2배+악! (10초)','#e74c3c','#2d1010');
             break;
@@ -5343,7 +5345,7 @@ function triggerLegendManaSkill(unit, lastTarget){
                     if(typeof updateCombineUI==='function') updateCombineUI();
                 }
                 unit._manaSkillActive=false;
-            }, 10000);
+            }, Math.round(10000/gameSpeedMul));
             showToast('✨ 꿈의 실현! '+rareName+' 소환 (10초)','#e67e22','#2d1e10');
             break;
         }
@@ -5364,8 +5366,8 @@ function triggerLegendManaSkill(unit, lastTarget){
                         spawnParticles(e.x,e.y,'#ff69b4',8,4);
                     }
                 }
-                setTimeout(()=>{ unit._stretchY=1; unit._stretchTimer=0; unit._manaSkillActive=false; },500);
-            },500);
+                setTimeout(()=>{ unit._stretchY=1; unit._stretchTimer=0; unit._manaSkillActive=false; }, Math.round(500/gameSpeedMul));
+            }, Math.round(500/gameSpeedMul));
             showToast('💕 진심! 범위 내 현체력 50% 제거','#ff69b4','#2d1020');
             break;
 
@@ -5375,7 +5377,7 @@ function triggerLegendManaSkill(unit, lastTarget){
             meleeAnims.push({type:'text_pop',x,y:y-50,life:50,maxLife:50,color:'#2ecc71',text:'🏛철밥통 확정!',big:true});
             const origDmg2=unit.damage, origCd2=unit.maxCd;
             unit.damage*=3; unit.maxCd=Math.max(4,Math.round(unit.maxCd/3));
-            setTimeout(()=>{ unit.damage=origDmg2; unit.maxCd=origCd2; unit._chulbabActive=false; unit._manaSkillActive=false; },10000);
+            setTimeout(()=>{ unit.damage=origDmg2; unit.maxCd=origCd2; unit._chulbabActive=false; unit._manaSkillActive=false; }, Math.round(10000/gameSpeedMul));
             showToast('🏛 철밥통 확정! 공속×3+공격력×3 (10초)','#2ecc71','#1a2d1a');
             break;
         }
@@ -5393,11 +5395,11 @@ function triggerLegendManaSkill(unit, lastTarget){
                         const px2=x+(Math.random()-0.5)*300, py2=y+(Math.random()-0.5)*300;
                         meleeAnims.push({type:'text_pop',x:px2,y:py2,life:20,maxLife:20,color:'#f1c40f',text:'📰',big:false});
                         spawnParticles(px2,py2,'#f1c40f',5,3);
-                    },i*60);
+                    }, Math.round(i*60/gameSpeedMul));
                 }
                 for(let k=0;k<3;k++) setTimeout(()=>{
                     particles.push({type:'ring',x,y,radius:k*20,maxRadius:180+k*40,color:'#f1c40f',alpha:0.7,life:30,maxLife:30});
-                },k*80);
+                }, Math.round(k*80/gameSpeedMul));
                 screenFlash={alpha:0.3,color:'#f1c40f',decay:0.02};
                 showToast('📰 KKM 디펜스 장인! 공격력×3 + 고정데미지 (10초)','#f1c40f','#2a2200');
                 setTimeout(()=>{
@@ -5405,7 +5407,7 @@ function triggerLegendManaSkill(unit, lastTarget){
                     unit._fixedDamage = false;
                     pdM.masterActive = false;
                     unit._manaSkillActive = false;
-                }, 10000);
+                }, Math.round(10000/gameSpeedMul));
             }
             break;
         }
@@ -5423,11 +5425,11 @@ function triggerLegendManaSkill(unit, lastTarget){
                         const px3=x+(Math.random()-0.5)*400, py3=y+(Math.random()-0.5)*300;
                         meleeAnims.push({type:'text_pop',x:px3,y:py3,life:22,maxLife:22,color:'#00c853',text:'💰',big:false});
                         spawnParticles(px3,py3,'#00c853',4,3);
-                    },i*50);
+                    }, Math.round(i*50/gameSpeedMul));
                 }
                 for(let k=0;k<4;k++) setTimeout(()=>{
                     particles.push({type:'ring',x,y,radius:k*25,maxRadius:220+k*50,color:'#00c853',alpha:0.7,life:35,maxLife:35});
-                },k*80);
+                }, Math.round(k*80/gameSpeedMul));
                 showToast('📈 삼성전자 풀매수! 전체 적 데미지 + 아군 공격력+30%','#00c853','#001a00');
                 // 적 데미지
                 for(let e of enemies){
@@ -5463,7 +5465,7 @@ function triggerLegendManaSkill(unit, lastTarget){
                     for(let u2 of units) u2.removeDmgBuff('samsung_aura');
                     pdS.masterActive = false;
                     unit._manaSkillActive = false;
-                }, 15000);
+                }, Math.round(15000/gameSpeedMul));
             }
             break;
         }
@@ -5548,14 +5550,14 @@ function spawnCombineExplosion(x,y,tier) {
                     color:spawnColor, alpha:1, life:30+Math.random()*20, maxLife:50, size:4+Math.random()*4});
                 meleeAnims.push({type:'text_pop',x:x+(Math.random()-0.5)*120,y:y+(Math.random()-0.5)*120,
                     life:25,maxLife:25,color:spawnColor,text: isMancai ? '🍺' : '📰',big:false});
-            }, i*40);
+            }, Math.round(i*40/gameSpeedMul));
         }
         for(let k=0;k<4;k++) setTimeout(()=>{
             particles.push({type:'ring',x,y,radius:k*20,maxRadius:200+k*30,color:spawnColor,alpha:0.8,life:35,maxLife:35});
-        }, k*100);
+        }, Math.round(k*100/gameSpeedMul));
         setTimeout(()=>{
             meleeAnims.push({type:'text_pop',x,y:y-70,life:60,maxLife:60,color:spawnColor,text:spawnText,big:true});
-        }, 300);
+        }, Math.round(300/gameSpeedMul));
     }
 
     // 화면 흔들기 (희귀 이상)
@@ -5604,7 +5606,7 @@ function updateAttackLines() {
     if(attackLines.length > 100) attackLines.splice(0, attackLines.length-100);
     for(let i=attackLines.length-1;i>=0;i--){
         let l=attackLines[i];
-        l.alpha-=1/l.life; l.life--;
+        l.alpha-=gameSpeedMul/l.life; l.life-=gameSpeedMul;
         if(l.life<=0){attackLines.splice(i,1);continue;}
         ctx.save();
         ctx.globalAlpha=l.alpha;
@@ -5637,8 +5639,8 @@ function triggerBossIntro(bossName) {
 function updateBossIntro() {
     if(!bossIntroAnim) return;
     let b=bossIntroAnim;
-    b.life--;
-    if(b.life>50){ b.alpha=Math.min(1,(80-b.life)/20*1); b.scale=Math.min(1.1,b.scale+0.06); }
+    b.life-=gameSpeedMul;
+    if(b.life>50){ b.alpha=Math.min(1,(80-b.life)/20*1); b.scale=Math.min(1.1,b.scale+0.06*gameSpeedMul); }
     else if(b.life>20){ b.alpha=1; b.scale=1; }
     else { b.alpha=b.life/20; }
     if(b.life<=0){bossIntroAnim=null;return;}
@@ -5679,7 +5681,7 @@ function handleMissionDestroy() {
         }
         missionClearing = false;
         updateInventoryUI();
-    }, 100);
+    }, Math.round(100/gameSpeedMul));
 }
 
 // 보스 웨이브별 보상
@@ -5687,7 +5689,6 @@ function handleMissionDestroy() {
 let godUnitExists = false;
 function triggerGodEvolution(unit) {
     // 🔒 갓 진화 전체 잠금 (구현 완료 시 해제 예정)
-    showToast('🔒 갓 진화는 준비중입니다!', '#f1c40f', '#2a2200');
     return;
     godUnitExists = true;
     const godName = godEvolution[unit.name];
@@ -5729,6 +5730,12 @@ function giveMiniBossReward(w) {
         // 8라운드: 특별 선택 위습 1개
         wisps.selSpecial += 1;
         showToast(`👹 미니보스 처치! 🌟 특별 선택 위습 1개 지급!`, '#3498db', '#161e35');
+        updateInventoryUI();
+    } else if(w === 15){
+        // 15라운드: 랜덤 희귀 유닛 1마리
+        const unitName = randFrom(unitTiers["희귀"]);
+        spawnUnit(unitName);
+        showToast(`👹 미니보스 처치! ⚔️ 희귀 유닛 [${unitName}] 지급!`, '#e67e22', '#2d1a10');
         updateInventoryUI();
     }
 }
@@ -5937,8 +5944,8 @@ function getMissionProgress(idx) {
         case 7: // 미션8: 짐바브웨 보물
             return { cur: Math.min(missionZimTreasureCount, 5), max: 5 };
         case 8: { // 미션9: 게하 제주도 복귀
-            const best = Object.values(missionGehaReturnMap).reduce((a,b)=>Math.max(a,b), 0);
-            return { cur: Math.min(best, 10), max: 10 };
+            const total = missionGehaReturnMap['total'] || 0;
+            return { cur: Math.min(total, 10), max: 10 };
         }
         default: return { cur: 0, max: 1 };
     }
@@ -5959,7 +5966,7 @@ function checkMission(id) {
         case 5: pass = (storyIdx >= 1 && wave < 8); break;
         case 6: pass = true; break; // combineUnit에서 wave < 7 체크 후 호출됨
         case 7: pass = (missionZimTreasureCount >= 5); break;
-        case 8: pass = Object.values(missionGehaReturnMap).some(v => v >= 10); break;
+        case 8: pass = (missionGehaReturnMap['total'] || 0) >= 10; break;
     }
     if(!pass) return;
     missionCleared[idx] = true;
@@ -6114,22 +6121,20 @@ function startBossKillTimer() {
     const wt = document.getElementById('wave-status-text');
     _bossKillTimer = setInterval(()=>{
         if(isGameOver || isPaused) return;
-        // 보스가 이미 죽었으면 타이머 종료
         if(!enemies.some(e=>e.isBoss)){
             clearBossKillTimer();
             return;
         }
-        remaining--;
-        if(wt) wt.innerText=`⚠️ 보스 처치까지 ${remaining}초!`;
+        remaining -= gameSpeedMul;
+        if(wt) wt.innerText=`⚠️ 보스 처치까지 ${Math.max(0,Math.ceil(remaining))}초!`;
         if(remaining <= 0){
             clearBossKillTimer();
-            // 보스가 아직 살아있으면 사망 처리
             if(!isGameOver && enemies.some(e=>e.isBoss)){
                 showToast('💀 보스를 시간 내에 처치하지 못했습니다!', '#e74c3c', '#2d1010');
-                setTimeout(()=>{ if(!isGameOver) showEndingModal('death'); }, 1000);
+                setTimeout(()=>{ if(!isGameOver) showEndingModal('death'); }, Math.round(1000/gameSpeedMul));
             }
         }
-    }, 1000);
+    }, Math.round(1000/gameSpeedMul));
 }
 function clearBossKillTimer() {
     if(_bossKillTimer){ clearInterval(_bossKillTimer); _bossKillTimer=null; }
@@ -6149,17 +6154,17 @@ function startFinalBossKillTimer() {
             clearFinalBossKillTimer();
             return;
         }
-        _finalBossElapsed++;
+        _finalBossElapsed += gameSpeedMul;
         const remaining = ((limit - _finalBossElapsed) / 10).toFixed(1);
-        if(wt) wt.innerText=`👾 괴물 병선 처치까지 ${remaining}초! (실패 시 사망)`;
+        if(wt) wt.innerText=`👾 괴물 병선 처치까지 ${Math.max(0,remaining)}초! (실패 시 사망)`;
         if(_finalBossElapsed >= limit){
             clearFinalBossKillTimer();
             if(!isGameOver && enemies.some(e=>e.isBoss)){
                 showToast('💀 괴물 병선을 쓰러뜨리지 못했습니다...', '#e74c3c', '#2d1010');
-                setTimeout(()=>{ if(!isGameOver) showEndingModal('death'); }, 1000);
+                setTimeout(()=>{ if(!isGameOver) showEndingModal('death'); }, Math.round(1000/gameSpeedMul));
             }
         }
-    }, 100); // 0.1초마다 갱신
+    }, Math.round(100/gameSpeedMul)); // 0.1초마다 갱신
 }
 function clearFinalBossKillTimer() {
     if(_finalBossKillTimer){ clearInterval(_finalBossKillTimer); _finalBossKillTimer=null; }
@@ -6173,24 +6178,22 @@ function startMiniBossKillTimer() {
     const wt = document.getElementById('wave-status-text');
     _miniBossKillTimer = setInterval(()=>{
         if(isGameOver || isPaused) return;
-        // 미니보스 이미 없으면 종료
         if(!enemies.some(e=>e.isMiniBoss)){
             clearMiniBossKillTimer();
             return;
         }
-        remaining--;
-        if(wt) wt.innerText=`👹 미니보스 처치까지 ${remaining}초! (실패 시 보상 없음)`;
+        remaining -= gameSpeedMul;
+        if(wt) wt.innerText=`👹 미니보스 처치까지 ${Math.max(0,Math.ceil(remaining))}초! (실패 시 보상 없음)`;
         if(remaining <= 0){
             clearMiniBossKillTimer();
             if(isGameOver) return;
-            // 미니보스 강제 제거 (보상 없음)
             for(let i=enemies.length-1;i>=0;i--){
                 if(enemies[i].isMiniBoss) enemies.splice(i,1);
             }
             showToast('👹 미니보스 처치 실패! 보상 없이 넘어갑니다.', '#9b59b6', '#22183a');
             if(waitingForBoss){ waitingForBoss=false; scheduleNextWave(); }
         }
-    }, 1000);
+    }, Math.round(1000/gameSpeedMul));
 }
 function clearMiniBossKillTimer() {
     if(_miniBossKillTimer){ clearInterval(_miniBossKillTimer); _miniBossKillTimer=null; }
@@ -6234,13 +6237,19 @@ function startWaveLogic() {
         // 보스 웨이브도 일반 몹 스폰
     }
 
-    // 미니보스 등장: 3, 5, 8 라운드에 미니보스 1마리 추가 스폰
-    if(wave===3 || wave===5 || wave===8){
+    // 미니보스 등장: 3, 5, 8, 15 라운드에 미니보스 1마리 추가 스폰
+    if(wave===3 || wave===5 || wave===8 || wave===15){
         let miniBoss = new Enemy(wave, false, 0, true);
         enemies.push(miniBoss);
         showToast(`👹 미니보스 등장! (라운드 ${wave})`, '#9b59b6', '#22183a');
     }
 
+    restartSpawnInterval();
+}
+
+function restartSpawnInterval() {
+    clearSpawnTimer();
+    if(!isPlaying || isGameOver || waitingForBoss || mobsSpawnedThisWave >= 60) return;
     spawnInterval=setInterval(()=>{
         if(isGameOver){clearSpawnTimer();return;}
         enemies.push(new Enemy(wave,false,mobsSpawnedThisWave));
@@ -6248,25 +6257,22 @@ function startWaveLogic() {
         if(mobsSpawnedThisWave>=60){
             clearSpawnTimer();
             if(isBossWave){
-                // [버그수정] 보스가 살아있으면 대기, 아니면 바로 다음
                 if(enemies.some(e=>e.isBoss)){
                     waitingForBoss=true;
                     document.getElementById('wave-status-text').innerText='보스를 처치하세요!';
-                    startBossKillTimer(); // ── 보스 처치 제한 타이머 시작
-                    // checkBossDeath가 루프에서 처리
+                    startBossKillTimer();
                 } else {
                     scheduleNextWave();
                 }
             } else if(enemies.some(e=>e.isMiniBoss)){
-                // 미니보스가 아직 살아있으면 60초 제한 대기
                 waitingForBoss=true;
                 document.getElementById('wave-status-text').innerText='미니보스를 처치하세요!';
-                startMiniBossKillTimer(); // ── 미니보스 제한 타이머 시작
+                startMiniBossKillTimer();
             } else {
                 scheduleNextWave();
             }
         }
-    },400);
+    }, Math.round(400 / gameSpeedMul));
 }
 
 let _waveTransitionPending = false;
@@ -6348,8 +6354,10 @@ function gameLoop(ts) {
     }
     _lastFrame = ts;
     _loopFrameId = requestAnimationFrame(gameLoop);
-    // 웨이브 전환 카운트다운 (일시정지 시 자동 멈춤)
-    if(typeof tickWaveCountdown === 'function') tickWaveCountdown();
+    // 웨이브 전환 카운트다운 (배속 적용)
+    for(let _spd=0; _spd<gameSpeedMul; _spd++){
+        if(typeof tickWaveCountdown === 'function') tickWaveCountdown();
+    }
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
     // 카메라 스크롤 업데이트
@@ -6357,11 +6365,15 @@ function gameLoop(ts) {
 
     // 화면 흔들기 적용
     let shakeX=0, shakeY=0;
+    for(let _spd=0; _spd<gameSpeedMul; _spd++){
+        if(screenShake && screenShake.duration>0){
+            screenShake.duration--;
+            if(screenShake.duration<=0) screenShake=null;
+        }
+    }
     if(screenShake && screenShake.duration>0){
         shakeX = (Math.random()-0.5)*screenShake.intensity*2;
         shakeY = (Math.random()-0.5)*screenShake.intensity*2;
-        screenShake.duration--;
-        if(screenShake.duration<=0) screenShake=null;
     }
 
     // 카메라 변환 적용 (월드→스크린 + 흔들기)
@@ -6441,7 +6453,7 @@ function gameLoop(ts) {
                         } else {
                             showEndingModal('bossclear', killTimeSec);
                         }
-                    }, 500);
+                    }, Math.round(500/gameSpeedMul));
                 } else {
                     giveBossReward(wave);
                     clearBossKillTimer(); // ── 보스 처치 제한 타이머 해제
@@ -6456,10 +6468,10 @@ function gameLoop(ts) {
         }
     }
 
-    // 이동 애니메이션 처리
+    // 이동 애니메이션 처리 (배속 적용)
     for(let i=gatherAnims.length-1;i>=0;i--){
         let g=gatherAnims[i];
-        g.p=Math.min(1, g.p+0.08);
+        g.p=Math.min(1, g.p+0.08*gameSpeedMul);
         let t=1-(1-g.p)*(1-g.p)*(1-g.p); // ease out cubic
         g.unit.x=g.startX+(g.targetX-g.startX)*t;
         g.unit.y=g.startY+(g.targetY-g.startY)*t;
@@ -6490,7 +6502,7 @@ function gameLoop(ts) {
 
     // 이동 웨이포인트 이펙트 (ctx는 아직 월드 변환 중)
     for(let i=moveTargets.length-1;i>=0;i--){
-        let mt=moveTargets[i]; mt.life--;
+        let mt=moveTargets[i]; mt.life-=gameSpeedMul;
         if(mt.life<=0){moveTargets.splice(i,1);continue;}
         const t=mt.life/mt.maxLife;
         ctx.save();
@@ -6504,7 +6516,7 @@ function gameLoop(ts) {
 
     // 조합 애니메이션
     for(let i=combiningAnims.length-1;i>=0;i--){
-        let a=combiningAnims[i]; a.p+=a.speed;
+        let a=combiningAnims[i]; a.p+=a.speed*gameSpeedMul;
         if(a.p>=1){
             spawnCombineExplosion(a.cx,a.cy,a.tier);
             inventory[a.target]=(inventory[a.target]||0)+1;
@@ -6522,17 +6534,18 @@ function gameLoop(ts) {
         }
     }
 
-    // 투사체 & 근접 이펙트
-    updateProjectiles();
-    updateMeleeAnims();
-    updateToothParticles();
-    updateSojuSummons();
-    updateFanAnims();
+    // 투사체 & 근접 이펙트 & 파티클 (배속 적용)
+    for(let _spd=0; _spd<gameSpeedMul; _spd++){
+        updateProjectiles();
+        updateMeleeAnims();
+        updateToothParticles();
+        updateSojuSummons();
+        updateFanAnims();
+        updateSellSalaries();
+        updateParticles();
+    }
     renderGirlSummons();
     renderVainStacks();
-    updateSellSalaries();
-    // 파티클
-    updateParticles();
 
     // 보스 등장 연출
     updateBossIntro();
@@ -6556,7 +6569,7 @@ function gameLoop(ts) {
         ctx.fillStyle=screenFlash.color;
         ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.restore();
-        screenFlash.alpha-=screenFlash.decay;
+        screenFlash.alpha -= screenFlash.decay * gameSpeedMul;
         if(screenFlash.alpha<=0) screenFlash=null;
     }
 
@@ -6895,31 +6908,8 @@ function togglePause(){
     } else {
         // 재개: 보류된 웨이브 전환 처리 (gameLoop가 자동 처리)
         if(typeof resumeWaveIfPending === 'function') resumeWaveIfPending();
-        // 스폰 타이머 재시작 조건:
-        // 1. 웨이브 전환 중이 아니고 (전환 중이면 gameLoop가 처리)
-        // 2. 아직 60마리 다 스폰 안 됐고
-        // 3. 보스 대기 상태가 아닐 때
-        if(!_waveTransitionPending && mobsSpawnedThisWave < 60 && !waitingForBoss){
-            spawnInterval = setInterval(()=>{
-                if(isGameOver||isPaused){ clearSpawnTimer(); return; }
-                enemies.push(new Enemy(wave, false, mobsSpawnedThisWave));
-                mobsSpawnedThisWave++;
-                if(mobsSpawnedThisWave>=60){
-                    clearSpawnTimer();
-                    if(isBossWave){
-                        if(enemies.some(e=>e.isBoss)){
-                            waitingForBoss=true;
-                            const wt=document.getElementById('wave-status-text');
-                            if(wt) wt.innerText='보스를 처치하세요!';
-                        } else {
-                            scheduleNextWave();
-                        }
-                    } else {
-                        scheduleNextWave();
-                    }
-                }
-            }, 400);
-        }
+        // 스폰 타이머 재시작
+        if(!_waveTransitionPending) restartSpawnInterval();
         // 게임 루프 재시작
         if(!_loopActive && !_loopFrameId){
             _loopActive=true;
@@ -7926,7 +7916,7 @@ giveInitialUnits();
             if(!_moved){
                 cvs.dispatchEvent(new MouseEvent('contextmenu',{clientX:_tx,clientY:_ty,bubbles:true}));
             }
-        },500);
+        }, 500);
     },{passive:false});
 
     cvs.addEventListener('touchmove', e=>{
