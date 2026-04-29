@@ -714,7 +714,7 @@ const PASSIVE_NAMES = {
     "허언 병선":      {passive:"허언증",       skill:null},
     "중2병 건모":     {passive:"빠른 주먹",    skill:null},
     "큰돌맹이":       {passive:"바위로 계란치기", skill:null},
-    "젖살안빠진 상웅":{passive:"돌진",          skill:null},
+    "젖살안빠진 상웅":{passive:"급발진",          skill:null},
     "담쟁이넝쿨 현준":{passive:"담쟁이 넝쿨",  skill:null},
     "130cm래규":      {passive:"키커져라!",     skill:null},
     "세균 훈덕":      {passive:"검은 염색체",   skill:null},
@@ -898,7 +898,7 @@ function placeUnitInDir(unit, dirKey){
 // 돌맹이 테크 유닛 목록
 const STONE_TECH_UNITS = new Set(["작은 돌맹이","큰돌맹이","바위","뇌까지 돌이된 찬희","온몸이 돌이 된 찬희","몸에서 돌이 떨어지는 김찬희","돌의 신 김찬희"]);
 
-const PASSIVE_DESC = {"술채": "🍶 술잔 투척: 공격 시 술잔이 깨지며 주변 30 유리파편 데미지", "허언 병선": "📢 허언증: 주변 몬스터 방어력 5 감소 (중첩불가)", "중2병 건모": "👊 빠른 주먹: 공격속도 3회/초, 연속 타격", "큰돌맹이": "🪨 바위로 계란치기: 느린 공격(0.3회/초), 높은 공격력", "젖살안빠진 상웅": "💨 돌진: 공격 시 10% 확률로 타겟 방향으로 돌진, 경로의 적 전부 타격", "담쟁이넝쿨 현준": "🌿 담쟁이넝쿨: 공격받은 적 5초 이동속도 60% 감소", "130cm래규": "📏 키커져라!: 30킬마다 랜덤위습 1기 반복 지급 (30킬→+1기, 60킬→+1기, 90킬→+1기 ...무한반복)", "세균 훈덕": "🦠 검은 염색체: 기본공격 없음. 주변 150 범위 아군 공격속도 +20% 버프 (범위 안에 있는 동안 지속)", "돼지병훈": "🐷 꾸에엑!: 몹 처치 시 공격력 영구 +5 증가", "게이다훈": "💕 오빠 달려: 보스 출현 시 보스만 단일 타격, 보스 공격마다 고정 데미지 +30 추가", "야동수": "📱 야!: 공격 시 주변 적 0.1초 스턴"};
+const PASSIVE_DESC = {"술채": "🍶 술잔 투척: 공격 시 술잔이 깨지며 주변 30 유리파편 데미지", "허언 병선": "📢 허언증: 주변 몬스터 방어력 5 감소 (중첩불가)", "중2병 건모": "👊 빠른 주먹: 공격속도 3회/초, 연속 타격", "큰돌맹이": "🪨 바위로 계란치기: 느린 공격(0.3회/초), 높은 공격력", "젖살안빠진 상웅": "💨 급발진: 공격 시 10% 확률로 타겟 방향으로 급발진, 경로의 적 전부 타격", "담쟁이넝쿨 현준": "🌿 담쟁이넝쿨: 공격받은 적 5초 이동속도 60% 감소", "130cm래규": "📏 키커져라!: 30킬마다 랜덤위습 1기 반복 지급 (30킬→+1기, 60킬→+1기, 90킬→+1기 ...무한반복)", "세균 훈덕": "🦠 검은 염색체: 기본공격 없음. 주변 150 범위 아군 공격속도 +20% 버프 (범위 안에 있는 동안 지속)", "돼지병훈": "🐷 꾸에엑!: 몹 처치 시 공격력 영구 +5 증가", "게이다훈": "💕 오빠 달려: 보스 출현 시 보스만 단일 타격, 보스 공격마다 고정 데미지 +30 추가", "야동수": "📱 야!: 공격 시 주변 적 0.1초 스턴"};
 
 const SPECIAL_UNITS = new Set(["이슬이", "지호", "나츠", "반짝 빛나는 돌", "미스테리한 여자", "지현", "해리", "흑색 염색체", "희주", "연진", "해나"]);
 
@@ -2242,7 +2242,7 @@ class Unit {
             this.passiveData = {name:"돌맹이테크", ...this.passiveData};
         }
         if(name === "큰돌맹이")       this.passiveData = {name:"바위로 계란치기", stoneTech:true};
-        if(name === "젖살안빠진 상웅") this.passiveData = {name:"돌진"};
+        if(name === "젖살안빠진 상웅") this.passiveData = {name:"급발진"};
         if(name === "130cm래규")       this.passiveData = {name:"키커져라", kills:0, lastMilestone:0};
         if(name === "세균 훈덕")       this.passiveData = {name:"검은 염색체", auraPhase:0};
         if(name === "돼지병훈")        this.passiveData = {name:"꾸에엑", bonusDmg:0, imgScale:1.0};
@@ -2385,11 +2385,11 @@ class Unit {
 
         // 젖살안빠진 상웅: 돌진 패시브 (공격 시 10% 확률, 돌진 경로 적 전부 타격)
         // 실제 돌진은 아래 공격 발동 블록에서 처리 (updatePassive는 상태 관리만)
-        if(pd.name === "돌진"){
+        if(pd.name === "급발진"){
             // 돌진 중이면 이동 처리
             if(pd.charging){
                 pd.chargeStep = (pd.chargeStep||0) + 1;
-                const spd = 18;
+                const spd = 12;
                 this.x += Math.cos(pd.chargeAngle) * spd;
                 this.y += Math.sin(pd.chargeAngle) * spd;
                 this.x = Math.max(40, Math.min(WORLD_W-40, this.x));
@@ -3005,7 +3005,7 @@ class Unit {
 
             // 흔함 유닛 고유 이펙트, 나머지는 기존 라인
             if(this.tier==='흔함'){
-                spawnCommonAttackEffect(this.name, this.x, this.y, target.x, target.y);
+                spawnCommonAttackEffect(this.name, this.x, this.y, target.x, target.y, this);
             } else if(this.tier==='안흔함'){
                 // 게이다훈: 보스/미니보스 타격 시 고정 데미지 +30 (이번 공격에만 추가)
                 if(this.name==="게이다훈" && target && (target.isBoss || target.isMiniBoss)){
@@ -4560,7 +4560,7 @@ function spawnHitEffect(type, x, y){
 // =============================================
 let meleeAnims = []; // 근접 공격 애니메이션
 
-function spawnCommonAttackEffect(name, sx, sy, tx, ty){
+function spawnCommonAttackEffect(name, sx, sy, tx, ty, unit){
     switch(name){
         // ── 근접 ──
         case '빈 지갑':
@@ -4647,13 +4647,13 @@ function spawnUncommonAttackEffect(name, sx, sy, tx, ty, unit){
             attackLines.push({sx,sy,tx,ty,color:'#f39c12',tier:'안흔함',alpha:1,life:10});
             spawnParticles(tx, ty, '#f39c12', 5, 3);
             // 10% 확률 돌진 발동
-            if(Math.random() < 0.1 && attackUnit.passiveData && !attackUnit.passiveData.charging){
-                const dxC = tx - attackUnit.x, dyC = ty - attackUnit.y;
+            if(Math.random() < 0.1 && unit.passiveData && !unit.passiveData.charging){
+                const dxC = tx - unit.x, dyC = ty - unit.y;
                 const distC = Math.sqrt(dxC*dxC + dyC*dyC) || 1;
-                attackUnit.passiveData.charging = true;
-                attackUnit.passiveData.chargeAngle = Math.atan2(dyC, dxC);
-                attackUnit.passiveData.chargeStep = 0;
-                meleeAnims.push({type:'text_pop',x:attackUnit.x,y:attackUnit.y-30,life:20,maxLife:20,color:'#f39c12',text:'💨 돌진!',big:false});
+                unit.passiveData.charging = true;
+                unit.passiveData.chargeAngle = Math.atan2(dyC, dxC);
+                unit.passiveData.chargeStep = 0;
+                meleeAnims.push({type:'text_pop',x:unit.x,y:unit.y-30,life:20,maxLife:20,color:'#f39c12',text:'💨 급발진!',big:false});
             }
             break;
         case "담쟁이넝쿨 현준":
@@ -7196,7 +7196,7 @@ canvas.addEventListener('contextmenu', e=>{
     const cols=Math.ceil(Math.sqrt(movableUnits.length));
     const spacing=50;
     movableUnits.forEach((u,i)=>{
-        if(u.passiveData && (u.passiveData.name==='돌진') && u.passiveData.charging){
+        if(u.passiveData && (u.passiveData.name==='급발진') && u.passiveData.charging){
             // 돌진 중인 유닛은 집결 이동 스킵
             return;
         }
