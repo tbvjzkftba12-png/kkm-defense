@@ -355,6 +355,7 @@
         </div>
         <div id="top-bar-right">
             <button id="gacha-btn" onclick="drawWisp()">🎲 뽑기 <span id="top-wisp-badge" style="background:#fff;color:#e74c3c;border-radius:8px;padding:0 6px;font-size:11px;font-weight:900;margin-left:4px;">0</span></button>
+            <button onclick="openMissionModal()" style="background:#1a2d1a;border:1.5px solid #2ecc71;color:#2ecc71;border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;">🎯 미션</button>
             <button id="pause-btn" onclick="togglePause()" style="
                 background:#1a1e28;border:1.5px solid #3498db;color:#3498db;
                 border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;">⏸</button>
@@ -485,9 +486,7 @@
         </div>
         <!-- 인벤토리 -->
         <div class="panel-box" style="margin-bottom:12px;">
-            <h2 style="margin-bottom:6px;">📦 인벤토리
-                <button onclick="openMissionModal()" style="float:right;width:auto;padding:2px 8px;font-size:10px;background:#1a2d1a;border:1px solid #2ecc71;color:#2ecc71;">🎯 미션목록</button>
-            </h2>
+            <h2 style="margin-bottom:6px;">📦 인벤토리</h2>
             <div id="inventory-list" style="max-height:160px;overflow-y:auto;background:#0d0f14;padding:6px;border-radius:6px;border:1px solid var(--c-border);"></div>
         </div>
         <!-- 조합 가능 -->
@@ -926,9 +925,12 @@ let wave = 1, isPlaying = false, isBossWave = false, isGameOver = false, isPause
 let killCountForWisp = 0, inventory = {};
 
 // ── 미션 시스템 상태 ──
-let missionCleared = [false,false,false,false,false,false,false,false,false]; // 미션 1~9
-let missionZimTreasureCount = 0;    // 미션8: 짐바브웨 꽝 제외 보상 횟수
-let missionGehaReturnMap = {};      // 미션9: 유닛ID별 제주도 복귀 횟수 {unitId: count}
+let missionCleared = new Array(21).fill(false); // 미션 1~20 (인덱스 0~19)
+let missionZimTreasureCount = 0;
+let missionGehaReturnMap = {};
+let normalMobKillTotal = 0;         // 청소부 미션 누적
+let bossKillStartTime = 0;          // 보스사냥꾼 타이머
+let bossHunterCount = 0;            // 보스사냥꾼 달성 횟수
 let spawnInterval = null, mobsSpawnedThisWave = 0;
 // [점수판] 게임 통계 추적용 전역 변수
 let totalKills = 0; // 총 처치 적 수
@@ -2178,7 +2180,7 @@ class Unit {
             "젖살안빠진 상웅":{dmg:100, type:"ranged", range:130, cd:40},   // 공속 1.5
             "담쟁이넝쿨 현준":{dmg:100, type:"ranged", range:130, cd:40},   // 공속 1.5
             "130cm래규":      {dmg:100, type:"ranged", range:130, cd:40},   // 공속 1.5
-            "세균 훈덕":      {dmg:0,   type:"passive",range:150, cd:9999}, // 패시브 전용
+            "세균 훈덕":      {dmg:0,   type:"passive",range:150, cd:9999}, // 기본공격 없음
             "돼지병훈":       {dmg:100, type:"melee",  range:100, cd:40},   // 공속 1.5
             "게이다훈":       {dmg:100, type:"melee",  range:100, cd:40},   // 공속 1.5
             "야동수":         {dmg:100, type:"melee",  range:100, cd:40},   // 공속 1.5
@@ -2193,7 +2195,7 @@ class Unit {
             "과 학회장 훈덕":  {dmg:300, type:"ranged", range:130, cd:30},   // 공속 2.0
             "이별휴유증 건모":{dmg:100, type:"ranged", range:130, cd:20},   // 공속 3.0
             "담배피는 병훈":  {dmg:300, type:"ranged", range:130, cd:30},   // 공속 2.0
-            "패션안경 다훈":  {dmg:0,   type:"passive",range:130, cd:9999}, // 패시브 전용
+            "패션안경 다훈":  {dmg:0,   type:"passive",range:130, cd:9999}, // 기본공격 없음 (이미지: UNIT_IMGS 직접)
             // 희귀 (cd = 60/공격속도)
             "꼬장 승채":          {dmg:3000, type:"melee",  range:100, cd:20},  // 공속 3.0
             "ROTC상웅":           {dmg:3000, type:"ranged", range:130, cd:20},  // 공속 3.0
@@ -2406,19 +2408,16 @@ class Unit {
             }
         }
 
-        // 세균 훈덕: 주변 150px 아군 공격속도 +20% 버프 (매 60프레임 갱신)
+        // 세균 훈덕: 주변 150px 아군 공격속도 +20% 버프 (도트 삭제)
         if(pd.name === "검은 염색체"){
             if(!pd._buffTick) pd._buffTick = 0;
             pd._buffTick++;
-            // 오라 펄스 시각 효과 (매 60프레임)
             if(pd._buffTick % 60 === 1){
                 particles.push({type:'ring',x:this.x,y:this.y,radius:0,maxRadius:150,
                     color:'#00ff88',alpha:0.5,life:35,maxLife:35});
             }
             if(pd._buffTick >= 60){
                 pd._buffTick = 0;
-                // 주변 150px 아군 유닛 공격속도 +20% 적용 (maxCd 감소)
-                // 이미 세균버프 받은 유닛은 중복 적용 안함
                 for(let u2 of units){
                     if(u2===this) continue;
                     const dx=u2.x-this.x, dy=u2.y-this.y;
@@ -2430,7 +2429,6 @@ class Unit {
                             u2.maxCd = Math.max(4, Math.round(u2.maxCd / 1.2));
                         }
                     } else {
-                        // 범위 밖 나가면 버프 해제
                         if(u2._segunBuff){
                             u2._segunBuff = false;
                             u2.maxCd = u2._segunOrigMaxCd;
@@ -2818,12 +2816,20 @@ class Unit {
         }
         // 흔함 유닛은 공격 없음 (성능 최적화 + 재료 전용)
         if(this.tier==='흔함') return;
-        // 가장 가까운 적 우선 타겟
+        // 공격 타겟 우선순위: 보스 > 미니보스 > 가장 가까운 일반몹
         let target=null, minDist=Infinity;
+        let bossTarget=null, miniBossTarget=null, bossMinDist=Infinity, miniBossMinDist=Infinity;
         for(let e of enemies){
-            let dx=e.x-this.x,dy=e.y-this.y,d=Math.sqrt(dx*dx+dy*dy);
-            if(d<=this.range && d<minDist){target=e;minDist=d;}
+            if(e.hp<=0 || e.isDestroyed) continue;
+            let dx=e.x-this.x, dy=e.y-this.y, d=Math.sqrt(dx*dx+dy*dy);
+            if(d<=this.range){
+                if(e.isBoss && d<bossMinDist){ bossTarget=e; bossMinDist=d; }
+                else if(e.isMiniBoss && d<miniBossMinDist){ miniBossTarget=e; miniBossMinDist=d; }
+                else if(!e.isBoss && !e.isMiniBoss && d<minDist){ target=e; minDist=d; }
+            }
         }
+        if(bossTarget) target=bossTarget;
+        else if(miniBossTarget) target=miniBossTarget;
         // 게이다훈: 보스/미니보스 Enemy가 실제로 맵에 존재할 때만 이동
         if(this.name==="게이다훈" && this.passiveData){
             const boss = enemies.find(e=>e.isBoss===true || e.isMiniBoss===true); // 보스+미니보스 모두 포함
@@ -3135,7 +3141,7 @@ class Unit {
                     if(Math.random()<0.05){
                         for(let e of enemies){
                             e.stunTimer=120;
-                            e.hp-=50000; // 지진 스킬 추가 데미지
+                            e.hp-=50000; // 지진 추가뎀
                             meleeAnims.push({type:'damage_text',x:e.x+(Math.random()-0.5)*16,y:e.y-25,life:38,maxLife:38,color:'#fff',text:10000,vy:-1.8,fixed:true});
                         }
                         // 지진 자체 이펙트 (전설등장 X)
@@ -3604,7 +3610,7 @@ class Unit {
                     for(let e of enemies){
                         const dx=e.x-target.x, dy=e.y-target.y;
                         if(Math.sqrt(dx*dx+dy*dy)<=80){
-                            e.hp-=10000; // 꼬장 스킬 폭발 데미지
+                            e.hp-=10000; // 꼬장 폭발
                             meleeAnims.push({type:'damage_text',x:e.x+(Math.random()-0.5)*14,y:e.y-22,life:35,maxLife:35,color:'#fff',text:3000,vy:-1.6,fixed:true});
                         }
                     }
@@ -5742,6 +5748,12 @@ function giveMiniBossReward(w) {
         spawnUnit(unitName);
         showToast(`👹 미니보스 처치! ⚔️ 희귀 유닛 [${unitName}] 지급!`, '#e67e22', '#2d1a10');
         updateInventoryUI();
+    } else if(w === 25){
+        // 25라운드: 흔함 선택 위습 2개 + 흔함 랜덤 위습 2개
+        wisps.selCommon += 2;
+        wisps.rand += 2;
+        showToast(`👹 강화 미니보스 처치! 🎯 흔함 선택 위습 2개 + 🎲 흔함 랜덤 위습 2개 지급!`, '#2ecc71', '#1a2d1a');
+        updateInventoryUI();
     }
 }
 
@@ -5860,165 +5872,215 @@ function spawnUnitForce(name) {
 // 미션 시스템
 // ══════════════════════════════════════════════
 const MISSION_DATA = [
-    {
-        id:1, name:"흔함 모으기",
-        desc:"맵에 흔함 유닛 8종류 전부 1기씩 보유",
-        rewardDesc:"흔함 랜덤 위습 3개",
-        reward(){ wisps.rand += 3; updateInventoryUI(); }
-    },
-    {
-        id:2, name:"안흔함 모으기",
-        desc:"맵에 안흔함 유닛 11종류 전부 1기씩 보유",
-        rewardDesc:"흔함 선택 위습 3개",
-        reward(){ wisps.selCommon += 3; updateInventoryUI(); }
-    },
-    {
-        id:3, name:"특별 모으기",
-        desc:"맵에 특별 유닛 11종류 전부 1기씩 보유",
-        rewardDesc:"특별 선택 위습 3개",
-        reward(){ wisps.selSpecial += 3; updateInventoryUI(); }
-    },
-    {
-        id:4, name:"희귀 모으기",
-        desc:"맵에 희귀 유닛 11종류 전부 1기씩 보유",
-        rewardDesc:"희귀 선택 위습 3개",
-        reward(){ wisps.selRare += 3; updateInventoryUI(); }
-    },
-    {
-        id:5, name:"전설 모으기",
-        desc:"맵에 전설 유닛 11종류 전부 1기씩 보유",
-        rewardDesc:"랜덤 전설 유닛 2기",
-        reward(){
-            for(let i=0;i<2;i++) spawnUnit(randFrom(unitTiers["전설"]));
-            updateInventoryUI();
-        }
-    },
-    {
-        id:6, name:"스피드 공략",
-        desc:"8라운드 전에 1스토리 격파",
-        rewardDesc:"흔함 선택 위습 2개",
-        reward(){ wisps.selCommon += 2; updateInventoryUI(); }
-    },
-    {
-        id:7, name:"빠른테크",
-        desc:"7라운드 전에 희귀 유닛 조합",
-        rewardDesc:"특별 선택 위습 1개",
-        reward(){ wisps.selSpecial += 1; updateInventoryUI(); }
-    },
-    {
-        id:8, name:"보물사냥꾼",
-        desc:"짐바브웨 동수가 꽝 제외 보물 보상 5회 획득",
-        rewardDesc:"흔함 선택 위습 2개",
-        reward(){ wisps.selCommon += 2; updateInventoryUI(); }
-    },
-    {
-        id:9, name:"제주도 사냥꾼",
-        desc:"게하 장인 현준 한 유닛이 제주도 10번 복귀",
-        rewardDesc:"흔함 선택 위습 3개",
-        reward(){ wisps.selCommon += 3; updateInventoryUI(); }
-    }
+    {id:1,  name:"흔함 모으기",       repeat:false,
+     desc:"맵에 흔함 유닛 8종류 전부 1기씩 보유",
+     rewardDesc:"흔함 랜덤 위습 3개",
+     reward(){ wisps.rand+=3; updateInventoryUI(); }},
+    {id:2,  name:"안흔함 모으기",     repeat:false,
+     desc:"맵에 안흔함 유닛 11종류 전부 1기씩 보유",
+     rewardDesc:"흔함 선택 위습 3개",
+     reward(){ wisps.selCommon+=3; updateInventoryUI(); }},
+    {id:3,  name:"특별 모으기",       repeat:false,
+     desc:"맵에 특별 유닛 11종류 전부 1기씩 보유",
+     rewardDesc:"특별 선택 위습 3개",
+     reward(){ wisps.selSpecial+=3; updateInventoryUI(); }},
+    {id:4,  name:"희귀 모으기",       repeat:false,
+     desc:"맵에 희귀 유닛 11종류 전부 1기씩 보유",
+     rewardDesc:"희귀 선택 위습 3개",
+     reward(){ wisps.selRare+=3; updateInventoryUI(); }},
+    {id:5,  name:"전설 모으기",       repeat:false,
+     desc:"맵에 전설 유닛 11종류 전부 1기씩 보유",
+     rewardDesc:"랜덤 전설 유닛 2기",
+     reward(){ for(let i=0;i<2;i++) spawnUnit(randFrom(unitTiers["전설"])); updateInventoryUI(); }},
+    {id:6,  name:"스피드 공략",       repeat:false,
+     desc:"8라운드 전에 1스토리 격파",
+     rewardDesc:"흔함 선택 위습 2개",
+     reward(){ wisps.selCommon+=2; updateInventoryUI(); }},
+    {id:7,  name:"빠른테크",          repeat:false,
+     desc:"7라운드 전에 희귀 유닛 조합",
+     rewardDesc:"특별 선택 위습 1개",
+     reward(){ wisps.selSpecial+=1; updateInventoryUI(); }},
+    {id:8,  name:"보물사냥꾼",        repeat:false,
+     desc:"짐바브웨 동수가 꽝 제외 보물 보상 5회 획득",
+     rewardDesc:"흔함 선택 위습 2개",
+     reward(){ wisps.selCommon+=2; updateInventoryUI(); }},
+    {id:9,  name:"제주도 사냥꾼",     repeat:false,
+     desc:"게하 장인 현준 한 유닛이 제주도 10번 복귀",
+     rewardDesc:"흔함 선택 위습 3개",
+     reward(){ wisps.selCommon+=3; updateInventoryUI(); }},
+    {id:10, name:"청소부 LV.1",       repeat:false,
+     desc:"일반몹 누적 500마리 처치",
+     rewardDesc:"흔함 랜덤 위습 2개",
+     reward(){ wisps.rand+=2; updateInventoryUI(); }},
+    {id:11, name:"청소부 LV.2",       repeat:false,
+     desc:"일반몹 누적 1000마리 처치",
+     rewardDesc:"흔함 랜덤 위습 4개",
+     reward(){ wisps.rand+=4; updateInventoryUI(); }},
+    {id:12, name:"청소부 LV.3",       repeat:false,
+     desc:"일반몹 누적 1500마리 처치",
+     rewardDesc:"흔함 랜덤 위습 6개",
+     reward(){ wisps.rand+=6; updateInventoryUI(); }},
+    {id:13, name:"청소부 LV.4",       repeat:false,
+     desc:"일반몹 누적 2000마리 처치",
+     rewardDesc:"흔함 랜덤 위습 8개",
+     reward(){ wisps.rand+=8; updateInventoryUI(); }},
+    {id:14, name:"청소부 LV.5",       repeat:false,
+     desc:"일반몹 누적 2500마리 처치",
+     rewardDesc:"흔함 랜덤 위습 10개",
+     reward(){ wisps.rand+=10; updateInventoryUI(); }},
+    {id:15, name:"청소부 만렙",       repeat:false,
+     desc:"일반몹 누적 3000마리 처치",
+     rewardDesc:"흔함 랜덤 위습 15개",
+     reward(){ wisps.rand+=15; updateInventoryUI(); }},
+    {id:16, name:"보스사냥꾼",        repeat:true,
+     desc:"10라운드마다 등장하는 보스를 10초 안에 처치 (반복 보상)",
+     rewardDesc:"흔함 랜덤 위습 3개 (반복)",
+     reward(){ wisps.rand+=3; updateInventoryUI(); }},
+    {id:17, name:"야! 나와!",         repeat:false,
+     desc:"맵에 깡소주 2기 이상 + 돛대 담배 2기 이상 + 술채(안흔함) 2기 이상 + 얼굴이 붉어진 승채(전설) 1기 이상 보유",
+     rewardDesc:"컴공과 승채(특별) + 클오클 래규(특별) + 이별휴유증 건모(특별) 각 1기",
+     reward(){
+         spawnUnit("컴공과 승채");
+         spawnUnit("클오클 래규");
+         spawnUnit("이별휴유증 건모");
+         updateInventoryUI();
+     }},
+    {id:18, name:"머저리 수집가",     repeat:false,
+     desc:"맵에 큰돌맹이(안흔함) + 바위(특별) + 뇌까지 돌이된 찬희(희귀) + 온몸이 돌이 된 찬희(전설) 각 1기 이상 보유",
+     rewardDesc:"3등 항해사병선(희귀) + 뇌까지 돌이된 찬희(희귀) 각 1기",
+     reward(){
+         spawnUnit("3등 항해사병선");
+         spawnUnit("뇌까지 돌이된 찬희");
+         updateInventoryUI();
+     }},
+    {id:19, name:"똑똑이 수집가",     repeat:false,
+     desc:"맵에 욕쟁이 현준(전설) + 코딩하는 상웅(전설) + 게하 장인 현준(희귀) 각 1기 이상 보유",
+     rewardDesc:"랜덤 전설 유닛 1기",
+     reward(){
+         spawnUnit(randFrom(unitTiers["전설"]));
+         updateInventoryUI();
+     }},
+    {id:20, name:"원랜디 도박왕",     repeat:false,
+     desc:"맵에 패션왕자 동수(전설) + 짐바브웨 동수(희귀) + 야동보는동수(특별) + 야동수(안흔함) 각 1기 이상 보유",
+     rewardDesc:"안흔함/특별/희귀/전설 전체 중 랜덤 2기",
+     reward(){
+         const allPool=[...unitTiers["안흔함"],...unitTiers["특별"],...unitTiers["희귀"],...unitTiers["전설"]];
+         for(let i=0;i<2;i++) spawnUnit(randFrom(allPool));
+         updateInventoryUI();
+     }},
 ];
 
-// 미션 진행도 계산
 function getMissionProgress(idx) {
-    switch(idx) {
-        case 0: { // 미션1: 흔함 8종류 보유
-            const have = unitTiers["흔함"].filter(n => units.some(u=>u.name===n)).length;
-            return { cur: have, max: unitTiers["흔함"].length };
+    const CT=[500,1000,1500,2000,2500,3000];
+    switch(idx){
+        case 0:{const h=unitTiers["흔함"].filter(n=>units.some(u=>u.name===n)).length;return{cur:h,max:unitTiers["흔함"].length};}
+        case 1:{const h=unitTiers["안흔함"].filter(n=>units.some(u=>u.name===n)).length;return{cur:h,max:unitTiers["안흔함"].length};}
+        case 2:{const h=unitTiers["특별"].filter(n=>units.some(u=>u.name===n)).length;return{cur:h,max:unitTiers["특별"].length};}
+        case 3:{const h=unitTiers["희귀"].filter(n=>units.some(u=>u.name===n)).length;return{cur:h,max:unitTiers["희귀"].length};}
+        case 4:{const h=unitTiers["전설"].filter(n=>units.some(u=>u.name===n)).length;return{cur:h,max:unitTiers["전설"].length};}
+        case 5:return{cur:missionCleared[5]?1:0,max:1};
+        case 6:return{cur:missionCleared[6]?1:0,max:1};
+        case 7:return{cur:Math.min(missionZimTreasureCount,5),max:5};
+        case 8:{const best=Object.values(missionGehaReturnMap).reduce((a,b)=>Math.max(a,b),0);return{cur:Math.min(best,10),max:10};}
+        case 9:case 10:case 11:case 12:case 13:case 14:
+            return{cur:Math.min(normalMobKillTotal,CT[idx-9]),max:CT[idx-9]};
+        case 15:return{cur:bossHunterCount,max:'∞'};
+        case 16:{
+            const need=[{name:"깡소주",cnt:2},{name:"돛대 담배",cnt:2},{name:"술채",cnt:2},{name:"얼굴이 붉어진 승채",cnt:1}];
+            return{cur:need.filter(r=>units.filter(u=>u.name===r.name).length>=r.cnt).length,max:4};
         }
-        case 1: { // 미션2: 안흔함 11종류 보유
-            const have = unitTiers["안흔함"].filter(n => units.some(u=>u.name===n)).length;
-            return { cur: have, max: unitTiers["안흔함"].length };
+        case 17:{
+            const need=["큰돌맹이","바위","뇌까지 돌이된 찬희","온몸이 돌이 된 찬희"];
+            return{cur:need.filter(n=>units.some(u=>u.name===n)).length,max:4};
         }
-        case 2: { // 미션3: 특별 11종류 보유
-            const have = unitTiers["특별"].filter(n => units.some(u=>u.name===n)).length;
-            return { cur: have, max: unitTiers["특별"].length };
+        case 18:{
+            const need=["욕쟁이 현준","코딩하는 상웅","게하 장인 현준"];
+            return{cur:need.filter(n=>units.some(u=>u.name===n)).length,max:3};
         }
-        case 3: { // 미션4: 희귀 11종류 보유
-            const have = unitTiers["희귀"].filter(n => units.some(u=>u.name===n)).length;
-            return { cur: have, max: unitTiers["희귀"].length };
+        case 19:{
+            const need=["패션왕자 동수","짐바브웨 동수","야동보는동수","야동수"];
+            return{cur:need.filter(n=>units.some(u=>u.name===n)).length,max:4};
         }
-        case 4: { // 미션5: 전설 11종류 보유
-            const have = unitTiers["전설"].filter(n => units.some(u=>u.name===n)).length;
-            return { cur: have, max: unitTiers["전설"].length };
-        }
-        case 5: // 미션6: 이벤트 기반
-            return { cur: missionCleared[5] ? 1 : (storyIdx >= 1 && wave < 8 ? 1 : 0), max: 1 };
-        case 6: // 미션7: 이벤트 기반
-            return { cur: missionCleared[6] ? 1 : 0, max: 1 };
-        case 7: // 미션8: 짐바브웨 보물
-            return { cur: Math.min(missionZimTreasureCount, 5), max: 5 };
-        case 8: { // 미션9: 게하 제주도 복귀
-            const total = missionGehaReturnMap['total'] || 0;
-            return { cur: Math.min(total, 10), max: 10 };
-        }
-        default: return { cur: 0, max: 1 };
+        default:return{cur:0,max:1};
     }
 }
 
-// 미션 조건 체크 (idx: 1~9)
 function checkMission(id) {
-    const idx = id - 1;
-    if(missionCleared[idx]) return; // 이미 클리어
-    const m = MISSION_DATA[idx];
-    let pass = false;
-    switch(idx) {
-        case 0: pass = unitTiers["흔함"].every(n => units.some(u=>u.name===n)); break;
-        case 1: pass = unitTiers["안흔함"].every(n => units.some(u=>u.name===n)); break;
-        case 2: pass = unitTiers["특별"].every(n => units.some(u=>u.name===n)); break;
-        case 3: pass = unitTiers["희귀"].every(n => units.some(u=>u.name===n)); break;
-        case 4: pass = unitTiers["전설"].every(n => units.some(u=>u.name===n)); break;
-        case 5: pass = (storyIdx >= 1 && wave < 8); break;
-        case 6: pass = true; break; // combineUnit에서 wave < 7 체크 후 호출됨
-        case 7: pass = (missionZimTreasureCount >= 5); break;
-        case 8: pass = (missionGehaReturnMap['total'] || 0) >= 10; break;
+    const idx=id-1;
+    const m=MISSION_DATA[idx];
+    if(!m) return;
+    if(!m.repeat && missionCleared[idx]) return;
+    const CT=[500,1000,1500,2000,2500,3000];
+    let pass=false;
+    switch(idx){
+        case 0: pass=unitTiers["흔함"].every(n=>units.some(u=>u.name===n)); break;
+        case 1: pass=unitTiers["안흔함"].every(n=>units.some(u=>u.name===n)); break;
+        case 2: pass=unitTiers["특별"].every(n=>units.some(u=>u.name===n)); break;
+        case 3: pass=unitTiers["희귀"].every(n=>units.some(u=>u.name===n)); break;
+        case 4: pass=unitTiers["전설"].every(n=>units.some(u=>u.name===n)); break;
+        case 5: pass=(storyIdx>=1&&wave<8); break;
+        case 6: pass=true; break;
+        case 7: pass=(missionZimTreasureCount>=5); break;
+        case 8: pass=Object.values(missionGehaReturnMap).some(v=>v>=10); break;
+        case 9:case 10:case 11:case 12:case 13:case 14:
+            pass=normalMobKillTotal>=CT[idx-9]; break;
+        case 16:{
+            pass=units.filter(u=>u.name==='깡소주').length>=2
+              &&units.filter(u=>u.name==='돛대 담배').length>=2
+              &&units.filter(u=>u.name==='술채').length>=2
+              &&units.some(u=>u.name==='얼굴이 붉어진 승채');
+            break;
+        }
+        case 17: pass=["큰돌맹이","바위","뇌까지 돌이된 찬희","온몸이 돌이 된 찬희"].every(n=>units.some(u=>u.name===n)); break;
+        case 18: pass=["욕쟁이 현준","코딩하는 상웅","게하 장인 현준"].every(n=>units.some(u=>u.name===n)); break;
+        case 19: pass=["패션왕자 동수","짐바브웨 동수","야동보는동수","야동수"].every(n=>units.some(u=>u.name===n)); break;
     }
     if(!pass) return;
-    missionCleared[idx] = true;
+    if(!m.repeat) missionCleared[idx]=true;
     m.reward();
-    showToast(`🎯 미션 클리어! [${m.name}] → ${m.rewardDesc}`, '#2ecc71', '#0a1a0a');
-    // 미션 모달 열려있으면 갱신
-    if(document.getElementById('modal-mission').style.display !== 'none') renderMissionModal();
+    showToast(`🎯 미션 클리어! [${m.name}] → ${m.rewardDesc}`,'#2ecc71','#0a1a0a');
+    if(document.getElementById('modal-mission').style.display!=='none') renderMissionModal();
 }
 
-// 웨이브마다 수동 체크 미션 (1~5: 유닛 보유)
 function checkCollectionMissions() {
-    for(let id = 1; id <= 5; id++) checkMission(id);
+    for(let id=1;id<=5;id++) checkMission(id);
+    for(let id=17;id<=20;id++) checkMission(id);
 }
 
-// 미션 모달 열기
 function openMissionModal() {
     renderMissionModal();
-    document.getElementById('modal-mission').style.display = 'flex';
+    document.getElementById('modal-mission').style.display='flex';
 }
 
 function renderMissionModal() {
-    const tierColors = {'흔함':'#2ecc71','안흔함':'#9b59b6','특별':'#3498db','희귀':'#e67e22','전설':'#e74c3c','초월':'#f1c40f'};
-    let html = '';
-    MISSION_DATA.forEach((m, idx) => {
-        const cleared = missionCleared[idx];
-        const prog = getMissionProgress(idx);
-        const pct = Math.round((prog.cur / prog.max) * 100);
-        const barColor = cleared ? '#2ecc71' : (pct >= 100 ? '#f1c40f' : '#3498db');
-        html += `
-        <div style="background:#161a22;border:1px solid ${cleared?'#2ecc71':'#2a2f3d'};border-radius:8px;padding:10px;margin-bottom:8px;">
+    let html='';
+    MISSION_DATA.forEach((m,idx)=>{
+        const cleared=missionCleared[idx];
+        const prog=getMissionProgress(idx);
+        const isRepeat=m.repeat;
+        const pct=isRepeat?100:Math.round((prog.cur/prog.max)*100);
+        const barColor=cleared?'#2ecc71':(pct>=100?'#f1c40f':'#3498db');
+        const statusText=isRepeat?`달성 ${bossHunterCount}회`:(cleared?'클리어!':'진행중');
+        const borderColor=isRepeat?'#e74c3c':(cleared?'#2ecc71':'#2a2f3d');
+        html+=`
+        <div style="background:#161a22;border:1px solid ${borderColor};border-radius:8px;padding:10px;margin-bottom:8px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                <span style="font-size:13px;font-weight:900;color:${cleared?'#2ecc71':'#e0e0e0'};">
-                    ${cleared?'✅':'⬜'} 미션${m.id}. ${m.name}
+                <span style="font-size:13px;font-weight:900;color:${cleared&&!isRepeat?'#2ecc71':isRepeat?'#e74c3c':'#e0e0e0'};">
+                    ${cleared&&!isRepeat?'✅':isRepeat?'🔁':'⬜'} ${isRepeat?'[반복] ':''}미션${m.id}. ${m.name}
                 </span>
-                <span style="font-size:10px;color:${cleared?'#2ecc71':'#aaa'};">${cleared?'클리어!':'진행중'}</span>
+                <span style="font-size:10px;color:${cleared&&!isRepeat?'#2ecc71':isRepeat?'#e74c3c':'#aaa'};">${statusText}</span>
             </div>
-            <div style="font-size:11px;color:#aaa;margin-bottom:4px;">${m.desc}</div>
+            <div style="font-size:11px;color:#aaa;margin-bottom:4px;">📋 ${m.desc}</div>
             <div style="font-size:10px;color:#f1c40f;margin-bottom:6px;">🎁 보상: ${m.rewardDesc}</div>
+            ${!isRepeat?`
             <div style="background:#0a0c10;border-radius:4px;height:8px;overflow:hidden;">
-                <div style="width:${Math.min(pct,100)}%;height:100%;background:${barColor};border-radius:4px;transition:width 0.3s;"></div>
+                <div style="width:${Math.min(pct,100)}%;height:100%;background:${barColor};border-radius:4px;"></div>
             </div>
-            <div style="text-align:right;font-size:10px;color:#666;margin-top:2px;">${prog.cur} / ${prog.max}</div>
+            <div style="text-align:right;font-size:10px;color:#666;margin-top:2px;">${prog.cur} / ${prog.max}</div>`:''}
         </div>`;
     });
-    document.getElementById('mission-list-content').innerHTML = html;
+    document.getElementById('mission-list-content').innerHTML=html;
 }
-
 // 클오클 래규 진화 체크 - 웨이브 시작 시점에 호출
 function checkKlokklEvolve() {
     for(const u of units){
@@ -6232,6 +6294,7 @@ function startWaveLogic() {
         enemies.push(boss);
         document.getElementById('boss-alert').style.display='block';
         triggerBossIntro(getBossName(wave));
+        bossKillStartTime = Date.now(); // 보스사냥꾼 타이머
         // R65 최종보스는 단독 등장 - 일반 몹 스폰 없이 바로 보스 대기
         if(wave >= 65){
             waitingForBoss = true;
@@ -6242,11 +6305,19 @@ function startWaveLogic() {
         // 보스 웨이브도 일반 몹 스폰
     }
 
-    // 미니보스 등장: 3, 5, 8, 15 라운드에 미니보스 1마리 추가 스폰
-    if(wave===3 || wave===5 || wave===8 || wave===15){
+    // 미니보스 등장: 3, 5, 8, 15, 25 라운드
+    if(wave===3 || wave===5 || wave===8 || wave===15 || wave===25){
         let miniBoss = new Enemy(wave, false, 0, true);
+        if(wave===25){
+            miniBoss.hp = Math.floor(miniBoss.hp * 3.5);
+            miniBoss.maxHp = miniBoss.hp;
+            miniBoss.damage = Math.floor(miniBoss.damage * 2.0);
+            miniBoss.armor = (miniBoss.armor||0) + 20;
+            miniBoss.name = '👹 강화 미니보스';
+        }
         enemies.push(miniBoss);
-        showToast(`👹 미니보스 등장! (라운드 ${wave})`, '#9b59b6', '#22183a');
+        const msg = wave===25 ? '👹 강화 미니보스 등장! (라운드 25)' : `👹 미니보스 등장! (라운드 ${wave})`;
+        showToast(msg, '#9b59b6', '#22183a');
     }
 
     restartSpawnInterval();
@@ -6341,39 +6412,31 @@ let _lastFrame = 0;
 let _loopActive = false;
 let _loopFrameId = null;
 // ── 특수 유닛 아우라 시스템 ──
-// 맵에 특수 유닛 1기당 전체 아군 공격력/공속 +30% 중첩 적용
-let _specialAuraLastCount = -1; // 이전 특수 유닛 수 (변화 감지)
+let _specialAuraLastCount = -1;
 function applySpecialUnitAura() {
     const specialCount = units.filter(u => u.tier === '특수').length;
-    if(specialCount === _specialAuraLastCount) return; // 변화 없으면 스킵
+    if(specialCount === _specialAuraLastCount) return;
     _specialAuraLastCount = specialCount;
-    // 모든 유닛에 버프 재적용
     for(let u of units){
         if(u.tier === '특수') continue;
-        // 이전 특수 아우라 초기화
         if(u._specialAuraApplied){
             u._baseDmg = u._specialAuraBaseDmg || u._baseDmg;
             u.maxCd = u._specialAuraBaseCd || u.maxCd;
-        }
-        if(specialCount === 0){
             u._specialAuraApplied = false;
-            continue;
         }
-        // 기준값 저장 (아직 버프 안 받은 경우만)
-        if(!u._specialAuraApplied){
+        if(specialCount === 0) continue;
+        if(!u._specialAuraBaseDmg){
             u._specialAuraBaseDmg = u._baseDmg;
             u._specialAuraBaseCd  = u.maxCd;
         }
-        // 1기당 +30% 누적 배율
         const mult = Math.pow(1.3, specialCount);
         u._baseDmg = Math.round(u._specialAuraBaseDmg * mult);
         u.recomputeDamage();
         u.maxCd   = Math.max(4, Math.round(u._specialAuraBaseCd / mult));
         u._specialAuraApplied = true;
     }
-    if(specialCount > 0){
-        showToast(`💕 특수 유닛 ${specialCount}기 아우라 적용 중! 공격력/공속 +${Math.round((Math.pow(1.3,specialCount)-1)*100)}%`, '#ff69b4', '#2d1020');
-    }
+    if(specialCount > 0)
+        showToast(`💕 특수 유닛 ${specialCount}기 아우라! 공격력/공속 +${Math.round((Math.pow(1.3,specialCount)-1)*100)}%`, '#ff69b4', '#2d1020');
 }
 
 function gameLoop(ts) {
@@ -6400,7 +6463,6 @@ function gameLoop(ts) {
         if(typeof tickWaveCountdown === 'function') tickWaveCountdown();
     }
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    // 특수 유닛 아우라 적용 (유닛 수 변화 시만)
     if(isPlaying && !isGameOver) applySpecialUnitAura();
 
     // 카메라 스크롤 업데이트
@@ -6481,7 +6543,20 @@ function gameLoop(ts) {
                 killCountForWisp++;
                 if(killCountForWisp>=15){ wisps.rand++; killCountForWisp-=15; updateInventoryUI(); }
                 else document.getElementById('kill-progress').innerText=killCountForWisp;
+                // 청소부 미션 누적 카운트
+                normalMobKillTotal++;
+                for(let _cid=10;_cid<=15;_cid++) checkMission(_cid);
             } else {
+                // 보스사냥꾼 반복 미션: 10초 안에 처치 체크
+                if(bossKillStartTime > 0){
+                    const elapsed = (Date.now() - bossKillStartTime) / 1000;
+                    if(elapsed <= 10){
+                        bossHunterCount++;
+                        wisps.rand += 3; updateInventoryUI();
+                        showToast(`⚔️ 보스사냥꾼! ${elapsed.toFixed(1)}초 처치! 흔함 랜덤 위습 3개!`, '#e74c3c','#2a0000');
+                    }
+                    bossKillStartTime = 0;
+                }
                 // 보스 처치 보상 지급
                 // R65 최종보스(괴물 병선) 처치 → 엔딩 분기
                 if(wave >= 65){
@@ -6828,7 +6903,6 @@ function restartGame(){
     normalMobKillTotal = 0;
     bossKillStartTime = 0;
     bossHunterCount = 0;
-    _specialAuraLastCount = -1;
     killCountForWisp=0; selectedUnits=[]; selectedEnemy=null;
     particles=[]; projectiles=[]; attackLines=[]; meleeAnims=[]; combiningAnims=[];
     gatherAnims=[]; toothParticles=[]; sojuSummons=[]; fanAnims=[]; moveTargets=[];
@@ -7024,14 +7098,19 @@ canvas.addEventListener('click', e=>{
     const modals=['modal-select','modal-super','modal-boss-reward','modal-start'];
     if(modals.some(id=>{ const el=document.getElementById(id); return el&&el.style.display==='flex'; })) return;
 
-    // ① 유닛 먼저 체크 (히트박스 36px - 크기 20% 키운 것 반영)
+    // ① 유닛 먼저 체크 (히트박스 36px) - 겹쳤을 때 등급 높은 유닛 우선
+    const TIER_PRIORITY = {'초월':7,'갓':6,'전설':5,'희귀':4,'특별':3,'안흔함':2,'흔함':1};
     let clicked=null;
-    for(let i=units.length-1;i>=0;i--){
+    let hitUnits=[];
+    for(let i=0;i<units.length;i++){
         const u=units[i];
-        // 소환 유닛은 클릭 불가 (소환물 취급)
         if(u.isLegendSummon || u.isSummoned) continue;
         const dx=Math.abs(wx-u.x), dy=Math.abs(wy-u.y);
-        if(dx<=36 && dy<=36){ clicked=u; break; }
+        if(dx<=36 && dy<=36) hitUnits.push(u);
+    }
+    if(hitUnits.length>0){
+        hitUnits.sort((a,b)=>(TIER_PRIORITY[b.tier]||0)-(TIER_PRIORITY[a.tier]||0));
+        clicked=hitUnits[0];
     }
     if(clicked){
         selectedEnemy=null;
