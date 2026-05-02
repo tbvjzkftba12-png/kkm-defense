@@ -748,7 +748,7 @@ const PASSIVE_NAMES = {
     // 전설
     "얼굴이 붉어진 승채": {passive:"술기운",         skill:"만취",          mana:"술병 난사"},
     "코딩하는 상웅":      {passive:"디버깅",          skill:"코드 배포",     mana:"혐오증"},
-    "2등 항해사 병선":    {passive:"진급의 오만",     skill:"깔봄",          mana:"함포 사격"},
+    "2등 항해사 병선":    {passive:"진급의 오만",     skill:"아머브레이크",          mana:"함포 사격"},
     "온몸이 돌이 된 찬희":{passive:"철벽",            skill:"지진",          mana:"운석 낙하"},
     "욕쟁이 현준":        {passive:"쌍욕",            skill:"욕폭탄",        mana:"전설의 쌍욕(패드립)"},
     "패션왕자 동수":      {passive:"비율 깡패",       skill:"런웨이",        mana:"패션쇼"},
@@ -764,7 +764,7 @@ const PASSIVE_NAMES = {
 
 const PASSIVE_DESC_LEGEND = {    "얼굴이 붉어진 승채": "🍺 [패시브1] 술기운: 공격 시 5% 확률로 추가 2배 데미지(크리) | [패시브2] 만취: 공격 시 10% 확률로 주변 100 범위 50% 데미지 추가 | [마나스킬, 마나60] 술병 난사: 150×150 범위 적 최대 50마리에게 ×3 데미지 + 슬로우 3초",
     "코딩하는 상웅":      "💻 [패시브1] 디버깅: 공격 시 5% 확률로 적 3초 정지+부들거림 | [패시브2] 코드 배포: 공격 시 10% 확률로 전체 아군 공격력 +15% (10초, 중복방지) | [마나스킬, 마나80] 혐오증: 자기 공속 2배 (10초)",
-    "2등 항해사 병선":    "⚓ [패시브1] 진급의 오만: 안흔함/특별/희귀 유닛 보유 1마리당 공격력 +10% (실시간) | [패시브2] 깔봄: 공격 시 10% 확률로 적 방어력 -10 영구 | [마나스킬, 마나60] 함포 사격: 타겟 진행 방향 기준 일자 라인 전체에 현재 공격력 데미지",
+    "2등 항해사 병선":    "⚓ [패시브1] 진급의 오만: 안흔함/특별/희귀 유닛 보유 1마리당 공격력 +10% (실시간) | [패시브2] 아머브레이크: 공격 시 7% 확률로 방어력 -3 누적 (최대 -45, 기존 방깍과 독립 합산) | [마나스킬, 마나60] 함포 사격: 타겟 진행 방향 기준 일자 라인 전체에 현재 공격력 데미지",
     "온몸이 돌이 된 찬희":"🪨 [패시브1] 철벽: 적 처치 시 자신 공격력 +100 영구 | [패시브2] 지진: 공격 시 5% 확률로 전체 적 2초 스턴 + 현재 공격력만큼 전체 데미지 | [마나스킬, 마나30] 운석 낙하: 타겟 위치 130 범위에 현재 공격력 ×2 고정 데미지",
     "욕쟁이 현준":        "💢 [패시브1] 쌍욕: 공격 시 인접 80 범위 적 2마리 추가 데미지+2초 스턴 | [패시브2] 욕폭탄: 공격 시 15% 확률로 타겟 주변 80 범위 2초 스턴 | [마나스킬, 마나70] 전설의 쌍욕(패드립): 150×150 범위 적 이속 -70% (5초) + 자기 공격력 2배 (10초)",
     "패션왕자 동수":      "👗 [패시브1] 비율 깡패: 공격 시 5% 확률로 적 최대체력 5% 추가 데미지 | [패시브2] 런웨이: 공격 시 10% 확률로 타겟 주변 80 범위 적 이속 -80% (3초) | [마나스킬, 마나90] 패션쇼: 전체 아군 공격력 +50% + 150×150 적 이속 -50% (10초)",
@@ -773,7 +773,7 @@ const PASSIVE_DESC_LEGEND = {    "얼굴이 붉어진 승채": "🍺 [패시브1
     "디엠티 건모":        "🏢 [패시브1] 신입 패기: 공격 시 0.1% 확률로 자기 공격력 +30 영구 | [패시브2] 야근: 공격 시 1% 확률로 자기 공속 3배 (5초, 중첩불가) | [마나스킬, 마나50] 꿈의 실현: 랜덤 희귀 유닛 1기 소환 (10초간 공격 가능, 이동 불가)",
     "연진 만난 병훈":     "💕 [패시브1] 금연금욕: 공격 시 5% 확률로 타겟 3초 정지 | [패시브2] 연진 파워: 공격 시 10% 확률로 전체 아군 공격력 +30% (10초, 중복방지) + 전설 유닛 마나 +20 충전 | [마나스킬, 마나70] 진심: 150×150 범위 적 현재 체력 50% 감소 (보스 10%)",
     "공무원 다훈":        "📄 [패시브1] 잠수고수: 공격 시 0.1% 확률로 가장 밀집한 곳으로 텔레포트 + 공속 5배 (3초) | [패시브2] 민원 폭탄: 공격 시 1% 확률로 적 최대 8마리에게 (자기 공격력 50%) 데미지 + 방어 -20 (중첩불가) + 이속 -30% (2초) | [마나스킬, 마나80] 철밥통 확정: 자기 공속 ×3 + 공격력 ×3 (10초)",
-    "언론 조종술사 김다훈": "📰 [패시브] 멘탈쌤이 보고있다: 공격 시 1% 확률로 10초간 공격력 +50% + 적 밀집지로 텔레포트 (중첩불가) | [스킬1] 언론 장악: 공격마다 적에게 여론 낙인 부여 (최대 5중첩) — 낙인 1개당 받는 피해 +8%, 이속 -5% / 5중첩 시 주변 120 범위 공론화 폭발 + 낙인 초기화 | [스킬2] 해나의 응원: 공격 500타 누적 시 전체 아군 공격력 +20%, 공속 +30% (15초, 중첩불가) / 하트 파티클 + 해나가 응원해! | [마나스킬, 마나80] KKM 디펜스 장인: 자신의 공격력 ×3 + 모든 데미지 고정데미지(방어력 무시)로 변경 (10초)",
+    "언론 조종술사 김다훈": "📰 [패시브] 멘탈쌤이 보고있다: 공격 시 1% 확률로 10초간 공격력 +50% + 적 밀집지로 텔레포트 (중첩불가) | [스킬1] 언론 장악: 공격마다 적에게 여론 낙인 부여 (최대 5중첩) — 낙인 1개당 받는 피해 +8%, 이속 -5% / 5중첩 시 주변 120 범위 공론화 폭발 + 낙인 초기화 | [스킬2] 해나의 응원: 공격 200타 누적 시 전체 아군 공격력 +50%, 공속 +50% (15초, 중첩불가) / 하트 파티클 + 해나가 응원해! | [마나스킬, 마나80] KKM 디펜스 장인: 자신의 공격력 ×3 + 모든 데미지 고정데미지(방어력 무시)로 변경 (10초)",
     "만카이 백승채": "🍺 [패시브] 만카이: 공격마다 만취스택 +1 (최대 100중첩) / 스택 1개당 공격력 +1% 증가 / 100중첩 달성 시 만카이! 발동 — 5초간 공격력 2배 + 공격마다 주변 120범위 폭발 데미지 / 발동 중 스택 획득 불가, 종료 후 스택 초기화 | [스킬1] 담배한모금: 기본공격 시 0.1% 확률 발동 — 5초간 공격속도 +50%, 마나 충전속도 1.5배 (중첩불가) | [스킬2] 솔로만세: 공격 300타 누적 시 발동 — 맵 중앙으로 텔레포트, 중앙 기준 100범위 아군 200밖으로 밀어냄 + 진입불가, 이동불가, 사거리 맵 전체, 단일→3기 멀티샷, 공격력 +50% + 밀어낸 아군 1기당 +15% (10초) / 종료 후 버프해제 + 5초 이동불가 | [마나스킬, 마나80] 삼성전자 풀매수: 일반몹에게 현재 공격력 ×3 + 해당 몹 최대체력 10% 데미지 / 보스·미니보스·스토리에게 현재 공격력 ×30 데미지 / 전체 아군 공격력 +30% (15초)",
 };
 const PASSIVE_DESC_RARE = {
@@ -925,12 +925,14 @@ let wave = 1, isPlaying = false, isBossWave = false, isGameOver = false, isPause
 let killCountForWisp = 0, inventory = {};
 
 // ── 미션 시스템 상태 ──
-let missionCleared = new Array(21).fill(false); // 미션 1~20 (인덱스 0~19)
+let missionCleared = new Array(27).fill(false); // 미션 1~27 (인덱스 0~26)
 let missionZimTreasureCount = 0;
 let missionGehaReturnMap = {};
 let normalMobKillTotal = 0;         // 청소부 미션 누적
 let bossKillStartTime = 0;          // 보스사냥꾼 타이머
 let bossHunterCount = 0;            // 보스사냥꾼 달성 횟수
+let mission130WispCount = 0;        // 할줄아는놈: 130cm래규 키커져라! 위습 누적
+let missionTobaccoCount = 0;        // 이제 공부 해라: 담배피는 병훈 돛대담배 소환 누적
 let spawnInterval = null, mobsSpawnedThisWave = 0;
 // [점수판] 게임 통계 추적용 전역 변수
 let totalKills = 0; // 총 처치 적 수
@@ -1978,6 +1980,7 @@ class Enemy {
                    : isBoss ? (baseArmor + 15)
                    : (isMiniBoss ? (baseArmor + 8) : baseArmor);
         this.armorDebuff = 0;
+        this._armorBreak = 0; // 아머브레이크 누적량 (기존 방깍과 독립)
         // 라운드별 몹 이모지 (테마별)
         const mobIcons = [
             // 1-10 유아기
@@ -2137,6 +2140,20 @@ function removeArmorDebuff(target, unit, key){
     if(target._armorDebuffsBy[slotKey] === undefined) return false;
     target.armorDebuff = (target.armorDebuff||0) - target._armorDebuffsBy[slotKey];
     delete target._armorDebuffsBy[slotKey];
+    return true;
+}
+
+// 아머브레이크: 타격마다 방어력 감소 (최대 한도까지), 기존 방깍과 독립적으로 합산
+// target._armorBreak: 아머브레이크로 누적된 감소량 (음수)
+// maxBreak: 아머브레이크 최대 누적 감소량 (양수로 전달, 내부적으로 음수 처리)
+function applyArmorBreak(target, amount, maxBreak){
+    if(!target._armorBreak) target._armorBreak = 0;
+    // 이미 최대치에 도달했으면 적용 안 함
+    if(target._armorBreak <= -maxBreak) return false;
+    const prevBreak = target._armorBreak;
+    target._armorBreak = Math.max(-maxBreak, target._armorBreak - amount);
+    const delta = target._armorBreak - prevBreak; // 실제 감소된 양 (음수)
+    target.armorDebuff = (target.armorDebuff||0) + delta;
     return true;
 }
 
@@ -2476,8 +2493,10 @@ class Unit {
                 const newMilestones = milestone - pd.lastMilestone;
                 pd.lastMilestone = milestone;
                 wisps.rand += newMilestones;
+                mission130WispCount += newMilestones; // 할줄아는놈 미션 추적
                 updateInventoryUI();
                 showToast(`🎁 130cm래규 ${pd.kills}킬 달성! 랜덤위습 ${newMilestones}개 지급!`, '#9b59b6', '#22183a');
+                checkMission(23); // 할줄아는놈 미션 체크
             }
         }
 
@@ -3063,8 +3082,10 @@ class Unit {
                 // 담배피는 병훈: 1% 돛대담배 소환
                 if(pd2.name==='담배끊을까' && Math.random()<0.01){
                     spawnUnit('돛대 담배'); updateInventoryUI();
+                    missionTobaccoCount++; // 이제 공부 해라 미션 추적
                     meleeAnims.push({type:'text_pop',x:this.x,y:this.y-30,life:25,maxLife:25,color:'#aaa',text:'돛대담배 획득!',big:false});
                     showToast('🚬 담배 획득!','#aaa','#1a1a1a');
+                    checkMission(24); // 이제 공부 해라 미션 체크
                 }
             }
 
@@ -3102,8 +3123,9 @@ class Unit {
                     }
                     if(Math.random()<0.1 && !legendBuffActive.codeDeployBuff){
                         legendBuffActive.codeDeployBuff = true;
+                        // [버그수정] 직접 damage 곱셈 대신 addDmgBuff 시스템 사용
                         for(let u2 of units){
-                            u2.damage=Math.round(u2.damage*1.15);
+                            u2.addDmgBuff('code_deploy', 1.15);
                             particles.push({type:'ring',x:u2.x,y:u2.y,radius:0,maxRadius:28,color:'#3498db',alpha:0.5,life:20,maxLife:20});
                         }
                         pdL.buffTimer=600;
@@ -3111,11 +3133,12 @@ class Unit {
                         showToast('💻 코드 배포! 전체 공격력 +15%','#3498db','#161e35');
                         setTimeout(()=>{
                             legendBuffActive.codeDeployBuff=false;
-                            for(let u2 of units) u2.damage=Math.round(u2.damage/1.15);
+                            // [버그수정] removeDmgBuff로 안전하게 복구
+                            for(let u2 of units) u2.removeDmgBuff('code_deploy');
                         }, Math.round(10000/gameSpeedMul));
                     }
                 }
-                // 2등 항해사 병선: 흔함 제외, 전설 미만 유닛 보유 1마리당 공격력 +10% / 깔봄 - 방어력 영구-10 10%
+                // 2등 항해사 병선: 흔함 제외, 전설 미만 유닛 보유 1마리당 공격력 +10% / 아머브레이크 - 7% 확률로 방어력 -3 (최대 -45, 기존 방깍과 독립 합산)
                 if(pdL.name==='진급의오만'){
                     // 흔함 제외, 전설/초월/갓 제외 → 안흔함/특별/희귀만 카운트
                     let lowerCount = 0;
@@ -3128,10 +3151,10 @@ class Unit {
                         if(target !== mission) meleeAnims.push({type:'damage_text',x:target.x+(Math.random()-0.5)*16,y:target.y-35,life:30,maxLife:30,color:'#ff3030',text:_extraDmg,vy:-1.5,fixed:false});
                         else meleeAnims.push({type:'damage_text',x:target.x+(Math.random()-0.5)*16,y:target.y-55,life:30,maxLife:30,color:'#ff3030',text:_extraDmg,vy:-1.5,fixed:false});
                     }
-                    if(Math.random()<0.1 && target!==mission){
-                        // 이 유닛이 이 적에게 이미 디버프 걸었으면 스킵
-                        if(applyArmorDebuff(target, this, "jingup", -10)){
-                            meleeAnims.push({type:'text_pop',x:target.x,y:target.y-20,life:18,maxLife:18,color:'#3498db',text:'너 병신이야?',big:false});
+                    // 아머브레이크: 7% 확률로 방어력 -3 (최대 -45, 기존 방깍과 독립 합산)
+                    if(Math.random() < 0.07){
+                        if(applyArmorBreak(target, 3, 45)){
+                            meleeAnims.push({type:'text_pop',x:target.x,y:target.y-20,life:18,maxLife:18,color:'#3498db',text:'💥아머브레이크!',big:false});
                         }
                     }
                 }
@@ -3311,9 +3334,11 @@ class Unit {
                     }
                     if(Math.random()<0.01 && !pdL.nightShift){
                         pdL.nightShift=true;
+                        // [버그수정] 원본 maxCd 저장 후 복구
+                        const _origCdNight = this.maxCd;
                         this.maxCd=4;
                         meleeAnims.push({type:'text_pop',x:this.x,y:this.y-20,life:20,maxLife:20,color:'#9b59b6',text:'🌙야근!',big:false});
-                        setTimeout(()=>{ if(this.maxCd===4) this.maxCd=12; pdL.nightShift=false; }, Math.round(5000/gameSpeedMul));
+                        setTimeout(()=>{ this.maxCd=_origCdNight; pdL.nightShift=false; }, Math.round(5000/gameSpeedMul));
                     }
                 }
                 // 연진이 만난 병훈: 5% 완전정지 / 10% 아군공격력+30%+마나+20
@@ -3457,16 +3482,16 @@ class Unit {
                     }
                 }
 
-                // ── 스킬2: 해나의 응원 (500타 누적, 중첩불가) ──
+                // ── 스킬2: 해나의 응원 (200타 누적, 중첩불가) ──
                 pdT.hitCount = (pdT.hitCount||0) + 1;
-                if(pdT.hitCount >= 500 && !pdT.hanaBuff){
+                if(pdT.hitCount >= 200 && !pdT.hanaBuff){
                     pdT.hitCount = 0;
                     pdT.hanaBuff = true;
                     const _origCdH = {};
                     for(let u2 of units){
-                        u2.addDmgBuff('hana', 1.2); // 버프키 'hana' - 중복불가
+                        u2.addDmgBuff('hana', 1.5); // 버프키 'hana' - 중복불가 (공격력 +50%)
                         _origCdH[u2.id] = u2.maxCd;
-                        u2.maxCd = Math.max(4, Math.round(u2.maxCd / 1.3));
+                        u2.maxCd = Math.max(4, Math.round(u2.maxCd / 1.5)); // 공속 +50%
                         meleeAnims.push({type:'text_pop',x:u2.x,y:u2.y-20,life:25,maxLife:25,color:'#ff69b4',text:'💕',big:false});
                     }
                     meleeAnims.push({type:'text_pop',x:this.x,y:this.y-50,life:45,maxLife:45,color:'#ff69b4',text:'해나가 응원해!',big:true});
@@ -3476,7 +3501,7 @@ class Unit {
                             spawnParticles(hx,hy,'#ff69b4',5,3);
                         }, Math.round(i*80/gameSpeedMul));
                     }
-                    showToast('💕 해나의 응원! 전체 아군 공격력+20% 공속+30% (15초)','#ff69b4','#2d1020');
+                    showToast('💕 해나의 응원! 전체 아군 공격력+50% 공속+50% (15초)','#ff69b4','#2d1020');
                     setTimeout(()=>{
                         for(let u2 of units){
                             u2.removeDmgBuff('hana');
@@ -3555,22 +3580,24 @@ class Unit {
                     pdB.soloHitCount = 0;
                     pdB.soloActive = true;
                     this._canMove = false;
+                    // 발동 전 원래 위치 저장 (복귀용)
+                    const _soloOrigX = this.x;
+                    const _soloOrigY = this.y;
                     // 맵 중앙으로 텔레포트
                     spawnParticles(this.x,this.y,'#9b59b6',15,6);
                     this.x = WORLD_W/2;
                     this.y = WORLD_H/2;
                     spawnParticles(this.x,this.y,'#9b59b6',20,7);
-                    // [버그수정] 중앙 기준 100범위 내 아군만 200 밖으로 밀어내기
+                    // 흔함 제외 아군만 밀어냄
                     let pushed = 0;
                     for(let u2 of units){
                         if(u2===this) continue;
+                        if(u2.tier === '흔함') continue; // 흔함 유닛은 밀지 않음
                         const dx=u2.x-this.x, dy=u2.y-this.y;
                         const dist=Math.sqrt(dx*dx+dy*dy);
                         if(dist < 100){
                             pushed++;
-                            // [버그수정] dx=dy=0(완전 중앙)이면 랜덤 방향, 그 외엔 atan2 사용
                             const angle = (dx===0 && dy===0) ? Math.random()*Math.PI*2 : Math.atan2(dy,dx);
-                            // [버그수정] 맵 경계 클램핑
                             u2.x = Math.max(20, Math.min(WORLD_W-20, this.x+Math.cos(angle)*220));
                             u2.y = Math.max(20, Math.min(WORLD_H-20, this.y+Math.sin(angle)*220));
                             meleeAnims.push({type:'text_pop',x:u2.x,y:u2.y-20,life:20,maxLife:20,color:'#9b59b6',text:'밀려남!',big:false});
@@ -3581,7 +3608,7 @@ class Unit {
                     const _soloOrigMaxCd = this.maxCd;
                     const _soloBuff = 1.5 + pushed * 0.15;
                     pdB.soloBuffMult = _soloBuff;
-                    this.addDmgBuff('solo', _soloBuff); // 버프키 'solo' - 중복불가
+                    this.addDmgBuff('solo', _soloBuff);
                     this.range = 9999;
                     this._soloMultiShot = true;
                     meleeAnims.push({type:'text_pop',x:this.x,y:this.y-60,life:60,maxLife:60,color:'#9b59b6',text:'💜 솔로만세!',big:true});
@@ -3598,6 +3625,11 @@ class Unit {
                         pdB.soloActive = false;
                         pdB.soloLocked = true;
                         this._canMove = false;
+                        // 원래 위치로 복귀 (밀기 없이)
+                        spawnParticles(this.x,this.y,'#9b59b6',10,5);
+                        this.x = Math.max(40, Math.min(WORLD_W-40, _soloOrigX));
+                        this.y = Math.max(40, Math.min(WORLD_H-40, _soloOrigY));
+                        spawnParticles(this.x,this.y,'#9b59b6',10,5);
                         meleeAnims.push({type:'text_pop',x:this.x,y:this.y-40,life:40,maxLife:40,color:'#888',text:'현타... (5초 이동불가)',big:true});
                         // 5초 후 이동 재개
                         setTimeout(()=>{
@@ -3846,7 +3878,8 @@ class Unit {
                     pd3.buffCombo=(pd3.buffCombo||0)+1;
                     if(pd3.buffCombo>=100){
                         pd3.buffCombo=0;
-                        for(let u of units) u.damage += 10;
+                        // [버그수정] 영구 버프는 damage와 _baseDmg 모두 올려야 배율 버프와 충돌 없음
+                        for(let u of units){ u.damage += 10; u._baseDmg = (u._baseDmg||u.damage) + 10; }
                         meleeAnims.push({type:'text_pop',x:this.x,y:this.y-40,life:35,maxLife:35,color:'#ff69b4',text:'고백 성공!',big:true});
                         showToast('💕 소개팅 건모 고백 성공! 전체 공격력 +10 영구!','#ff69b4','#2d1020');
                     }
@@ -5301,14 +5334,16 @@ function triggerLegendManaSkill(unit, lastTarget){
             }
             if(!legendBuffActive.fashionShowBuff){
                 legendBuffActive.fashionShowBuff=true;
-                for(let u2 of units){ u2.damage=Math.round(u2.damage*1.5); }
+                // [버그수정] 직접 damage 곱셈 대신 addDmgBuff 시스템 사용 (중복/복구 안전)
+                for(let u2 of units){ u2.addDmgBuff('fashion_show', 1.5); }
                 for(let e of enemies){
                     if(Math.abs(e.x-x)<=150 && Math.abs(e.y-y)<=150){
                         e.baseSpeed=e.baseSpeed||e.speed; e.speed=e.baseSpeed*0.5; e.slowTimer=600;
                     }
                 }
                 setTimeout(()=>{
-                    for(let u2 of units) u2.damage=Math.round(u2.damage/1.5);
+                    // [버그수정] removeDmgBuff로 안전하게 복구
+                    for(let u2 of units) u2.removeDmgBuff('fashion_show');
                     legendBuffActive.fashionShowBuff=false;
                     unit._manaSkillActive=false;
                 }, Math.round(10000/gameSpeedMul));
@@ -5320,9 +5355,19 @@ function triggerLegendManaSkill(unit, lastTarget){
             meleeAnims.push({type:'text_pop',x,y:y-50,life:50,maxLife:50,color:'#f1c40f',text:'🚗기아 풀옵션!',big:true});
             if(!legendBuffActive.kiaBuff){
                 legendBuffActive.kiaBuff=true;
-                for(let u2 of units){ u2.maxCd=Math.max(6,Math.round(u2.maxCd/2)); }
+                // [버그수정] 버프 적용 전 각 유닛의 원본 maxCd를 저장
+                const _kiaOrigCds = new Map();
+                for(let u2 of units){
+                    _kiaOrigCds.set(u2.id, u2.maxCd);
+                    u2.maxCd=Math.max(6,Math.round(u2.maxCd/2));
+                }
                 setTimeout(()=>{
-                    for(let u2 of units) u2.maxCd=Math.round(u2.maxCd*2);
+                    // [버그수정] ×2 방식 대신 저장된 원본값으로 복구
+                    for(let u2 of units){
+                        if(_kiaOrigCds.has(u2.id)){
+                            u2.maxCd = _kiaOrigCds.get(u2.id);
+                        }
+                    }
                     legendBuffActive.kiaBuff=false;
                     unit._manaSkillActive=false;
                 }, Math.round(10000/gameSpeedMul));
@@ -5982,6 +6027,38 @@ const MISSION_DATA = [
          for(let i=0;i<2;i++) spawnUnit(randFrom(allPool));
          updateInventoryUI();
      }},
+    {id:21, name:"컬렉터",           repeat:false,
+     desc:"미션 1~5 (흔함/안흔함/특별/희귀/전설 모으기) 전부 달성",
+     rewardDesc:"특수 랜덤 선택 위습 2개",
+     reward(){ wisps.selSuper+=2; updateInventoryUI(); }},
+    {id:22, name:"소주 중독자",       repeat:false,
+     desc:"맵에 술채(안흔함)+게이다훈(안흔함)+130cm래규(안흔함)+컴공과 승채(특별)+클오클 래규(특별)+패션안경 다훈(특별) 각 1기 이상 보유",
+     rewardDesc:"깡소주 6개 지급",
+     reward(){ for(let i=0;i<6;i++) spawnUnit('깡소주'); updateInventoryUI(); }},
+    {id:23, name:"할줄아는놈",        repeat:false,
+     desc:"130cm래규 키커져라! 패시브로 지급된 랜덤위습 누적 8개 이상",
+     rewardDesc:"랜덤위습 5개 지급",
+     reward(){ wisps.rand+=5; updateInventoryUI(); }},
+    {id:24, name:"이제 공부 해라",    repeat:false,
+     desc:"담배피는 병훈 패시브로 돛대담배 누적 10개 이상 소환",
+     rewardDesc:"연필 5개 지급",
+     reward(){ for(let i=0;i<5;i++) spawnUnit('연필'); updateInventoryUI(); }},
+    {id:25, name:"앱등이",            repeat:false,
+     desc:"맵에 젖살안빠진 상웅(안흔함)+돼지병훈(안흔함)+야동보는동수(특별)+바위(특별)+3등 항해사병선(희귀)+방송인 훈덕(희귀) 각 1기 이상 보유",
+     rewardDesc:"아이폰1 10개 지급",
+     reward(){ for(let i=0;i<10;i++) spawnUnit('아이폰1'); updateInventoryUI(); }},
+    {id:26, name:"삥뜯기",            repeat:false,
+     desc:"맵에 중2병 건모(안흔함) 3기 이상 보유",
+     rewardDesc:"빈 지갑 5개 지급",
+     reward(){ for(let i=0;i<5;i++) spawnUnit('빈 지갑'); updateInventoryUI(); }},
+    {id:27, name:"배쟁이",            repeat:false,
+     desc:"맵에 2등 항해사 병선(전설) + 온몸이 돌이 된 찬희(전설) 각 1기 이상 보유",
+     rewardDesc:"3등 항해사병선(희귀) + 뇌까지 돌이된 찬희(희귀) 각 1기 지급",
+     reward(){
+         spawnUnit('3등 항해사병선');
+         spawnUnit('뇌까지 돌이된 찬희');
+         updateInventoryUI();
+     }},
 ];
 
 function getMissionProgress(idx) {
@@ -6014,6 +6091,29 @@ function getMissionProgress(idx) {
         case 19:{
             const need=["패션왕자 동수","짐바브웨 동수","야동보는동수","야동수"];
             return{cur:need.filter(n=>units.some(u=>u.name===n)).length,max:4};
+        }
+        case 20:{ // 컬렉터: 미션 1~5 달성 수
+            const cleared=[0,1,2,3,4].filter(i=>missionCleared[i]).length;
+            return{cur:cleared,max:5};
+        }
+        case 21:{ // 소주 중독자
+            const need=["술채","게이다훈","130cm래규","컴공과 승채","클오클 래규","패션안경 다훈"];
+            return{cur:need.filter(n=>units.some(u=>u.name===n)).length,max:6};
+        }
+        case 22: // 할줄아는놈
+            return{cur:Math.min(mission130WispCount,8),max:8};
+        case 23: // 이제 공부 해라
+            return{cur:Math.min(missionTobaccoCount,10),max:10};
+        case 24:{ // 앱등이
+            const need=["젖살안빠진 상웅","돼지병훈","야동보는동수","바위","3등 항해사병선","방송인 훈덕"];
+            return{cur:need.filter(n=>units.some(u=>u.name===n)).length,max:6};
+        }
+        case 25:{ // 삥뜯기
+            return{cur:Math.min(units.filter(u=>u.name==='중2병 건모').length,3),max:3};
+        }
+        case 26:{ // 배쟁이
+            const need=["2등 항해사 병선","온몸이 돌이 된 찬희"];
+            return{cur:need.filter(n=>units.some(u=>u.name===n)).length,max:2};
         }
         default:return{cur:0,max:1};
     }
@@ -6048,6 +6148,20 @@ function checkMission(id) {
         case 17: pass=["큰돌맹이","바위","뇌까지 돌이된 찬희","온몸이 돌이 된 찬희"].every(n=>units.some(u=>u.name===n)); break;
         case 18: pass=["욕쟁이 현준","코딩하는 상웅","게하 장인 현준"].every(n=>units.some(u=>u.name===n)); break;
         case 19: pass=["패션왕자 동수","짐바브웨 동수","야동보는동수","야동수"].every(n=>units.some(u=>u.name===n)); break;
+        case 20: // 컬렉터: 미션 1~5 전부 달성
+            pass=[0,1,2,3,4].every(i=>missionCleared[i]); break;
+        case 21: // 소주 중독자
+            pass=["술채","게이다훈","130cm래규","컴공과 승채","클오클 래규","패션안경 다훈"].every(n=>units.some(u=>u.name===n)); break;
+        case 22: // 할줄아는놈
+            pass=mission130WispCount>=8; break;
+        case 23: // 이제 공부 해라
+            pass=missionTobaccoCount>=10; break;
+        case 24: // 앱등이
+            pass=["젖살안빠진 상웅","돼지병훈","야동보는동수","바위","3등 항해사병선","방송인 훈덕"].every(n=>units.some(u=>u.name===n)); break;
+        case 25: // 삥뜯기
+            pass=units.filter(u=>u.name==='중2병 건모').length>=3; break;
+        case 26: // 배쟁이
+            pass=units.some(u=>u.name==='2등 항해사 병선') && units.some(u=>u.name==='온몸이 돌이 된 찬희'); break;
     }
     if(!pass) return;
     if(!m.repeat) missionCleared[idx]=true;
@@ -6059,6 +6173,11 @@ function checkMission(id) {
 function checkCollectionMissions() {
     for(let id=1;id<=5;id++) checkMission(id);
     for(let id=17;id<=20;id++) checkMission(id);
+    checkMission(21); // 컬렉터: 1~5 달성 후 체크
+    checkMission(22); // 소주 중독자
+    checkMission(25); // 앱등이
+    checkMission(26); // 삥뜯기
+    checkMission(27); // 배쟁이
 }
 
 function openMissionModal() {
@@ -6158,8 +6277,12 @@ function spawnUnit(name) {
         }
     }
     units.push(u);
-    // 미션 1~5 즉시 체크 (유닛 소환 시마다)
-    if(typeof checkCollectionMissions === 'function') checkCollectionMissions();
+    // 미션 즉시 체크 (재귀 방지 플래그 사용)
+    if(typeof checkCollectionMissions === 'function' && !window._missionCheckInProgress){
+        window._missionCheckInProgress = true;
+        checkCollectionMissions();
+        window._missionCheckInProgress = false;
+    }
 }
 
 // 새 방향 선택: 전역 인덱스 사용
@@ -6440,8 +6563,10 @@ function applySpecialUnitAura() {
         }
         if(specialCount === 0) continue;
         if(!u._specialAuraBaseDmg){
+            // [버그수정] 다른 maxCd 버프가 활성화된 상태일 때는 baseCd를 오염시키지 않음
+            // _segunBuff나 기타 임시 버프가 없을 때의 maxCd만 기준으로 저장
             u._specialAuraBaseDmg = u._baseDmg;
-            u._specialAuraBaseCd  = u.maxCd;
+            u._specialAuraBaseCd  = u._segunOrigMaxCd || u.maxCd;
         }
         const mult = Math.pow(1.3, specialCount);
         u._baseDmg = Math.round(u._specialAuraBaseDmg * mult);
@@ -6653,7 +6778,14 @@ function gameLoop(ts) {
             spawnCombineExplosion(a.cx,a.cy,a.tier);
             inventory[a.target]=(inventory[a.target]||0)+1;
             let nu=new Unit(a.target); nu.x=a.cx; nu.y=a.cy; units.push(nu);
-            updateInventoryUI(); combiningAnims.splice(i,1);
+            updateInventoryUI();
+            // [버그수정] 조합 완료 시점(유닛이 실제로 units에 추가된 후)에 미션 체크
+            if(!window._missionCheckInProgress){
+                window._missionCheckInProgress = true;
+                checkCollectionMissions();
+                window._missionCheckInProgress = false;
+            }
+            combiningAnims.splice(i,1);
         } else {
             for(let u of a.mats){
                 let ox=u.x,oy=u.y;
@@ -6843,6 +6975,38 @@ function showEndingModal(type, killTime){
         ? '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px;"><span style="color:#aaa;">👾 괴물 병선 처치</span><b style="color:#ff69b4;">'+ killTime +'초</b></div>'
         : '';
 
+    // 보유 전설 이상 유닛 목록 HTML
+    const tierOrder = ['갓','초월','전설'];
+    const tierColorMap2 = { '전설':'#e74c3c', '초월':'#f1c40f', '갓':'#ffffff' };
+    // 전설 이상 유닛만 필터 → {등급, 이름, 수량} 으로 집계
+    const highUnitMap = {}; // key: "tier__name"
+    for(const u of units){
+        if(!tierOrder.includes(u.tier)) continue;
+        const key = u.tier + '__' + u.name;
+        if(!highUnitMap[key]) highUnitMap[key] = { tier: u.tier, name: u.name, count: 0 };
+        highUnitMap[key].count++;
+    }
+    // 갓 → 초월 → 전설 순, 같은 등급 내 이름 가나다순 정렬
+    const highUnitList = Object.values(highUnitMap).sort((a, b) => {
+        const ti = tierOrder.indexOf(a.tier), tj = tierOrder.indexOf(b.tier);
+        if(ti !== tj) return ti - tj;
+        return a.name.localeCompare(b.name, 'ko');
+    });
+    let eliteHtml = '';
+    if(highUnitList.length === 0){
+        eliteHtml = '<div style="color:#888;text-align:center;padding:8px;font-size:13px;">전설 이상 유닛 없음</div>';
+    } else {
+        highUnitList.forEach(entry => {
+            const tc = tierColorMap2[entry.tier] || '#fff';
+            const countBadge = entry.count > 1
+                ? ' <span style="color:#f1c40f;font-weight:900;">×'+entry.count+'</span>'
+                : '';
+            eliteHtml += '<div style="display:flex;align-items:center;padding:5px 10px;background:#1a1d24;border:1px solid #333;border-radius:6px;margin-bottom:4px;">'
+                + '<span style="font-size:13px;"><b style="color:'+tc+';">'+entry.tier+'</b> '+entry.name+countBadge+'</span>'
+                + '</div>';
+        });
+    }
+
     // 명예의 전당 HTML
     let hofHtml = '';
     if(HALL_OF_FAME.length === 0){
@@ -6872,6 +7036,10 @@ function showEndingModal(type, killTime){
         +   '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px;"><span style="color:#aaa;">처치한 적</span><b style="color:#f1c40f;">'+totalKills+' 마리</b></div>'
         +   '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px;"><span style="color:#aaa;">스토리 진행</span><b style="color:#9b59b6;">'+storyIdx+' / '+storyData.length+'</b></div>'
         +   killTimeRow
+        + '</div>'
+        + '<div style="background:#0d0f14;border-radius:8px;padding:12px;margin-bottom:14px;">'
+        +   '<h3 style="color:#e74c3c;font-size:15px;margin:0 0 10px;border-bottom:1px solid #333;padding-bottom:6px;">⭐ 보유 전설 이상 유닛</h3>'
+        +   eliteHtml
         + '</div>'
         + '<div style="background:#0d0f14;border-radius:8px;padding:12px;margin-bottom:14px;">'
         +   '<h3 style="color:#f1c40f;font-size:15px;margin:0 0 10px;border-bottom:1px solid #333;padding-bottom:6px;">🏆 유닛 랭킹 TOP 3</h3>'
@@ -6911,12 +7079,14 @@ function restartGame(){
     totalKills = 0; // [점수판] 처치 카운트 초기화
     enemies=[]; units=[]; inventory={}; wisps={rand:0,selCommon:0,selSpecial:0,selRare:0,selSuper:0};
     // 미션 시스템 초기화
-    missionCleared = new Array(21).fill(false);
+    missionCleared = new Array(27).fill(false);
     missionZimTreasureCount = 0;
     missionGehaReturnMap = {};
     normalMobKillTotal = 0;
     bossKillStartTime = 0;
     bossHunterCount = 0;
+    mission130WispCount = 0;
+    missionTobaccoCount = 0;
     killCountForWisp=0; selectedUnits=[]; selectedEnemy=null;
     particles=[]; projectiles=[]; attackLines=[]; meleeAnims=[]; combiningAnims=[];
     gatherAnims=[]; toothParticles=[]; sojuSummons=[]; fanAnims=[]; moveTargets=[];
@@ -7802,6 +7972,9 @@ function combineUnit(target) {
     if(su2&&mats.includes(su2)){selectedUnits=selectedUnits.filter(u=>!mats.includes(u));updateDetailUI();updateCombineUI();}
     let cx=mats.length?mats.reduce((s,u)=>s+u.ox,0)/mats.length:325;
     let cy=mats.length?mats.reduce((s,u)=>s+u.oy,0)/mats.length:325;
+    // 조합 결과는 항상 스토리 미션 아래, 아이폰1/연필 위 고정 위치에 생성
+    cx = 400;
+    cy = 430;
     combiningAnims.push({target,tier:getTier(target),mats,cx,cy,p:0,speed:0.06});
     // 희귀 등급 조합 시 사운드 재생
     if(getTier(target)==='희귀'){
@@ -7818,8 +7991,12 @@ function combineUnit(target) {
         if(typeof playTranscendCraftSound === 'function') playTranscendCraftSound();
     }
     updateInventoryUI();
-    // 미션 1~5: 조합 후 즉시 체크
-    checkCollectionMissions();
+    // 미션 1~5: 조합 후 즉시 체크 (재귀 방지)
+    if(!window._missionCheckInProgress){
+        window._missionCheckInProgress = true;
+        checkCollectionMissions();
+        window._missionCheckInProgress = false;
+    }
 
     if(typeof updateDetailUI === "function") updateDetailUI();
 }
