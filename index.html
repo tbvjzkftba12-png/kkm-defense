@@ -760,6 +760,7 @@ const PASSIVE_NAMES = {
     // 초월
     "언론 조종술사 김다훈": {passive:"멘탈쌤이 보고있다", skill:"언론 장악/해나의 응원", mana:"KKM 디펜스 장인"},
     "만카이 백승채":        {passive:"만카이",           skill:"담배한모금/솔로만세",   mana:"삼성전자 풀매수"},
+    "몸에서 돌이 떨어지는 김찬희": {passive:"태생이돌", skill:"뇌성마비/전신낙석",     mana:"지각변동"},
 };
 
 const PASSIVE_DESC_LEGEND = {    "얼굴이 붉어진 승채": "🍺 [패시브1] 술기운: 공격 시 5% 확률로 추가 2배 데미지(크리) | [패시브2] 만취: 공격 시 10% 확률로 주변 100 범위 50% 데미지 추가 | [마나스킬, 마나60] 술병 난사: 150×150 범위 적 최대 50마리에게 ×3 데미지 + 슬로우 3초",
@@ -775,6 +776,7 @@ const PASSIVE_DESC_LEGEND = {    "얼굴이 붉어진 승채": "🍺 [패시브1
     "공무원 다훈":        "📄 [패시브1] 잠수고수: 공격 시 0.1% 확률로 가장 밀집한 곳으로 텔레포트 + 공속 5배 (3초) | [패시브2] 민원 폭탄: 공격 시 1% 확률로 적 최대 8마리에게 (자기 공격력 50%) 데미지 + 방어 -20 (중첩불가) + 이속 -30% (2초) | [마나스킬, 마나80] 철밥통 확정: 자기 공속 ×3 + 공격력 ×3 (10초)",
     "언론 조종술사 김다훈": "📰 [패시브] 멘탈쌤이 보고있다: 공격 시 1% 확률로 10초간 공격력 +50% + 적 밀집지로 텔레포트 (중첩불가) | [스킬1] 언론 장악: 공격마다 적에게 여론 낙인 부여 (최대 5중첩) — 낙인 1개당 받는 피해 +8%, 이속 -5% / 5중첩 시 주변 120 범위 공론화 폭발 + 낙인 초기화 | [스킬2] 해나의 응원: 공격 200타 누적 시 전체 아군 공격력 +50%, 공속 +50% (15초, 중첩불가) / 하트 파티클 + 해나가 응원해! | [마나스킬, 마나80] KKM 디펜스 장인: 자신의 공격력 ×3 + 모든 데미지 고정데미지(방어력 무시)로 변경 (10초)",
     "만카이 백승채": "🍺 [패시브] 만카이: 공격마다 만취스택 +1 (최대 100중첩) / 스택 1개당 공격력 +1% 증가 / 100중첩 달성 시 만카이! 발동 — 5초간 공격력 2배 + 공격마다 주변 120범위 폭발 데미지 / 발동 중 스택 획득 불가, 종료 후 스택 초기화 | [스킬1] 담배한모금: 기본공격 시 0.1% 확률 발동 — 5초간 공격속도 +50%, 마나 충전속도 1.5배 (중첩불가) | [스킬2] 솔로만세: 공격 300타 누적 시 발동 — 맵 중앙으로 텔레포트, 중앙 기준 100범위 아군 200밖으로 밀어냄 + 진입불가, 이동불가, 사거리 맵 전체, 단일→3기 멀티샷, 공격력 +50% + 밀어낸 아군 1기당 +15% (10초) / 종료 후 버프해제 + 5초 이동불가 | [마나스킬, 마나80] 삼성전자 풀매수: 일반몹에게 현재 공격력 ×3 + 해당 몹 최대체력 10% 데미지 / 보스·미니보스·스토리에게 현재 공격력 ×30 데미지 / 전체 아군 공격력 +30% (15초)",
+    "몸에서 돌이 떨어지는 김찬희": "🪨 [패시브] 태생이돌: 평타 시 주변 90범위 스플래시(공격력×40%) + 아머브레이크 -2 누적(최대-20) | [스킬1] 뇌성마비: 10% 확률 발동 — 다음 5타 공속 8.0회/초 | [스킬2] 전신낙석: 100타마다 캐릭터 회전 + 10초간 주변 150범위 공격력×2 고정뎀 + 돌 낙하 이펙트 | [마나스킬, 마나110] 지각변동: 전체 적 3초 스턴+방어력-30+공격력×5 + 땅 갈라지는 균열 이펙트"
 };
 const PASSIVE_DESC_RARE = {
     "꼬장 승채":      "💥 꼬장: 공격 시 10% 확률로 술병 폭발 - 범위 10000 데미지 | 공격 시 10% 확률로 ROTC상웅 소환",
@@ -1220,6 +1222,100 @@ function playTranscendCraftSound(){
         highG.gain.exponentialRampToValueAtTime(0.001, t+0.68);
         highO.connect(highG); highG.connect(ctx.destination);
         highO.start(t+0.48); highO.stop(t+0.7);
+    } catch(e){}
+}
+
+// 🪨 찬희 초월 기본공격 - 묵직한 돌 타격음
+let _lastStoneHitTime = 0;
+function playStoneHitSound(){
+    const now = performance.now();
+    if(now - _lastStoneHitTime < 80) return;
+    _lastStoneHitTime = now;
+    const ctx = getAudioCtx();
+    if(!ctx) return;
+    try {
+        const t = ctx.currentTime;
+        // 1) 초저음 쿵 (돌이 쿵 하고 박히는 느낌)
+        const osc1 = ctx.createOscillator();
+        const g1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(55, t);
+        osc1.frequency.exponentialRampToValueAtTime(22, t+0.25);
+        g1.gain.setValueAtTime(0.35, t);
+        g1.gain.exponentialRampToValueAtTime(0.001, t+0.28);
+        osc1.connect(g1); g1.connect(ctx.destination);
+        osc1.start(t); osc1.stop(t+0.3);
+        // 2) 중저음 바위 울림
+        const osc2 = ctx.createOscillator();
+        const g2 = ctx.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(110, t);
+        osc2.frequency.exponentialRampToValueAtTime(45, t+0.18);
+        g2.gain.setValueAtTime(0.18, t);
+        g2.gain.exponentialRampToValueAtTime(0.001, t+0.2);
+        osc2.connect(g2); g2.connect(ctx.destination);
+        osc2.start(t); osc2.stop(t+0.22);
+        // 3) 돌가루 파편 노이즈 (짧은 어택)
+        const bSize = ctx.sampleRate * 0.06;
+        const buf = ctx.createBuffer(1, bSize, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for(let i=0;i<bSize;i++) data[i] = (Math.random()*2-1) * Math.pow(1-i/bSize, 0.8);
+        const noise = ctx.createBufferSource();
+        noise.buffer = buf;
+        const lpf = ctx.createBiquadFilter();
+        lpf.type = 'lowpass';
+        lpf.frequency.value = 800;
+        const ng = ctx.createGain();
+        ng.gain.setValueAtTime(0.22, t);
+        ng.gain.exponentialRampToValueAtTime(0.001, t+0.06);
+        noise.connect(lpf); lpf.connect(ng); ng.connect(ctx.destination);
+        noise.start(t); noise.stop(t+0.07);
+    } catch(e){}
+}
+
+// 🪨 찬희 초월 등장 사운드 - 바위 무너지는 저주파 진동
+function playStoneAppearSound(){
+    const ctx = getAudioCtx();
+    if(!ctx) return;
+    try {
+        const t = ctx.currentTime;
+        // 1) 깊은 저음 진동 (바위 구르는 느낌)
+        for(let i=0;i<3;i++){
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(40-i*5, t+i*0.12);
+            o.frequency.exponentialRampToValueAtTime(18, t+i*0.12+0.35);
+            g.gain.setValueAtTime(0.0, t+i*0.12);
+            g.gain.linearRampToValueAtTime(0.28, t+i*0.12+0.03);
+            g.gain.exponentialRampToValueAtTime(0.001, t+i*0.12+0.38);
+            o.connect(g); g.connect(ctx.destination);
+            o.start(t+i*0.12); o.stop(t+i*0.12+0.4);
+        }
+        // 2) 돌 굴러가는 노이즈 (로우패스)
+        const bSize2 = ctx.sampleRate * 0.5;
+        const buf2 = ctx.createBuffer(1, bSize2, ctx.sampleRate);
+        const d2 = buf2.getChannelData(0);
+        for(let i=0;i<bSize2;i++) d2[i] = (Math.random()*2-1) * (1 - i/bSize2) * 0.7;
+        const noise2 = ctx.createBufferSource();
+        noise2.buffer = buf2;
+        const lpf2 = ctx.createBiquadFilter();
+        lpf2.type = 'lowpass'; lpf2.frequency.value = 400;
+        const ng2 = ctx.createGain();
+        ng2.gain.setValueAtTime(0.25, t+0.1);
+        ng2.gain.exponentialRampToValueAtTime(0.001, t+0.55);
+        noise2.connect(lpf2); lpf2.connect(ng2); ng2.connect(ctx.destination);
+        noise2.start(t+0.1); noise2.stop(t+0.6);
+        // 3) 마지막 쾅! 임팩트
+        const impOsc = ctx.createOscillator();
+        const impG = ctx.createGain();
+        impOsc.type = 'sine';
+        impOsc.frequency.setValueAtTime(70, t+0.45);
+        impOsc.frequency.exponentialRampToValueAtTime(25, t+0.7);
+        impG.gain.setValueAtTime(0.4, t+0.45);
+        impG.gain.exponentialRampToValueAtTime(0.001, t+0.75);
+        impOsc.connect(impG); impG.connect(ctx.destination);
+        impOsc.start(t+0.45); impOsc.stop(t+0.78);
     } catch(e){}
 }
 
@@ -2240,6 +2336,7 @@ class Unit {
             // 초월 유닛
             "언론 조종술사 김다훈": {dmg:150000,type:"ranged", range:180, cd:12},  // 공속 5.0
             "만카이 백승채":        {dmg:150000,type:"melee",  range:130, cd:12},  // 공속 5.0
+            "몸에서 돌이 떨어지는 김찬희": {dmg:250000,type:"melee", range:130, cd:40}, // 공속 1.5
         };
         if(attackTypes[name]){
             const at = attackTypes[name];
@@ -2322,6 +2419,15 @@ class Unit {
             soloLocked: false,
             masterActive: false,
         };
+        if(name === "몸에서 돌이 떨어지는 김찬희") this.passiveData = {
+            name:"태생이돌",
+            hitCount: 0,
+            neuroActive: false,
+            neuroCount: 0,
+            _origCdNeuro: 0,
+            rockFallActive: false,
+            quakeActive: false,
+        };
 
         // 킬 카운트
         this.kills = 0;
@@ -2349,6 +2455,7 @@ class Unit {
             const transcendManaMap = {
                 "언론 조종술사 김다훈": 80,
                 "만카이 백승채": 80,
+                "몸에서 돌이 떨어지는 김찬희": 110,
             };
             if(transcendManaMap[name]){
                 this.maxMana = transcendManaMap[name];
@@ -2953,7 +3060,7 @@ class Unit {
                 const _isMiss = (target === mission);
                 const _offsetX = (Math.random()-0.5)*(_isMiss ? 30 : 20);
                 const _ty = _isMiss ? target.y - 55 : target.y - 20;
-                const _dmgColor = _isMiss ? '#ff3030' : (this._fixedDamage ? '#ffffff' : '#ff3030');
+                const _dmgColor = this._fixedDamage ? '#ffffff' : (_isMiss ? '#ff3030' : '#ff3030');
                 meleeAnims.push({
                     type:'damage_text',
                     x: target.x + _offsetX,
@@ -2977,7 +3084,12 @@ class Unit {
             } else if(this.tier==='전설'){
                 if(typeof playLegendHitSound === 'function') playLegendHitSound();
             } else if(this.tier==='초월'){
-                if(typeof playTranscendHitSound === 'function') playTranscendHitSound();
+                // 찬희 초월 전용 돌 타격음
+                if(this.name==='몸에서 돌이 떨어지는 김찬희'){
+                    if(typeof playStoneHitSound === 'function') playStoneHitSound();
+                } else {
+                    if(typeof playTranscendHitSound === 'function') playTranscendHitSound();
+                }
             }
             // [버그수정] 마나 충전 (전설 유닛) - 스토리/일반 공격 모두 충전
             if(this.tier==='전설' && this.maxMana && !this._manaSkillActive){
@@ -3641,6 +3753,140 @@ class Unit {
                 }
             }
 
+            // ── 초월: 몸에서 돌이 떨어지는 김찬희 공격 성공 패시브/스킬 ──
+            if(this.tier==='초월' && this.passiveData && this.name==='몸에서 돌이 떨어지는 김찬희'){
+                const pdC = this.passiveData;
+
+                // ── 패시브: 태생이돌 - 평타마다 주변 범위 스플래시 + 아머브레이크 ──
+                const splashRange = 90;
+                for(let e of enemies){
+                    if(e === target) continue;
+                    const dx=e.x-target.x, dy=e.y-target.y;
+                    if(Math.sqrt(dx*dx+dy*dy) <= splashRange){
+                        const splashDmg = Math.round(this.damage * 0.4);
+                        e.hp -= splashDmg;
+                        meleeAnims.push({type:'damage_text',x:e.x+(Math.random()-0.5)*12,y:e.y-20,
+                            life:28,maxLife:28,color:'#8B4513',text:splashDmg,vy:-1.4,fixed:false});
+                    }
+                }
+                applyArmorBreak(target, 2, 20);
+                if(Math.random()<0.5) spawnParticles(target.x, target.y, '#8B4513', 3, 2);
+
+                // ── 스킬1: 뇌성마비 - 10% 확률로 다음 5타 공속 8.0 ──
+                if(!pdC.neuroActive && Math.random() < 0.10){
+                    pdC.neuroActive = true;
+                    pdC.neuroCount = 5;
+                    pdC._origCdNeuro = this.maxCd;
+                    this.maxCd = 7; // 공속 8.0회/초 (60fps ÷ 7.5 → 7로 근사)
+                    // 텍스트 없이 이펙트만
+                    particles.push({type:'ring',x:this.x,y:this.y,radius:0,maxRadius:80,
+                        color:'#00bfff',alpha:0.7,life:22,maxLife:22});
+                    spawnParticles(this.x, this.y, '#00bfff', 8, 3);
+                }
+                if(pdC.neuroActive){
+                    pdC.neuroCount--;
+                    if(pdC.neuroCount <= 0){
+                        pdC.neuroActive = false;
+                        this.maxCd = pdC._origCdNeuro;
+                    }
+                }
+
+                // ── 스킬2: 전신낙석 - 100타마다 캐릭터 회전 + 주변 낙석 폭발 ──
+                pdC.hitCount = (pdC.hitCount||0) + 1;
+                if(pdC.hitCount >= 100 && !pdC.rockFallActive){
+                    pdC.hitCount = 0;
+                    pdC.rockFallActive = true;
+                    const rockRange = 150;
+                    const rockDmg = this.damage * 2;
+                    // 캐릭터 회전 애니메이션 (10초 동안)
+                    this._rockSpinActive = true;
+                    this._rockSpinAngle = 0;
+                    meleeAnims.push({type:'text_pop',x:this.x,y:this.y-60,life:55,maxLife:55,
+                        color:'#8B4513',text:'🪨 전신낙석!',big:true});
+                    showToast('🪨 전신낙석! 10초간 주변 폭격','#8B4513','#1a0d00');
+
+                    // 0.3초마다 돌 계속 떨어짐
+                    const _thisUnit = this;
+                    const contDrop = setInterval(()=>{
+                        if(!units.includes(_thisUnit) || !pdC.rockFallActive){
+                            clearInterval(contDrop); return;
+                        }
+                        const bodyParts=[{ox:0,oy:-30},{ox:-15,oy:-18},{ox:15,oy:-18},
+                            {ox:-10,oy:-5},{ox:10,oy:-5},{ox:-5,oy:8},{ox:5,oy:8}];
+                        const sc=['#8B4513','#A0522D','#696969','#5D4037','#808080','#6B4423'];
+                        for(let i=0;i<4;i++){
+                            const part=bodyParts[Math.floor(Math.random()*bodyParts.length)];
+                            particles.push({type:'rockfall',
+                                x:_thisUnit.x+part.ox+(Math.random()-0.5)*6,
+                                y:_thisUnit.y+part.oy,
+                                vx:(Math.random()-0.5)*2, vy:-1.5-Math.random()*2,
+                                color:sc[Math.floor(Math.random()*sc.length)],
+                                alpha:1,life:55,maxLife:55,
+                                size:6+Math.random()*5,
+                                rotation:Math.random()*Math.PI*2,
+                                rotSpeed:(Math.random()-0.5)*0.4});
+                        }
+                    }, Math.round(300/gameSpeedMul));
+
+                    // 매 1초 데미지 + 큰 돌 폭발
+                    for(let tick=0; tick<10; tick++){
+                        setTimeout(()=>{
+                            if(!units.includes(_thisUnit)) return;
+                            // 데미지
+                            for(let e of enemies){
+                                if(e.hp<=0) continue;
+                                const dxR=e.x-_thisUnit.x, dyR=e.y-_thisUnit.y;
+                                if(Math.sqrt(dxR*dxR+dyR*dyR)<=rockRange){
+                                    e.hp -= rockDmg;
+                                    meleeAnims.push({type:'damage_text',
+                                        x:e.x+(Math.random()-0.5)*16,y:e.y-25,
+                                        life:35,maxLife:35,color:'#8B4513',text:rockDmg,vy:-1.6,fixed:true});
+                                }
+                            }
+                            if(mission&&mission.hp>0){
+                                const dxM=mission.x-_thisUnit.x,dyM=mission.y-_thisUnit.y;
+                                if(Math.sqrt(dxM*dxM+dyM*dyM)<=rockRange) mission.hp-=rockDmg;
+                            }
+                            // 큰 바위 폭발
+                            const bp=[{ox:0,oy:-30},{ox:-15,oy:-18},{ox:15,oy:-18},{ox:-10,oy:-5},{ox:10,oy:-5}];
+                            const sc=['#8B4513','#A0522D','#696969','#5D4037','#808080'];
+                            for(let i=0;i<3;i++){
+                                const part=bp[Math.floor(Math.random()*bp.length)];
+                                particles.push({type:'rockfall',
+                                    x:_thisUnit.x+part.ox, y:_thisUnit.y+part.oy,
+                                    vx:(Math.random()-0.5)*3, vy:-3-Math.random()*2,
+                                    color:'#5D4037', alpha:1, life:70, maxLife:70,
+                                    size:14+Math.random()*6,
+                                    rotation:Math.random()*Math.PI*2,
+                                    rotSpeed:(Math.random()-0.5)*0.3});
+                            }
+                            for(let i=0;i<6;i++){
+                                const part=bp[Math.floor(Math.random()*bp.length)];
+                                particles.push({type:'rockfall',
+                                    x:_thisUnit.x+part.ox, y:_thisUnit.y+part.oy,
+                                    vx:(Math.random()-0.5)*2.5, vy:-2-Math.random()*2.5,
+                                    color:sc[Math.floor(Math.random()*sc.length)],
+                                    alpha:1, life:60, maxLife:60,
+                                    size:8+Math.random()*5,
+                                    rotation:Math.random()*Math.PI*2,
+                                    rotSpeed:(Math.random()-0.5)*0.4});
+                            }
+                            particles.push({type:'ring',x:_thisUnit.x,y:_thisUnit.y,
+                                radius:0,maxRadius:rockRange,color:'#8B4513',alpha:0.5,life:20,maxLife:20});
+                            if(typeof playStoneHitSound==='function') playStoneHitSound();
+                        }, Math.round((tick+1)*1000/gameSpeedMul));
+                    }
+
+                    // 10초 후 종료
+                    setTimeout(()=>{
+                        pdC.rockFallActive = false;
+                        _thisUnit._rockSpinActive = false;
+                        _thisUnit._rockSpinAngle = 0;
+                        clearInterval(contDrop);
+                    }, Math.round(10000/gameSpeedMul));
+                }
+            }
+
             // ── 희귀 유닛 공격 성공 패시브 ──
             if(this.tier==='희귀' && this.passiveData){
                 const pd3=this.passiveData;
@@ -3985,6 +4231,11 @@ class Unit {
         // 모션 + 찌그러짐 transform 적용 (rx/ry 중심)
         ctx.translate(rx, ry);
         ctx.scale(this.squashX, this.squashY * _syScale);
+        // 🪨 전신낙석 중 캐릭터 회전
+        if(this._rockSpinActive){
+            this._rockSpinAngle = (this._rockSpinAngle||0) + 0.12 * (gameSpeedMul||1);
+            ctx.rotate(this._rockSpinAngle);
+        }
         ctx.translate(-rx, -ry);
 
         // ── 등급별 바닥 글로우 (박스 대신) ──
@@ -5540,6 +5791,70 @@ function triggerLegendManaSkill(unit, lastTarget){
             }
             break;
         }
+
+        case '몸에서 돌이 떨어지는 김찬희': {
+            // 지각변동: 땅 갈라지는 균열 + 전체 스턴 + 방어력-30 + 공격력×5
+            const pdQ = unit.passiveData;
+            if(pdQ && !pdQ.quakeActive){
+                pdQ.quakeActive = true;
+                const quakeDmg = unit.damage * 5;
+                const crackOrigin = {x: unit.x, y: unit.y};
+                // 전체 적 데미지 + 스턴 + 방어력 감소
+                for(let e of enemies){
+                    if(e.hp<=0) continue;
+                    e.hp -= quakeDmg;
+                    e.stunTimer = Math.round(180/gameSpeedMul);
+                    e.armorDebuff = (e.armorDebuff||0) - 30;
+                    meleeAnims.push({type:'damage_text',x:e.x+(Math.random()-0.5)*16,y:e.y-25,
+                        life:40,maxLife:40,color:'#8B4513',text:quakeDmg,vy:-1.8,fixed:true});
+                    spawnParticles(e.x, e.y+10, '#8B4513', 5, 3);
+                }
+                if(mission&&mission.hp>0){ mission.hp -= quakeDmg; }
+                // 🌍 땅 갈라지는 균열 이펙트 - 12방향 지그재그 크랙
+                for(let cIdx=0; cIdx<12; cIdx++){
+                    const baseAngle = (cIdx/12)*Math.PI*2;
+                    for(let seg=0; seg<8; seg++){
+                        setTimeout(()=>{
+                            const angleVar = baseAngle + (Math.random()-0.5)*0.4;
+                            const sx = crackOrigin.x + Math.cos(baseAngle)*(seg*60);
+                            const sy = crackOrigin.y + Math.sin(baseAngle)*(seg*60);
+                            const ex = crackOrigin.x + Math.cos(angleVar)*(seg*60+60+seg*40);
+                            const ey = crackOrigin.y + Math.sin(angleVar)*(seg*60+60+seg*40);
+                            attackLines.push({sx,sy,tx:ex,ty:ey,color:'#3a1f0a',tier:'전설',alpha:1,life:55});
+                            spawnParticles(ex, ey, '#8B4513', 4, 3);
+                            spawnParticles(ex, ey, '#A0522D', 2, 2);
+                        }, Math.round(seg*40/gameSpeedMul));
+                    }
+                }
+                // 충격파 링 3겹
+                for(let k=0;k<3;k++) setTimeout(()=>{
+                    particles.push({type:'ring',x:crackOrigin.x,y:crackOrigin.y,
+                        radius:k*30,maxRadius:600,color:'#8B4513',alpha:0.7,life:45,maxLife:45});
+                }, Math.round(k*100/gameSpeedMul));
+                // 맵 전체 돌가루 솟구침
+                for(let i=0;i<25;i++){
+                    setTimeout(()=>{
+                        const rx=Math.random()*WORLD_W, ry=Math.random()*WORLD_H;
+                        for(let j=0;j<6;j++){
+                            const ang=Math.random()*Math.PI*2, sp=2+Math.random()*5;
+                            particles.push({type:'spark',x:rx,y:ry,
+                                vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp-3,
+                                color:['#8B4513','#A0522D','#696969','#5D4037'][Math.floor(Math.random()*4)],
+                                alpha:1,life:35+Math.random()*15,maxLife:50,size:3+Math.random()*4});
+                        }
+                    }, Math.round(i*30/gameSpeedMul));
+                }
+                screenFlash={alpha:0.4,color:'#8B4513',decay:0.02};
+                meleeAnims.push({type:'text_pop',x:unit.x,y:unit.y-70,life:70,maxLife:70,
+                    color:'#8B4513',text:'🌍 지각변동!!',big:true});
+                showToast('🌍 지각변동! 전체 스턴+방어력-30+공격력×5','#8B4513','#1a0d00');
+                setTimeout(()=>{
+                    pdQ.quakeActive = false;
+                    unit._manaSkillActive = false;
+                }, Math.round(500/gameSpeedMul));
+            }
+            break;
+        }
     } // switch 닫기
     // 공통 마나스킬 이펙트
     for(let i=0;i<10;i++){
@@ -5608,27 +5923,60 @@ function spawnCombineExplosion(x,y,tier) {
 
     // 언론 조종술사 김다훈 전용 초월 등장 이펙트
     if(tier === '초월'){
-        // 기본 초월 신문지 파편 (언론 조종술사 김다훈용)
         const isMancai = (typeof spawnedName !== 'undefined' && spawnedName === '만카이 백승채');
-        const spawnColor = isMancai ? '#ff4400' : '#f1c40f';
-        const spawnText  = isMancai ? '🍺 만카이!!!' : '📰 마녀 사냥 시작!';
-        for(let i=0;i<20;i++){
+        const isChanHee = (typeof spawnedName !== 'undefined' && spawnedName === '몸에서 돌이 떨어지는 김찬희');
+        let spawnColor, spawnText;
+        if(isChanHee){
+            spawnColor = '#8B4513'; // 흙갈색
+            spawnText  = '🪨 몸에서 돌이 떨어지는 김찬희!!';
+            // 바위 등장 사운드
+            if(typeof playStoneAppearSound === 'function') playStoneAppearSound();
+            // 돌가루 파티클 폭발
+            for(let i=0;i<30;i++){
+                setTimeout(()=>{
+                    const angle = Math.random()*Math.PI*2;
+                    const sp = 3+Math.random()*6;
+                    const stoneColors = ['#8B4513','#A0522D','#696969','#808080','#556B2F'];
+                    const sc = stoneColors[Math.floor(Math.random()*stoneColors.length)];
+                    particles.push({type:'spark',x,y,
+                        vx:Math.cos(angle)*sp, vy:Math.sin(angle)*sp - 2,
+                        color:sc, alpha:1, life:40+Math.random()*20, maxLife:60, size:5+Math.random()*7});
+                    if(Math.random()<0.4) meleeAnims.push({type:'text_pop',
+                        x:x+(Math.random()-0.5)*150, y:y+(Math.random()-0.5)*150,
+                        life:20,maxLife:20,color:sc,text:'🪨',big:false});
+                }, Math.round(i*35/gameSpeedMul));
+            }
+            // 갈색 충격파 링 4겹
+            for(let k=0;k<4;k++) setTimeout(()=>{
+                particles.push({type:'ring',x,y,radius:k*25,maxRadius:220+k*40,
+                    color:'#8B4513',alpha:0.85,life:38,maxLife:38});
+            }, Math.round(k*90/gameSpeedMul));
+            // 텍스트
             setTimeout(()=>{
-                const angle = Math.random()*Math.PI*2;
-                const sp = 2+Math.random()*5;
-                particles.push({type:'spark',x,y,
-                    vx:Math.cos(angle)*sp, vy:Math.sin(angle)*sp,
-                    color:spawnColor, alpha:1, life:30+Math.random()*20, maxLife:50, size:4+Math.random()*4});
-                meleeAnims.push({type:'text_pop',x:x+(Math.random()-0.5)*120,y:y+(Math.random()-0.5)*120,
-                    life:25,maxLife:25,color:spawnColor,text: isMancai ? '🍺' : '📰',big:false});
-            }, Math.round(i*40/gameSpeedMul));
+                meleeAnims.push({type:'text_pop',x,y:y-80,life:70,maxLife:70,
+                    color:'#A0522D',text:spawnText,big:true});
+            }, Math.round(400/gameSpeedMul));
+        } else {
+            spawnColor = isMancai ? '#ff4400' : '#f1c40f';
+            spawnText  = isMancai ? '🍺 만카이!!!' : '📰 마녀 사냥 시작!';
+            for(let i=0;i<20;i++){
+                setTimeout(()=>{
+                    const angle = Math.random()*Math.PI*2;
+                    const sp = 2+Math.random()*5;
+                    particles.push({type:'spark',x,y,
+                        vx:Math.cos(angle)*sp, vy:Math.sin(angle)*sp,
+                        color:spawnColor, alpha:1, life:30+Math.random()*20, maxLife:50, size:4+Math.random()*4});
+                    meleeAnims.push({type:'text_pop',x:x+(Math.random()-0.5)*120,y:y+(Math.random()-0.5)*120,
+                        life:25,maxLife:25,color:spawnColor,text: isMancai ? '🍺' : '📰',big:false});
+                }, Math.round(i*40/gameSpeedMul));
+            }
+            for(let k=0;k<4;k++) setTimeout(()=>{
+                particles.push({type:'ring',x,y,radius:k*20,maxRadius:200+k*30,color:spawnColor,alpha:0.8,life:35,maxLife:35});
+            }, Math.round(k*100/gameSpeedMul));
+            setTimeout(()=>{
+                meleeAnims.push({type:'text_pop',x,y:y-70,life:60,maxLife:60,color:spawnColor,text:spawnText,big:true});
+            }, Math.round(300/gameSpeedMul));
         }
-        for(let k=0;k<4;k++) setTimeout(()=>{
-            particles.push({type:'ring',x,y,radius:k*20,maxRadius:200+k*30,color:spawnColor,alpha:0.8,life:35,maxLife:35});
-        }, Math.round(k*100/gameSpeedMul));
-        setTimeout(()=>{
-            meleeAnims.push({type:'text_pop',x,y:y-70,life:60,maxLife:60,color:spawnColor,text:spawnText,big:true});
-        }, Math.round(300/gameSpeedMul));
     }
 
     // 화면 흔들기 (희귀 이상)
@@ -5659,6 +6007,33 @@ function updateParticles() {
         if(p.alpha<=0){particles.splice(i,1);continue;}
         ctx.save();
         ctx.globalAlpha=p.alpha;
+        // 🪨 rockfall: 회전하는 돌덩이 (사각형 + 회전)
+        if(p.type==='rockfall'){
+            p.rotation = (p.rotation||0) + (p.rotSpeed||0.15);
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation);
+            ctx.fillStyle = p.color;
+            ctx.shadowColor = '#000';
+            ctx.shadowBlur = 4;
+            // 돌 모양 (불규칙한 다각형)
+            const sz = p.size;
+            ctx.beginPath();
+            ctx.moveTo(-sz, -sz*0.6);
+            ctx.lineTo(sz*0.7, -sz);
+            ctx.lineTo(sz, sz*0.5);
+            ctx.lineTo(sz*0.3, sz);
+            ctx.lineTo(-sz*0.8, sz*0.7);
+            ctx.lineTo(-sz, -sz*0.3);
+            ctx.closePath();
+            ctx.fill();
+            // 하이라이트
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.beginPath();
+            ctx.arc(-sz*0.3, -sz*0.3, sz*0.3, 0, Math.PI*2);
+            ctx.fill();
+            ctx.restore();
+            continue;
+        }
         ctx.fillStyle=p.color==='rainbow'?`hsl(${(Date.now()/5+i*15)%360},100%,60%)`:p.color;
         ctx.shadowColor=p.color; ctx.shadowBlur=p.size*2;
         if(p.type==='stack'){
@@ -6241,9 +6616,9 @@ function checkKlokklEvolve() {
     }
 }
 
-// 특수유닛 랜덤 지급 (해나 or 이슬이)
+// 특수유닛 랜덤 지급
 function spawnRandomSpecial(){
-    const specials = ["해나","이슬이"];
+    const specials = ["해나","이슬이","지호","나츠","반짝 빛나는 돌","미스테리한 여자","지현","해리","흑색 염색체","희주","연진"];
     const pick = specials[Math.floor(Math.random()*specials.length)];
     spawnUnit(pick);
     return pick;
@@ -7666,7 +8041,7 @@ function updateDetailUI() {
                 const tier=getTier(n);
                 const bc=getTierColor(tier);
                 // 🔒 초월 등급은 준비중 표시 (언론 조종술사 김다훈만 예외)
-                const isDisabledTranscend = (!ENABLE_TRANSCEND && tier==='초월' && n !== '언론 조종술사 김다훈' && n !== '만카이 백승채');
+                const isDisabledTranscend = (!ENABLE_TRANSCEND && tier==='초월' && n !== '언론 조종술사 김다훈' && n !== '만카이 백승채' && n !== '몸에서 돌이 떨어지는 김찬희');
                 if(isDisabledTranscend){
                     craftHtml += '<div onclick="combineUnit(\''+n+'\')" style="padding:4px 6px;margin-bottom:2px;background:#1a1a1a;border-left:2px dashed #555;border-radius:3px;cursor:not-allowed;opacity:0.5;display:flex;justify-content:space-between;align-items:center;"><span style="color:#666;font-weight:700;font-size:10px;">🔒 ['+tier+'] '+n+'</span><span style="font-size:10px;color:#888;">준비중 🔒</span></div>';
                 } else {
@@ -7815,7 +8190,7 @@ function updateCraftableUI() {
             let em=tierEmoji[t]||'✨';
             let isGod=(t==='갓');
             // 🔒 초월 유닛은 회색 처리 + "준비중" 표시 (언론 조종술사 김다훈만 예외)
-            let isDisabledTranscend = (!ENABLE_TRANSCEND && t==='초월' && r !== '언론 조종술사 김다훈' && r !== '만카이 백승채');
+            let isDisabledTranscend = (!ENABLE_TRANSCEND && t==='초월' && r !== '언론 조종술사 김다훈' && r !== '만카이 백승채' && r !== '몸에서 돌이 떨어지는 김찬희');
             let nameStyle = isGod
                 ? `background:linear-gradient(90deg,#ff0,#f0f,#0ff,#ff0);background-size:300% 100%;-webkit-background-clip:text;color:transparent;font-weight:900;animation:rainbow-anim 2s linear infinite;`
                 : (isDisabledTranscend ? `color:#666;font-weight:900;` : `color:${c};font-weight:900;`);
@@ -7963,8 +8338,8 @@ function updateCombineUI() {
 
 function combineUnit(target) {
     const rec=recipes[target];
-    // 🔒 초월 유닛 조합 임시 차단 (언론 조종술사 김다훈만 예외 허용)
-    if(!ENABLE_TRANSCEND && getTier(target)==='초월' && target !== '언론 조종술사 김다훈' && target !== '만카이 백승채'){
+    // 🔒 초월 유닛 조합 임시 차단 (예외 허용)
+    if(!ENABLE_TRANSCEND && getTier(target)==='초월' && target !== '언론 조종술사 김다훈' && target !== '만카이 백승채' && target !== '몸에서 돌이 떨어지는 김찬희'){
         showToast('🔒 초월 유닛은 준비중입니다 (조합 불가)', '#f1c40f', '#2a2200');
         return;
     }
@@ -8143,8 +8518,9 @@ function openAllRecipeModal(){
         if(!recipesForTier.length && tier!=='흔함') continue;
         const tc=tierColor2[tier];
         const isGod=tier==='갓';
-        // 🔒 초월 등급은 준비중 표시 (언론 조종술사 김다훈만 예외 - 티어 단위이므로 전체 잠금)
-        const isDisabledTranscend = (!ENABLE_TRANSCEND && tier==='초월');
+        // 🔒 초월 등급은 준비중 표시 (구현된 유닛 제외)
+        const _transcendUnlocked = ['언론 조종술사 김다훈','만카이 백승채','몸에서 돌이 떨어지는 김찬희'];
+        const isDisabledTranscend = (!ENABLE_TRANSCEND && tier==='초월' && !recipesForTier.some(r=>_transcendUnlocked.includes(r)));
         const tierLabel = isDisabledTranscend ? `${tier} 등급 🔒 (준비중)` : `${tier} 등급`;
         html+=`<div style="margin-bottom:14px;${isDisabledTranscend?'opacity:0.5;':''}">
             <div style="font-size:13px;font-weight:900;color:${isGod?'#ff0':tc};border-bottom:1px solid #333;padding-bottom:4px;margin-bottom:6px;">${tierLabel}</div>`;
