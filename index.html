@@ -3592,7 +3592,8 @@ class Unit {
                     let pushed = 0;
                     for(let u2 of units){
                         if(u2===this) continue;
-                        if(u2.tier === '흔함') continue; // 흔함 유닛은 밀지 않음
+                        // [버그수정2] getTier()로 정확히 흔함 체크 (tier 속성 오염 방지)
+                        if(getTier(u2.name)==='흔함') continue;
                         const dx=u2.x-this.x, dy=u2.y-this.y;
                         const dist=Math.sqrt(dx*dx+dy*dy);
                         if(dist < 100){
@@ -6296,6 +6297,11 @@ function doSelectDir(btnEl){
         showToast('흔함 유닛은 이동할 수 없습니다','#888','#1a1a1a');
         return;
     }
+    // [버그수정] 솔로만세 등 이동불가 상태인 유닛은 방향 버튼으로도 이동 불가
+    if(u._canMove === false){
+        showToast('⛔ 이 유닛은 현재 이동할 수 없습니다','#e74c3c','#2d1010');
+        return;
+    }
     placeUnitInDir(u, dirKey);
     updateDetailUI();
     showToast('📍 '+u.name+' → '+dirKey+' 배치!', '#3498db', '#161e35');
@@ -6728,6 +6734,11 @@ function gameLoop(ts) {
     // 이동 애니메이션 처리 (배속 적용)
     for(let i=gatherAnims.length-1;i>=0;i--){
         let g=gatherAnims[i];
+        // [버그수정1] 흔함 유닛 또는 이동불가(_canMove===false) 유닛은 gatherAnims에서 즉시 제거
+        if(getTier(g.unit.name)==='흔함' || g.unit._canMove===false){
+            gatherAnims.splice(i,1);
+            continue;
+        }
         g.p=Math.min(1, g.p+0.08*gameSpeedMul);
         let t=1-(1-g.p)*(1-g.p)*(1-g.p); // ease out cubic
         g.unit.x=g.startX+(g.targetX-g.startX)*t;
@@ -6777,7 +6788,27 @@ function gameLoop(ts) {
         if(a.p>=1){
             spawnCombineExplosion(a.cx,a.cy,a.tier);
             inventory[a.target]=(inventory[a.target]||0)+1;
-            let nu=new Unit(a.target); nu.x=a.cx; nu.y=a.cy; units.push(nu);
+            let nu=new Unit(a.target);
+            // [수정] 조합 완료 위치: 중앙(400)부터 양쪽으로 퍼지며 빈 자리에 배치
+            const COMBINE_Y = 430;
+            const COMBINE_SPACING = 48;
+            // y:430 ±30 범위 비흔함 유닛 x좌표 수집
+            const nearYUnits = units.filter(u => Math.abs(u.y - COMBINE_Y) <= 30 && getTier(u.name) !== '흔함');
+            // 중앙부터 좌우 순서로 후보 위치 탐색
+            let spawnX = 400;
+            const candidates = [400];
+            for(let offset = COMBINE_SPACING; offset <= 240; offset += COMBINE_SPACING){
+                candidates.push(400 + offset);
+                candidates.push(400 - offset);
+            }
+            for(let tx of candidates){
+                if(tx < 60 || tx > 740) continue;
+                const occupied = nearYUnits.some(u => Math.abs(u.x - tx) < COMBINE_SPACING * 0.7);
+                if(!occupied){ spawnX = tx; break; }
+            }
+            nu.x = spawnX;
+            nu.y = COMBINE_Y;
+            units.push(nu);
             updateInventoryUI();
             // [버그수정] 조합 완료 시점(유닛이 실제로 units에 추가된 후)에 미션 체크
             if(!window._missionCheckInProgress){
@@ -7318,7 +7349,7 @@ canvas.addEventListener('contextmenu', e=>{
     const {x:wx,y:wy}=screenToWorld(e.clientX, e.clientY);
     const spacing=42, cols=4;
     // 흔함 유닛은 이동 대상에서 제외 (고정 위치 유지)
-    const movableUnits = selectedUnits.filter(u => getTier(u.name) !== '흔함');
+    const movableUnits = selectedUnits.filter(u => getTier(u.name) !== '흔함' && u._canMove !== false);
     movableUnits.forEach((u,i)=>{
         const sp = spacing;
         const tx = wx + (i%cols-(cols-1)/2)*sp;
@@ -7359,8 +7390,8 @@ canvas.addEventListener('contextmenu', e=>{
     if(!selectedUnits.length) return;
     const sx=e.clientX, sy=e.clientY;
     const {x:wx,y:wy}=screenToWorld(sx,sy);
-    // 흔함 유닛은 이동 대상에서 제외 (고정 위치 유지)
-    const movableUnits = selectedUnits.filter(u => getTier(u.name) !== '흔함');
+    // 흔함 유닛 + 이동불가(_canMove===false) 유닛은 이동 대상에서 제외
+    const movableUnits = selectedUnits.filter(u => getTier(u.name) !== '흔함' && u._canMove !== false);
     if(movableUnits.length === 0) return;
     // 선택된 유닛들을 우클릭 위치 주변 격자로 배치
     const cols=Math.ceil(Math.sqrt(movableUnits.length));
