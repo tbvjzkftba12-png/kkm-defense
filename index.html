@@ -761,6 +761,7 @@ const PASSIVE_NAMES = {
     "언론 조종술사 김다훈": {passive:"멘탈쌤이 보고있다", skill:"언론 장악/해나의 응원", mana:"KKM 디펜스 장인"},
     "만카이 백승채":        {passive:"만카이",           skill:"담배한모금/솔로만세",   mana:"삼성전자 풀매수"},
     "몸에서 돌이 떨어지는 김찬희": {passive:"태생이돌", skill:"뇌성마비/전신낙석",     mana:"지각변동"},
+    "전설의 코딩술사 김상웅":    {passive:"재택근무", skill:"뻑상웅 모드/서울 출근", mana:"해킹"},
 };
 
 const PASSIVE_DESC_LEGEND = {    "얼굴이 붉어진 승채": "🍺 [패시브1] 술기운: 공격 시 5% 확률로 추가 2배 데미지(크리) | [패시브2] 만취: 공격 시 10% 확률로 주변 100 범위 50% 데미지 추가 | [마나스킬, 마나60] 술병 난사: 150×150 범위 적 최대 50마리에게 ×3 데미지 + 슬로우 3초",
@@ -776,7 +777,8 @@ const PASSIVE_DESC_LEGEND = {    "얼굴이 붉어진 승채": "🍺 [패시브1
     "공무원 다훈":        "📄 [패시브1] 잠수고수: 공격 시 0.1% 확률로 가장 밀집한 곳으로 텔레포트 + 공속 5배 (3초) | [패시브2] 민원 폭탄: 공격 시 1% 확률로 적 최대 8마리에게 (자기 공격력 50%) 데미지 + 방어 -20 (중첩불가) + 이속 -30% (2초) | [마나스킬, 마나80] 철밥통 확정: 자기 공속 ×3 + 공격력 ×3 (10초)",
     "언론 조종술사 김다훈": "📰 [패시브] 멘탈쌤이 보고있다: 공격 시 1% 확률로 10초간 공격력 +50% + 적 밀집지로 텔레포트 (중첩불가) | [스킬1] 언론 장악: 공격마다 적에게 여론 낙인 부여 (최대 5중첩) — 낙인 1개당 받는 피해 +8%, 이속 -5% / 5중첩 시 주변 120 범위 공론화 폭발 + 낙인 초기화 | [스킬2] 해나의 응원: 공격 200타 누적 시 전체 아군 공격력 +50%, 공속 +50% (15초, 중첩불가) / 하트 파티클 + 해나가 응원해! | [마나스킬, 마나80] KKM 디펜스 장인: 자신의 공격력 ×3 + 모든 데미지 고정데미지(방어력 무시)로 변경 (10초)",
     "만카이 백승채": "🍺 [패시브] 만카이: 공격마다 만취스택 +1 (최대 100중첩) / 스택 1개당 공격력 +1% 증가 / 100중첩 달성 시 만카이! 발동 — 5초간 공격력 2배 + 공격마다 주변 120범위 폭발 데미지 / 발동 중 스택 획득 불가, 종료 후 스택 초기화 | [스킬1] 담배한모금: 기본공격 시 0.1% 확률 발동 — 5초간 공격속도 +50%, 마나 충전속도 1.5배 (중첩불가) | [스킬2] 솔로만세: 공격 300타 누적 시 발동 — 맵 중앙으로 텔레포트, 중앙 기준 100범위 아군 200밖으로 밀어냄 + 진입불가, 이동불가, 사거리 맵 전체, 단일→3기 멀티샷, 공격력 +50% + 밀어낸 아군 1기당 +15% (10초) / 종료 후 버프해제 + 5초 이동불가 | [마나스킬, 마나80] 삼성전자 풀매수: 일반몹에게 현재 공격력 ×3 + 해당 몹 최대체력 10% 데미지 / 보스·미니보스·스토리에게 현재 공격력 ×30 데미지 / 전체 아군 공격력 +30% (15초)",
-    "몸에서 돌이 떨어지는 김찬희": "🪨 [패시브] 태생이돌: 평타 시 주변 90범위 스플래시(공격력×40%) + 아머브레이크 -2 누적(최대-20) | [스킬1] 뇌성마비: 10% 확률 발동 — 다음 5타 공속 8.0회/초 | [스킬2] 전신낙석: 100타마다 캐릭터 회전 + 10초간 주변 150범위 공격력×2 고정뎀 + 돌 낙하 이펙트 | [마나스킬, 마나110] 지각변동: 전체 적 3초 스턴+방어력-30+공격력×5 + 땅 갈라지는 균열 이펙트"
+    "몸에서 돌이 떨어지는 김찬희": "🪨 [패시브] 태생이돌: 평타 시 주변 90범위 스플래시(공격력×40%) + 아머브레이크 -2 누적(최대-20) | [스킬1] 뇌성마비: 10% 확률 발동 — 다음 5타 공속 8.0회/초 | [스킬2] 전신낙석: 100타마다 캐릭터 회전 + 10초간 주변 150범위 공격력×2 고정뎀 + 돌 낙하 이펙트 | [마나스킬, 마나110] 지각변동: 전체 적 3초 스턴+방어력-30+공격력×5 + 땅 갈라지는 균열 이펙트",
+    "전설의 코딩술사 김상웅": "💻 [패시브] 재택근무: 맵 내 등급 1순위→공격력×공속 2순위 기준 최강 아군 옆에 밀착, 밀착 대상 공격력+50%/사거리 공유, 새 유닛 소환 시 자동 재계산, 솔로만세 발동 시 논외로 옆 유지+사거리 동기화 | [스킬1] 뻑상웅 모드: 공격 시 5% 확률 발동 — 5초간 공격력 2배 + 빨간 이펙트 | [스킬2] 서울 출근: 200타마다 현재 라인 적 전부 15초간 '출근하는 사람'으로 변이 (이름/이모지 변경, 방어력-50, 이속-40%) | [마나스킬, 마나80] 해킹: 분신 소환 (15초, 패시브+스킬 동일 사용, 마나스킬 불가) — 분신이 본체를 밀착 대상으로 삼아 본체 공격력+50% 추가"
 };
 const PASSIVE_DESC_RARE = {
     "꼬장 승채":      "💥 꼬장: 공격 시 10% 확률로 술병 폭발 - 범위 10000 데미지 | 공격 시 10% 확률로 ROTC상웅 소환",
@@ -1809,7 +1811,7 @@ const storyData = [
     // 🔒 미션 3번 보상: 특수 유닛 → ENABLE_SPECIAL_REWARD=false면 임시로 희귀 선택 위습 1개 지급
     { name:"3. 쌀콩리턴",
       hp:900000,
-      get rewardMsg(){ return "특수 유닛 [해나] 지급!"; },
+      get rewardMsg(){ return "특수 유닛 랜덤 1개 지급!"; },
       reward:()=>{
           const _spM=spawnRandomSpecial();
           showToast('💕 쌀콩리턴 클리어! 특수 유닛 ['+_spM+'] 지급!', '#ff69b4', '#2d1020');
@@ -2046,13 +2048,13 @@ class Enemy {
                    : isBoss ? 0.5
                    : (isMiniBoss ? 0.6 : 1.5 + wave*0.04);
 
-        let baseHp = Math.floor(120*Math.pow(1.22,wave));
+        let baseHp = Math.floor(120*Math.pow(1.18,wave));
         if(wave > 10) baseHp *= 2;
         if(wave > 20) baseHp *= 2;
-        // R55 이상 추가 배수 (초월 없이 클리어 방지)
-        if(wave >= 61) baseHp *= 5;
-        else if(wave >= 60) baseHp *= 4;
-        else if(wave >= 55) baseHp *= 3;
+        // R55 이상 추가 배수 조정 (완만하게)
+        if(wave >= 61) baseHp *= 4;
+        else if(wave >= 60) baseHp *= 3;
+        else if(wave >= 55) baseHp *= 2;
         // 1~10라운드 일반몹 너프 (미니보스/보스 제외)
         let normalHpMult = 1;
         if(!isBoss && !isMiniBoss){
@@ -2060,7 +2062,7 @@ class Enemy {
             else if(wave >= 6 && wave <= 10) normalHpMult = 0.70;
         }
         this.maxHp = isFinalBoss ? 3000000000
-                   : isBoss ? (wave >= 60 ? 1000000000 : Math.floor(2000*Math.pow(1.18,wave)))
+                   : isBoss ? (wave >= 60 ? 500000000 : Math.floor(2000*Math.pow(1.15,wave)))
                    : (isMiniBoss ? baseHp * 10 : Math.floor(baseHp * normalHpMult));
         this.hp=this.maxHp;
         this.name = isFinalBoss ? `👾괴물 병선`
@@ -2071,7 +2073,7 @@ class Enemy {
                    : (isMiniBoss ? '#9b59b6' : '#e74c3c');
         this.glowPhase=Math.random()*Math.PI*2;
 
-        const baseArmor = Math.floor((wave-1) / 5) * 3; // 방어력 증가 5→3
+        const baseArmor = Math.floor((wave-1) / 5) * 2; // 방어력 5라운드마다 +2로 완화
         this.armor = isFinalBoss ? 85
                    : isBoss ? (baseArmor + 15)
                    : (isMiniBoss ? (baseArmor + 8) : baseArmor);
@@ -2337,6 +2339,7 @@ class Unit {
             "언론 조종술사 김다훈": {dmg:150000,type:"ranged", range:180, cd:12},  // 공속 5.0
             "만카이 백승채":        {dmg:150000,type:"melee",  range:130, cd:12},  // 공속 5.0
             "몸에서 돌이 떨어지는 김찬희": {dmg:250000,type:"melee", range:130, cd:40}, // 공속 1.5
+            "전설의 코딩술사 김상웅": {dmg:150000,type:"ranged", range:180, cd:12}, // 공속 5.0
         };
         if(attackTypes[name]){
             const at = attackTypes[name];
@@ -2428,6 +2431,19 @@ class Unit {
             rockFallActive: false,
             quakeActive: false,
         };
+        if(name === "전설의 코딩술사 김상웅") this.passiveData = {
+            name:"재택근무",
+            attachTarget: null,     // 현재 밀착 대상 유닛
+            _attachBuffKey: null,   // addDmgBuff 키 (id 기반)
+            _origRange: 180,        // 원래 사거리 저장
+            hitCount: 0,            // 서울 출근 타수
+            seoulActive: false,     // 서울 출근 발동 중
+            bbeokActive: false,     // 뻑상웅 모드 발동 중
+            bbeokCount: 0,          // 뻑상웅 남은 타수
+            _origCdBbeok: 0,        // 뻑상웅 전 원본 maxCd
+            _isClone: false,        // 분신 여부
+            cloneUnit: null,        // 생성된 분신 참조
+        };
 
         // 킬 카운트
         this.kills = 0;
@@ -2456,6 +2472,7 @@ class Unit {
                 "언론 조종술사 김다훈": 80,
                 "만카이 백승채": 80,
                 "몸에서 돌이 떨어지는 김찬희": 110,
+                "전설의 코딩술사 김상웅": 80,
             };
             if(transcendManaMap[name]){
                 this.maxMana = transcendManaMap[name];
@@ -2910,6 +2927,10 @@ class Unit {
             if(pd.soloActive){
                 for(let u2 of units){
                     if(u2 === this) continue;
+                    // [버그수정] 흔함 유닛 + 상웅은 밀지 않음
+                    if(getTier(u2.name)==='흔함') continue;
+                    if(u2.name==='전설의 코딩술사 김상웅') continue;
+                    if(u2.passiveData && u2.passiveData._isClone) continue;
                     const dx=u2.x-this.x, dy=u2.y-this.y;
                     const dist=Math.sqrt(dx*dx+dy*dy);
                     if(dist < 200){
@@ -2937,7 +2958,73 @@ class Unit {
         this.motionX += this.motionVX; this.motionY += this.motionVY;
         this.squashX += (1-this.squashX)*0.2; this.squashY += (1-this.squashY)*0.2;
 
-        // ── 안흔함 패시브 처리 ──
+        // ── 초월 전설의 코딩술사 김상웅: 재택근무 밀착 이동 ──
+        if(this.name === '전설의 코딩술사 김상웅' && this.passiveData){
+            const pdS = this.passiveData;
+            // 분신 여부 - 분신이면 본체(attachTarget)를 따라다님
+            // 본체이면 최강 유닛을 찾아서 따라다님
+            if(!pdS._isClone){
+                // 밀착 대상 재계산 (매 30프레임)
+                pdS._recalcTimer = (pdS._recalcTimer||0) + 1;
+                if(pdS._recalcTimer >= 30){
+                    pdS._recalcTimer = 0;
+                    const tierRank = {'흔함':0,'안흔함':1,'특별':2,'희귀':3,'전설':4,'초월':5,'갓':6};
+                    let best = null, bestScore = -1;
+                    for(let u2 of units){
+                        if(u2 === this) continue;
+                        if(u2.passiveData && u2.passiveData._isClone) continue; // 분신 제외
+                        if(getTier(u2.name) === '흔함') continue;
+                        if(getTier(u2.name) === '특수') continue;
+                        const tierScore = (tierRank[getTier(u2.name)]||0) * 1e12;
+                        const atkScore = (u2.damage||0) * (60/(u2.maxCd||1));
+                        const total = tierScore + atkScore;
+                        if(total > bestScore){ bestScore = total; best = u2; }
+                    }
+                    // 밀착 대상 변경 시 기존 버프 제거 후 새 버프 적용
+                    if(best !== pdS.attachTarget){
+                        if(pdS.attachTarget && pdS._attachBuffKey){
+                            pdS.attachTarget.removeDmgBuff(pdS._attachBuffKey);
+                        }
+                        pdS.attachTarget = best;
+                        if(best){
+                            pdS._attachBuffKey = 'jaetaek_' + this.id;
+                            best.addDmgBuff(pdS._attachBuffKey, 1.5);
+                        }
+                    }
+                }
+            }
+            // 밀착 이동 (본체/분신 공통)
+            const _target = pdS._isClone ? pdS.attachTarget : pdS.attachTarget;
+            if(_target && units.includes(_target)){
+                const dx = _target.x - this.x;
+                const dy = _target.y - this.y;
+                const dist = Math.sqrt(dx*dx+dy*dy);
+                const offsetX = 35, offsetY = 0;
+                const targetX = _target.x + offsetX;
+                const targetY = _target.y + offsetY;
+                const ddx = targetX - this.x, ddy = targetY - this.y;
+                const ddist = Math.sqrt(ddx*ddx+ddy*ddy);
+                if(ddist > 5){
+                    const spd = Math.min(ddist, 8 * (gameSpeedMul||1));
+                    this.x += (ddx/ddist)*spd;
+                    this.y += (ddy/ddist)*spd;
+                }
+                // 사거리/공격력 동기화 - 분신은 공격력 동기화 안함 (무한 증폭 방지)
+                if(!pdS._soloSyncActive){
+                    this.range = _target.range;
+                }
+                if(!pdS._isClone){
+                    // 본체만 밀착 대상 공격력 동기화
+                    const _targetFinalDmg = _target.damage;
+                    if(this._baseDmg !== _targetFinalDmg){
+                        this._baseDmg = _targetFinalDmg;
+                        let totalMult = 1;
+                        if(this._dmgBuffs) for(const v of Object.values(this._dmgBuffs)) totalMult *= v;
+                        this.damage = Math.round(this._baseDmg * totalMult);
+                    }
+                }
+            }
+        }
         this.updatePassive();
 
         if(this.cd>0){
@@ -3003,7 +3090,15 @@ class Unit {
         }
         if(!target && !mission.isDestroyed){
             let dx=mission.x-this.x,dy=mission.y-this.y;
-            if(Math.sqrt(dx*dx+dy*dy)<=this.range) target=mission;
+            // 솔로만세 중(상웅 포함): 라인몹이 있으면 스토리 타겟 안함
+            const _isSoloMode = this._soloMultiShot ||
+                (this.name==='전설의 코딩술사 김상웅' && this.passiveData &&
+                 this.passiveData.attachTarget && this.passiveData.attachTarget._soloMultiShot);
+            if(_isSoloMode && enemies.some(e=>!e.isBoss&&!e.isMiniBoss&&e.hp>0&&!e.isDestroyed)){
+                // 라인몹 있으면 스토리 패스
+            } else {
+                if(Math.sqrt(dx*dx+dy*dy)<=this.range) target=mission;
+            }
         }
         if(target){
             // 방어력 시스템: armor=0(일반몹), armor=30(보스/스토리 기본)
@@ -3700,12 +3795,14 @@ class Unit {
                     this.x = WORLD_W/2;
                     this.y = WORLD_H/2;
                     spawnParticles(this.x,this.y,'#9b59b6',20,7);
-                    // 흔함 제외 아군만 밀어냄
+                    // 흔함 제외 아군만 밀어냄 (전설의 코딩술사 김상웅은 논외 - 재택근무 패시브)
                     let pushed = 0;
                     for(let u2 of units){
                         if(u2===this) continue;
-                        // [버그수정2] getTier()로 정확히 흔함 체크 (tier 속성 오염 방지)
                         if(getTier(u2.name)==='흔함') continue;
+                        // 재택근무 패시브 유닛(상웅 본체/분신)은 밀지 않음
+                        if(u2.name==='전설의 코딩술사 김상웅') continue;
+                        if(u2.passiveData && u2.passiveData._isClone) continue;
                         const dx=u2.x-this.x, dy=u2.y-this.y;
                         const dist=Math.sqrt(dx*dx+dy*dy);
                         if(dist < 100){
@@ -3724,6 +3821,16 @@ class Unit {
                     this.addDmgBuff('solo', _soloBuff);
                     this.range = 9999;
                     this._soloMultiShot = true;
+                    // 재택근무 상웅: 솔로만세 사거리에 맞춰 동기화
+                    for(let u2 of units){
+                        if(u2.name==='전설의 코딩술사 김상웅' && u2.passiveData){
+                            const pd2 = u2.passiveData;
+                            if(pd2.attachTarget === this || (pd2._isClone && pd2.attachTarget === this)){
+                                u2.range = 9999;
+                                pd2._soloSyncActive = true;
+                            }
+                        }
+                    }
                     meleeAnims.push({type:'text_pop',x:this.x,y:this.y-60,life:60,maxLife:60,color:'#9b59b6',text:'💜 솔로만세!',big:true});
                     meleeAnims.push({type:'text_pop',x:this.x,y:this.y-90,life:55,maxLife:55,color:'#fff',text:`밀어낸 아군: ${pushed}기 (+${Math.round(pushed*15)}%)`,big:false});
                     particles.push({type:'ring',x:this.x,y:this.y,radius:0,maxRadius:200,color:'#9b59b6',alpha:0.6,life:35,maxLife:35});
@@ -3737,6 +3844,13 @@ class Unit {
                         this._soloMultiShot = false;
                         pdB.soloActive = false;
                         pdB.soloLocked = true;
+                        // 재택근무 상웅 사거리 원복
+                        for(let u2 of units){
+                            if(u2.name==='전설의 코딩술사 김상웅' && u2.passiveData && u2.passiveData._soloSyncActive){
+                                u2.range = u2.passiveData.attachTarget ? u2.passiveData.attachTarget.range : 180;
+                                u2.passiveData._soloSyncActive = false;
+                            }
+                        }
                         this._canMove = false;
                         // 원래 위치로 복귀 (밀기 없이)
                         spawnParticles(this.x,this.y,'#9b59b6',10,5);
@@ -3887,7 +4001,76 @@ class Unit {
                 }
             }
 
-            // ── 희귀 유닛 공격 성공 패시브 ──
+            // ── 초월: 전설의 코딩술사 김상웅 공격 성공 패시브/스킬 ──
+            if(this.tier==='초월' && this.passiveData && this.name==='전설의 코딩술사 김상웅'){
+                const pdS = this.passiveData;
+
+                // ── 스킬1: 뻑상웅 모드 - 5% 확률, 5초간 공격력 2배 ──
+                if(!pdS.bbeokActive && Math.random() < 0.05){
+                    pdS.bbeokActive = true;
+                    this._redTint = 40;
+                    this.addDmgBuff('bbeok_' + this.id, 2);
+                    particles.push({type:'ring',x:this.x,y:this.y,radius:0,maxRadius:80,color:'#e74c3c',alpha:0.7,life:22,maxLife:22});
+                    spawnParticles(this.x, this.y, '#e74c3c', 10, 4);
+                    meleeAnims.push({type:'text_pop',x:this.x,y:this.y-50,life:45,maxLife:45,color:'#e74c3c',text:'뻑이가유~🍺',big:true});
+                    showToast('🍺 뻑상웅 모드! 공격력 2배 (5초)','#e74c3c','#2d1010');
+                    setTimeout(()=>{
+                        pdS.bbeokActive = false;
+                        this._redTint = 0;
+                        this.removeDmgBuff('bbeok_' + this.id);
+                    }, Math.round(5000/gameSpeedMul));
+                }
+
+                // ── 스킬2: 서울 출근 - 200타마다 라인 적 변이 ──
+                // 분신은 별도 카운트, 마나스킬 분신이면 공유 안함
+                if(!pdS._isClone){
+                    pdS.hitCount = (pdS.hitCount||0) + 1;
+                    if(pdS.hitCount >= 200 && !pdS.seoulActive){
+                        pdS.hitCount = 0;
+                        pdS.seoulActive = true;
+                        meleeAnims.push({type:'text_pop',x:this.x,y:this.y-60,life:60,maxLife:60,color:'#3498db',text:'🚇 서울 출근....',big:true});
+                        showToast('🚇 서울 출근! 라인 몹 전부 출근하는 사람들로 변이 (15초)','#3498db','#001a2a');
+                        // 현재 라인에 있는 적 변이 (보스/미니보스 포함)
+                        const seoulTargets = [];
+                        for(let e of enemies){
+                            seoulTargets.push(e);
+                            e._seoulOrigName = e.name;
+                            e._seoulOrigIcon = e.icon;
+                            e._seoulOrigSpeed = e.baseSpeed || e.speed;
+                            // 보스/미니보스는 더 크게 표시
+                            if(e.isBoss){
+                                e.name = '🏢 부장님 (출근중)';
+                                e.icon = '👨‍💼';
+                            } else if(e.isMiniBoss){
+                                e.name = '📋 과장님 (출근중)';
+                                e.icon = '🧑‍💼';
+                            } else {
+                                e.name = '출근하는 사람';
+                                e.icon = '👔';
+                            }
+                            e.armorDebuff = (e.armorDebuff||0) - 50;
+                            e.baseSpeed = e.baseSpeed || e.speed;
+                            e.speed = e.baseSpeed * 0.6; // 이속 -40%
+                            e.slowTimer = Math.round(600/gameSpeedMul);
+                            spawnParticles(e.x, e.y, '#3498db', 5, 3);
+                        }
+                        // 10초 후 원복
+                        setTimeout(()=>{
+                            for(let e of seoulTargets){
+                                if(!enemies.includes(e)) continue;
+                                e.name = e._seoulOrigName || e.name;
+                                e.icon = e._seoulOrigIcon || e.icon;
+                                e.armorDebuff = (e.armorDebuff||0) + 50;
+                                e.speed = e._seoulOrigSpeed || e.speed;
+                                delete e._seoulOrigName;
+                                delete e._seoulOrigIcon;
+                                delete e._seoulOrigSpeed;
+                            }
+                            pdS.seoulActive = false;
+                        }, Math.round(15000/gameSpeedMul));
+                    }
+                }
+            }
             if(this.tier==='희귀' && this.passiveData){
                 const pd3=this.passiveData;
                 // 꼬장 승채: 10% 폭발 범위뎀 3000
@@ -5792,6 +5975,60 @@ function triggerLegendManaSkill(unit, lastTarget){
             break;
         }
 
+        case '전설의 코딩술사 김상웅': {
+            const pdH = unit.passiveData;
+            // 분신이면 해킹 사용 불가 (분신의 분신 방지)
+            if(pdH && pdH._isClone){ unit._manaSkillActive=false; break; }
+            if(pdH && !pdH.cloneUnit){
+                // 분신 생성
+                const clone = new Unit('전설의 코딩술사 김상웅');
+                clone.x = unit.x + 40;
+                clone.y = unit.y;
+                clone.damage = unit.damage;
+                clone._baseDmg = unit._baseDmg || unit.damage;
+                clone.range = unit.range;
+                clone.maxCd = unit.maxCd;
+                clone.mana = 0;
+                clone.maxMana = 9999; // 분신은 마나스킬 못씀
+                if(clone.passiveData){
+                    clone.passiveData._isClone = true;
+                    clone.passiveData.attachTarget = unit; // 분신은 본체를 따라다님
+                }
+                units.push(clone);
+                inventory['전설의 코딩술사 김상웅'] = (inventory['전설의 코딩술사 김상웅']||0)+1;
+                pdH.cloneUnit = clone;
+                // 분신이 본체에 addDmgBuff
+                const cloneBuffKey = 'jaetaek_' + clone.id;
+                clone.passiveData._attachBuffKey = cloneBuffKey;
+                unit.addDmgBuff(cloneBuffKey, 1.5);
+                meleeAnims.push({type:'text_pop',x:unit.x,y:unit.y-65,life:65,maxLife:65,color:'#00bfff',text:'💻 해킹! 분신 소환!',big:true});
+                spawnParticles(clone.x, clone.y, '#00bfff', 15, 5);
+                particles.push({type:'ring',x:clone.x,y:clone.y,radius:0,maxRadius:100,color:'#00bfff',alpha:0.7,life:25,maxLife:25});
+                showToast('💻 해킹! 분신 소환 (15초)','#00bfff','#001a2a');
+                // 15초 후 분신 소멸
+                setTimeout(()=>{
+                    if(pdH.cloneUnit && units.includes(pdH.cloneUnit)){
+                        // 버프 제거
+                        unit.removeDmgBuff(cloneBuffKey);
+                        // 분신이 밀착중인 대상 버프 제거
+                        if(clone.passiveData && clone.passiveData.attachTarget && clone.passiveData._attachBuffKey){
+                            clone.passiveData.attachTarget.removeDmgBuff(clone.passiveData._attachBuffKey);
+                        }
+                        // 분신 제거
+                        const idx = units.indexOf(pdH.cloneUnit);
+                        if(idx !== -1) units.splice(idx, 1);
+                        inventory['전설의 코딩술사 김상웅'] = Math.max(0,(inventory['전설의 코딩술사 김상웅']||1)-1);
+                        spawnParticles(clone.x, clone.y, '#00bfff', 10, 4);
+                        meleeAnims.push({type:'text_pop',x:clone.x,y:clone.y-40,life:35,maxLife:35,color:'#888',text:'분신 소멸',big:false});
+                    }
+                    pdH.cloneUnit = null;
+                    unit._manaSkillActive = false;
+                    updateInventoryUI();
+                }, Math.round(15000/gameSpeedMul));
+            }
+            break;
+        }
+
         case '몸에서 돌이 떨어지는 김찬희': {
             // 지각변동: 땅 갈라지는 균열 + 전체 스턴 + 방어력-30 + 공격력×5
             const pdQ = unit.passiveData;
@@ -6618,7 +6855,8 @@ function checkKlokklEvolve() {
 
 // 특수유닛 랜덤 지급
 function spawnRandomSpecial(){
-    const specials = ["해나","이슬이","지호","나츠","반짝 빛나는 돌","미스테리한 여자","지현","해리","흑색 염색체","희주","연진"];
+    // 현재 구현된 초월 재료 특수 유닛만 포함
+    const specials = ["해나","이슬이","지호","반짝 빛나는 돌"];
     const pick = specials[Math.floor(Math.random()*specials.length)];
     spawnUnit(pick);
     return pick;
@@ -8041,9 +8279,10 @@ function updateDetailUI() {
                 const tier=getTier(n);
                 const bc=getTierColor(tier);
                 // 🔒 초월 등급은 준비중 표시 (언론 조종술사 김다훈만 예외)
-                const isDisabledTranscend = (!ENABLE_TRANSCEND && tier==='초월' && n !== '언론 조종술사 김다훈' && n !== '만카이 백승채' && n !== '몸에서 돌이 떨어지는 김찬희');
+                const _unlockedTranscend = ['언론 조종술사 김다훈','만카이 백승채','몸에서 돌이 떨어지는 김찬희','전설의 코딩술사 김상웅'];
+                const isDisabledTranscend = (!ENABLE_TRANSCEND && tier==='초월' && !_unlockedTranscend.includes(n));
                 if(isDisabledTranscend){
-                    craftHtml += '<div onclick="combineUnit(\''+n+'\')" style="padding:4px 6px;margin-bottom:2px;background:#1a1a1a;border-left:2px dashed #555;border-radius:3px;cursor:not-allowed;opacity:0.5;display:flex;justify-content:space-between;align-items:center;"><span style="color:#666;font-weight:700;font-size:10px;">🔒 ['+tier+'] '+n+'</span><span style="font-size:10px;color:#888;">준비중 🔒</span></div>';
+                    craftHtml += '<div style="padding:4px 6px;margin-bottom:2px;background:#1a1a1a;border-left:2px dashed #555;border-radius:3px;cursor:not-allowed;opacity:0.5;display:flex;justify-content:space-between;align-items:center;"><span style="color:#666;font-weight:700;font-size:10px;">🔒 ['+tier+'] '+n+'</span><span style="font-size:10px;color:#888;">준비중 🔒</span></div>';
                 } else {
                     craftHtml += '<div onclick="combineUnit(\''+n+'\')" style="padding:4px 6px;margin-bottom:2px;background:#1a1e28;border-left:2px solid '+bc+';border-radius:3px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;"><span style="color:'+bc+';font-weight:700;font-size:10px;">['+tier+'] '+n+'</span><span style="font-size:10px;color:#2ecc71;">조합 ▶</span></div>';
                 }
@@ -8190,7 +8429,7 @@ function updateCraftableUI() {
             let em=tierEmoji[t]||'✨';
             let isGod=(t==='갓');
             // 🔒 초월 유닛은 회색 처리 + "준비중" 표시 (언론 조종술사 김다훈만 예외)
-            let isDisabledTranscend = (!ENABLE_TRANSCEND && t==='초월' && r !== '언론 조종술사 김다훈' && r !== '만카이 백승채' && r !== '몸에서 돌이 떨어지는 김찬희');
+            let isDisabledTranscend = (!ENABLE_TRANSCEND && t==='초월' && !['언론 조종술사 김다훈','만카이 백승채','몸에서 돌이 떨어지는 김찬희','전설의 코딩술사 김상웅'].includes(r));
             let nameStyle = isGod
                 ? `background:linear-gradient(90deg,#ff0,#f0f,#0ff,#ff0);background-size:300% 100%;-webkit-background-clip:text;color:transparent;font-weight:900;animation:rainbow-anim 2s linear infinite;`
                 : (isDisabledTranscend ? `color:#666;font-weight:900;` : `color:${c};font-weight:900;`);
@@ -8339,7 +8578,7 @@ function updateCombineUI() {
 function combineUnit(target) {
     const rec=recipes[target];
     // 🔒 초월 유닛 조합 임시 차단 (예외 허용)
-    if(!ENABLE_TRANSCEND && getTier(target)==='초월' && target !== '언론 조종술사 김다훈' && target !== '만카이 백승채' && target !== '몸에서 돌이 떨어지는 김찬희'){
+    if(!ENABLE_TRANSCEND && getTier(target)==='초월' && target !== '언론 조종술사 김다훈' && target !== '만카이 백승채' && target !== '몸에서 돌이 떨어지는 김찬희' && target !== '전설의 코딩술사 김상웅'){
         showToast('🔒 초월 유닛은 준비중입니다 (조합 불가)', '#f1c40f', '#2a2200');
         return;
     }
@@ -8419,14 +8658,14 @@ function showToast(msg, color='#e74c3c', bg='#2d1010') {
     }
     // 배경색을 50% 반투명으로 변환 (hex → rgba)
     function _toRgba50(hex){
-        if(!hex || typeof hex !== 'string') return 'rgba(45,16,16,0.5)';
+        if(!hex || typeof hex !== 'string') return 'rgba(45,16,16,0.4)';
         let h = hex.replace('#','');
         if(h.length === 3) h = h.split('').map(c=>c+c).join('');
         if(h.length !== 6) return 'rgba(45,16,16,0.5)';
         const r = parseInt(h.substring(0,2),16);
         const g = parseInt(h.substring(2,4),16);
         const b = parseInt(h.substring(4,6),16);
-        return 'rgba('+r+','+g+','+b+',0.5)';
+        return 'rgba('+r+','+g+','+b+',0.4)';
     }
     t.style.background=_toRgba50(bg);
     t.style.border='1px solid '+color;
@@ -8519,7 +8758,7 @@ function openAllRecipeModal(){
         const tc=tierColor2[tier];
         const isGod=tier==='갓';
         // 🔒 초월 등급은 준비중 표시 (구현된 유닛 제외)
-        const _transcendUnlocked = ['언론 조종술사 김다훈','만카이 백승채','몸에서 돌이 떨어지는 김찬희'];
+        const _transcendUnlocked = ['언론 조종술사 김다훈','만카이 백승채','몸에서 돌이 떨어지는 김찬희','전설의 코딩술사 김상웅'];
         const isDisabledTranscend = (!ENABLE_TRANSCEND && tier==='초월' && !recipesForTier.some(r=>_transcendUnlocked.includes(r)));
         const tierLabel = isDisabledTranscend ? `${tier} 등급 🔒 (준비중)` : `${tier} 등급`;
         html+=`<div style="margin-bottom:14px;${isDisabledTranscend?'opacity:0.5;':''}">
