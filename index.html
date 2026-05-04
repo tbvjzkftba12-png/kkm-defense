@@ -443,6 +443,19 @@
             <span style="font-size:14px;font-weight:900;color:#f1c40f;">📋 게임 메뉴</span>
             <button onclick="closeRightPanel()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;">✕</button>
         </div>
+        <!-- 탭 버튼 -->
+        <div style="display:flex;gap:4px;margin-bottom:10px;">
+            <button id="tab-btn-menu" onclick="switchRightTab('menu')" style="
+                flex:1;padding:7px 0;font-size:12px;font-weight:900;
+                background:#2a2200;border:1.5px solid #f1c40f;color:#f1c40f;
+                border-radius:6px;cursor:pointer;">⚙️ 메뉴</button>
+            <button id="tab-btn-dex" onclick="switchRightTab('dex')" style="
+                flex:1;padding:7px 0;font-size:12px;font-weight:900;
+                background:#161a22;border:1.5px solid #555;color:#aaa;
+                border-radius:6px;cursor:pointer;">📖 도감</button>
+        </div>
+        <!-- 게임 메뉴 탭 -->
+        <div id="tab-content-menu">
         <!-- 게임 설정 -->
         <div class="panel-box" style="margin-bottom:12px;">
             <h2 style="margin-bottom:6px;">⚙️ 게임 설정</h2>
@@ -519,6 +532,36 @@
             <h2 style="margin-bottom:4px;">🏆 게임 기록 (최근 5)</h2>
             <div id="game-records" style="font-size:10px;color:#ccc;"></div>
         </div>
+        </div><!-- /tab-content-menu -->
+
+        <!-- 도감 탭 -->
+        <div id="tab-content-dex" style="display:none;">
+            <!-- 등급 필터 -->
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">
+                <button class="dex-filter-btn dex-filter-active" data-tier="전체" onclick="dexFilter('전체')"
+                    style="padding:4px 8px;font-size:11px;font-weight:900;border-radius:12px;border:1.5px solid #aaa;background:#333;color:#fff;cursor:pointer;">전체</button>
+                <button class="dex-filter-btn" data-tier="흔함" onclick="dexFilter('흔함')"
+                    style="padding:4px 8px;font-size:11px;font-weight:900;border-radius:12px;border:1.5px solid #2ecc71;background:#0d1a0d;color:#2ecc71;cursor:pointer;">흔함</button>
+                <button class="dex-filter-btn" data-tier="안흔함" onclick="dexFilter('안흔함')"
+                    style="padding:4px 8px;font-size:11px;font-weight:900;border-radius:12px;border:1.5px solid #9b59b6;background:#1a0d1a;color:#9b59b6;cursor:pointer;">안흔함</button>
+                <button class="dex-filter-btn" data-tier="특별" onclick="dexFilter('특별')"
+                    style="padding:4px 8px;font-size:11px;font-weight:900;border-radius:12px;border:1.5px solid #3498db;background:#0d1220;color:#3498db;cursor:pointer;">특별</button>
+                <button class="dex-filter-btn" data-tier="희귀" onclick="dexFilter('희귀')"
+                    style="padding:4px 8px;font-size:11px;font-weight:900;border-radius:12px;border:1.5px solid #e67e22;background:#1a0f00;color:#e67e22;cursor:pointer;">희귀</button>
+                <button class="dex-filter-btn" data-tier="전설" onclick="dexFilter('전설')"
+                    style="padding:4px 8px;font-size:11px;font-weight:900;border-radius:12px;border:1.5px solid #e74c3c;background:#1a0808;color:#e74c3c;cursor:pointer;">전설</button>
+                <button class="dex-filter-btn" data-tier="초월" onclick="dexFilter('초월')"
+                    style="padding:4px 8px;font-size:11px;font-weight:900;border-radius:12px;border:1.5px solid #f1c40f;background:#1a1500;color:#f1c40f;cursor:pointer;">초월</button>
+                <button class="dex-filter-btn" data-tier="갓" onclick="dexFilter('갓')"
+                    style="padding:4px 8px;font-size:11px;font-weight:900;border-radius:12px;border:1.5px solid #fff;background:#111;color:#fff;cursor:pointer;">갓</button>
+                <button class="dex-filter-btn" data-tier="특수" onclick="dexFilter('특수')"
+                    style="padding:4px 8px;font-size:11px;font-weight:900;border-radius:12px;border:1.5px solid #ff69b4;background:#1a0011;color:#ff69b4;cursor:pointer;">특수</button>
+            </div>
+            <!-- 유닛 목록 -->
+            <div id="dex-unit-list" style="display:flex;flex-direction:column;gap:5px;"></div>
+            <!-- 유닛 상세 패널 -->
+            <div id="dex-detail-panel" style="display:none;margin-top:10px;background:#0d0f14;border:1.5px solid #f1c40f;border-radius:10px;padding:10px;"></div>
+        </div><!-- /tab-content-dex -->
     </div>
 </div>
 
@@ -762,6 +805,7 @@ const PASSIVE_NAMES = {
     "만카이 백승채":        {passive:"만카이",           skill:"담배한모금/솔로만세",   mana:"삼성전자 풀매수"},
     "몸에서 돌이 떨어지는 김찬희": {passive:"태생이돌", skill:"뇌성마비/전신낙석",     mana:"지각변동"},
     "전설의 코딩술사 김상웅":    {passive:"재택근무", skill:"뻑상웅 모드/서울 출근", mana:"해킹"},
+    "1등 항해사 윤병선":         {passive:"로봇판단", skill:"허언증/병선마을 건설",   mana:"어그로 끌기"},
 };
 
 const PASSIVE_DESC_LEGEND = {    "얼굴이 붉어진 승채": "🍺 [패시브1] 술기운: 공격 시 5% 확률로 추가 2배 데미지(크리) | [패시브2] 만취: 공격 시 10% 확률로 주변 100 범위 50% 데미지 추가 | [마나스킬, 마나60] 술병 난사: 150×150 범위 적 최대 50마리에게 ×3 데미지 + 슬로우 3초",
@@ -772,13 +816,14 @@ const PASSIVE_DESC_LEGEND = {    "얼굴이 붉어진 승채": "🍺 [패시브1
     "패션왕자 동수":      "👗 [패시브1] 비율 깡패: 공격 시 5% 확률로 적 최대체력 5% 추가 데미지 | [패시브2] 런웨이: 공격 시 10% 확률로 타겟 주변 80 범위 적 이속 -80% (3초) | [마나스킬, 마나90] 패션쇼: 전체 아군 공격력 +50% + 150×150 적 이속 -50% (10초)",
     "KIA 래규":           "🚗 [패시브1] 대기업 정규직: 흔함 제외 유닛 1마리당 자신의 기본공격력 +10% (실시간) | [패시브2] 라인 파업: 공격 시 0.1% 확률로 맵 전체 적 2초 스턴 + (현재 공격력 + 각 적 최대체력 5%) 데미지 | [마나스킬, 마나80] 기아 풀옵션: 전체 아군 공속 2배 (10초, 중복방지)",
     "정신차린 훈덕":      "🪖 [패시브1] 해병대 정신: 공격 시 5% 확률로 자기 공격력 +50 영구 | [패시브2] 특수부대 돌격: 공격 시 1% 확률로 체력 최대 적에게 (자기 공격력 + 대상 남은체력 25%) ×10연타 | [마나스킬, 마나80] 해병대 전술: 전체 아군 사거리 2배 (10초, 중복방지)",
-    "디엠티 건모":        "🏢 [패시브1] 신입 패기: 공격 시 0.1% 확률로 자기 공격력 +30 영구 | [패시브2] 야근: 공격 시 1% 확률로 자기 공속 3배 (5초, 중첩불가) | [마나스킬, 마나50] 꿈의 실현: 랜덤 희귀 유닛 1기 소환 (10초간 공격 가능, 이동 불가)",
+    "디엠티 건모":        "🏢 [패시브1] 신입 패기: 공격 시 2% 확률로 맵 전체 아군 공격력 +10 영구 | [패시브2] 야근: 공격 시 1% 확률로 자기 공속 3배 (5초, 중첩불가) | [마나스킬, 마나50] 꿈의 실현: 랜덤 희귀 유닛 1기 소환 (10초간 공격 가능, 이동 불가)",
     "연진 만난 병훈":     "💕 [패시브1] 금연금욕: 공격 시 5% 확률로 타겟 3초 정지 | [패시브2] 연진 파워: 공격 시 10% 확률로 전체 아군 공격력 +30% (10초, 중복방지) + 전설 유닛 마나 +20 충전 | [마나스킬, 마나70] 진심: 150×150 범위 적 현재 체력 50% 감소 (보스 10%)",
     "공무원 다훈":        "📄 [패시브1] 잠수고수: 공격 시 0.1% 확률로 가장 밀집한 곳으로 텔레포트 + 공속 5배 (3초) | [패시브2] 민원 폭탄: 공격 시 1% 확률로 적 최대 8마리에게 (자기 공격력 50%) 데미지 + 방어 -20 (중첩불가) + 이속 -30% (2초) | [마나스킬, 마나80] 철밥통 확정: 자기 공속 ×3 + 공격력 ×3 (10초)",
     "언론 조종술사 김다훈": "📰 [패시브] 멘탈쌤이 보고있다: 공격 시 1% 확률로 10초간 공격력 +50% + 적 밀집지로 텔레포트 (중첩불가) | [스킬1] 언론 장악: 공격마다 적에게 여론 낙인 부여 (최대 5중첩) — 낙인 1개당 받는 피해 +8%, 이속 -5% / 5중첩 시 주변 120 범위 공론화 폭발 + 낙인 초기화 | [스킬2] 해나의 응원: 공격 200타 누적 시 전체 아군 공격력 +50%, 공속 +50% (15초, 중첩불가) / 하트 파티클 + 해나가 응원해! | [마나스킬, 마나80] KKM 디펜스 장인: 자신의 공격력 ×3 + 모든 데미지 고정데미지(방어력 무시)로 변경 (10초)",
     "만카이 백승채": "🍺 [패시브] 만카이: 공격마다 만취스택 +1 (최대 100중첩) / 스택 1개당 공격력 +1% 증가 / 100중첩 달성 시 만카이! 발동 — 5초간 공격력 2배 + 공격마다 주변 120범위 폭발 데미지 / 발동 중 스택 획득 불가, 종료 후 스택 초기화 | [스킬1] 담배한모금: 기본공격 시 0.1% 확률 발동 — 5초간 공격속도 +50%, 마나 충전속도 1.5배 (중첩불가) | [스킬2] 솔로만세: 공격 300타 누적 시 발동 — 맵 중앙으로 텔레포트, 중앙 기준 100범위 아군 200밖으로 밀어냄 + 진입불가, 이동불가, 사거리 맵 전체, 단일→3기 멀티샷, 공격력 +50% + 밀어낸 아군 1기당 +15% (10초) / 종료 후 버프해제 + 5초 이동불가 | [마나스킬, 마나80] 삼성전자 풀매수: 일반몹에게 현재 공격력 ×3 + 해당 몹 최대체력 10% 데미지 / 보스·미니보스·스토리에게 현재 공격력 ×30 데미지 / 전체 아군 공격력 +30% (15초)",
     "몸에서 돌이 떨어지는 김찬희": "🪨 [패시브] 태생이돌: 평타 시 주변 90범위 스플래시(공격력×40%) + 아머브레이크 -2 누적(최대-20) | [스킬1] 뇌성마비: 10% 확률 발동 — 다음 5타 공속 8.0회/초 | [스킬2] 전신낙석: 100타마다 캐릭터 회전 + 10초간 주변 150범위 공격력×2 고정뎀 + 돌 낙하 이펙트 | [마나스킬, 마나110] 지각변동: 전체 적 3초 스턴+방어력-30+공격력×5 + 땅 갈라지는 균열 이펙트",
-    "전설의 코딩술사 김상웅": "💻 [패시브] 재택근무: 맵 내 등급 1순위→공격력×공속 2순위 기준 최강 아군 옆에 밀착, 밀착 대상 공격력+50%/사거리 공유, 새 유닛 소환 시 자동 재계산, 솔로만세 발동 시 논외로 옆 유지+사거리 동기화 | [스킬1] 뻑상웅 모드: 공격 시 5% 확률 발동 — 5초간 공격력 2배 + 빨간 이펙트 | [스킬2] 서울 출근: 200타마다 현재 라인 적 전부 15초간 '출근하는 사람'으로 변이 (이름/이모지 변경, 방어력-50, 이속-40%) | [마나스킬, 마나80] 해킹: 분신 소환 (15초, 패시브+스킬 동일 사용, 마나스킬 불가) — 분신이 본체를 밀착 대상으로 삼아 본체 공격력+50% 추가"
+    "전설의 코딩술사 김상웅": "💻 [패시브] 재택근무: 맵 내 등급 1순위→공격력×공속 2순위 기준 최강 아군 옆에 밀착, 밀착 대상 공격력+50%/사거리 공유, 새 유닛 소환 시 자동 재계산, 솔로만세 발동 시 논외로 옆 유지+사거리 동기화 | [스킬1] 뻑상웅 모드: 공격 시 5% 확률 발동 — 5초간 공격력 2배 + 빨간 이펙트 | [스킬2] 서울 출근: 200타마다 현재 라인 적 전부 15초간 '출근하는 사람'으로 변이 (이름/이모지 변경, 방어력-50, 이속-40%) | [마나스킬, 마나80] 해킹: 분신 소환 (15초, 패시브+스킬 동일 사용, 마나스킬 불가) — 분신이 본체를 밀착 대상으로 삼아 본체 공격력+50% 추가",
+    "1등 항해사 윤병선": "⚓ [패시브] 로봇판단: 항상 체력 가장 낮은 적 우선 타겟 / 타겟 최대체력 15% 미만 → 일반몹 즉시 처형, 보스/미니보스/스토리는 공격력×5 고정뎀 추가 | [스킬1] 허언증: 공격 시 5% 확률 — '난 너네가 제일 소중해~' 현재 공격력×5 데미지 | [스킬2] 병선마을 건설: 300타마다 20초간 발동 — 전체 아군 공격력+30% 공속+30% / 특수 이하 조합 시 재료 소모 없이 결과 유닛만 추가 생성 (최대 3회) | [마나스킬, 마나100] 어그로 끌기: 20초간 매 공격마다 타겟 방향 레이저 직선 관통 공격 (패시브/스킬 동시 발동)"
 };
 const PASSIVE_DESC_RARE = {
     "꼬장 승채":      "💥 꼬장: 공격 시 10% 확률로 술병 폭발 - 범위 10000 데미지 | 공격 시 10% 확률로 ROTC상웅 소환",
@@ -2340,6 +2385,7 @@ class Unit {
             "만카이 백승채":        {dmg:150000,type:"melee",  range:130, cd:12},  // 공속 5.0
             "몸에서 돌이 떨어지는 김찬희": {dmg:250000,type:"melee", range:130, cd:40}, // 공속 1.5
             "전설의 코딩술사 김상웅": {dmg:150000,type:"ranged", range:180, cd:12}, // 공속 5.0
+            "1등 항해사 윤병선":      {dmg:150000,type:"ranged", range:180, cd:12}, // 공속 5.0
         };
         if(attackTypes[name]){
             const at = attackTypes[name];
@@ -2391,7 +2437,7 @@ class Unit {
         // 전설 패시브 초기화
         if(name === "얼굴이 붉어진 승채") this.passiveData = {name:"술기운",    atkBonus:0};
         if(name === "코딩하는 상웅")      this.passiveData = {name:"디버깅",    buffTimer:0};
-        if(name === "2등 항해사 병선")    this.passiveData = {name:"진급의오만", armorStack:0};
+        if(name === "2등 항해사 병선")    this.passiveData = {name:"진급의오만", armorStack:0, _jingupBaseDmg: 30000};
         if(name === "온몸이 돌이 된 찬희")this.passiveData = {name:"철벽",       atkStack:0};
         if(name === "욕쟁이 현준")        this.passiveData = {name:"쌍욕"};
         if(name === "패션왕자 동수")       this.passiveData = {name:"비율깡패"};
@@ -2444,6 +2490,14 @@ class Unit {
             _isClone: false,        // 분신 여부
             cloneUnit: null,        // 생성된 분신 참조
         };
+        if(name === "1등 항해사 윤병선") this.passiveData = {
+            name:"로봇판단",
+            hitCount: 0,
+            villageActive: false,
+            villageFreeCount: 0,
+            villageFreeUsed: [],  // 무료조합 사용한 유닛 이름 목록 (중복 방지)
+            aggroActive: false,
+        };
 
         // 킬 카운트
         this.kills = 0;
@@ -2473,6 +2527,7 @@ class Unit {
                 "만카이 백승채": 80,
                 "몸에서 돌이 떨어지는 김찬희": 110,
                 "전설의 코딩술사 김상웅": 80,
+                "1등 항해사 윤병선": 100,
             };
             if(transcendManaMap[name]){
                 this.maxMana = transcendManaMap[name];
@@ -2635,11 +2690,11 @@ class Unit {
                 pd._jingupTick = 0;
                 let lowerCount = 0;
                 for(let u2 of units){
-                    if(u2.tier === '안흔함' || u2.tier === '특별' || u2.tier === '희귀') lowerCount++;
+                    if(getTier(u2.name) === '안흔함' || getTier(u2.name) === '특별' || getTier(u2.name) === '희귀') lowerCount++;
                 }
-                // baseDmg = 기본 5000 + 10%×lowerCount 누적이 아닌, 항상 기본값 기준으로 계산
-                const BASE_NAVY = 5000;
-                const newBase = Math.round(BASE_NAVY * (1 + 0.1 * lowerCount));
+                // [버그수정] 기본 공격력 기준으로 실시간 계산 (하드코딩 제거)
+                if(!pd._jingupBaseDmg) pd._jingupBaseDmg = 30000; // 전설 기본값
+                const newBase = Math.round(pd._jingupBaseDmg * (1 + 0.1 * lowerCount));
                 if(this._baseDmg !== newBase){
                     this._baseDmg = newBase;
                     this.recomputeDamage();
@@ -3049,6 +3104,34 @@ class Unit {
         }
         if(bossTarget) target=bossTarget;
         else if(miniBossTarget) target=miniBossTarget;
+
+        // ── 1등 항해사 윤병선: 로봇 판단 - 체력 가장 낮은 적 우선 타겟 ──
+        if(this.name==='1등 항해사 윤병선' && this.passiveData){
+            let lowestHp = null, lowestHpVal = Infinity;
+            for(let e of enemies){
+                if(e.hp<=0||e.isDestroyed) continue;
+                const dx=e.x-this.x, dy=e.y-this.y;
+                if(Math.sqrt(dx*dx+dy*dy)<=this.range && e.hp < lowestHpVal){
+                    lowestHpVal = e.hp; lowestHp = e;
+                }
+            }
+            if(lowestHp) target = lowestHp;
+            // 처형 체크: 타겟 최대체력 15% 미만이면 즉시 처형 (보스/미니보스/스토리 제외)
+            if(target && target !== mission && !target.isBoss && !target.isMiniBoss){
+                if(target.hp < target.maxHp * 0.15){
+                    target.hp = 0;
+                    spawnParticles(target.x, target.y, '#e74c3c', 10, 5);
+                    meleeAnims.push({type:'text_pop',x:target.x,y:target.y-30,life:30,maxLife:30,color:'#e74c3c',text:'⚔️처형!',big:true});
+                    target = null;
+                }
+            }
+            // 보스/미니보스/스토리는 처형 대신 공격력 ×5 고정데미지 추가
+            if(target && (target.isBoss || target.isMiniBoss) && target.hp < target.maxHp * 0.15){
+                target.hp -= this.damage * 5;
+                meleeAnims.push({type:'damage_text',x:target.x+(Math.random()-0.5)*16,y:target.y-30,
+                    life:35,maxLife:35,color:'#ff4500',text:this.damage*5,vy:-1.8,fixed:true});
+            }
+        }
         // 게이다훈: 보스/미니보스 Enemy가 실제로 맵에 존재할 때만 이동
         if(this.name==="게이다훈" && this.passiveData){
             const boss = enemies.find(e=>e.isBoss===true || e.isMiniBoss===true); // 보스+미니보스 모두 포함
@@ -3532,12 +3615,13 @@ class Unit {
                         }
                     }
                 }
-                // 디엠티 건모: 0.1% 공격력 영구+30 / 1% 공속3배 5초
+                // 디엠티 건모: 2% 맵 전체 아군 공격력 영구+10 / 1% 공속3배 5초
                 if(pdL.name==='신입패기'){
-                    if(Math.random()<0.001){
-                        this.damage+=30; this._baseDmg+=30; pdL.atkBonus=(pdL.atkBonus||0)+30;
-                        spawnParticles(this.x,this.y,'#3498db',4,3);
-                        meleeAnims.push({type:'text_pop',x:this.x,y:this.y-30,life:20,maxLife:20,color:'#3498db',text:'열심히하겠습니다!',big:false});
+                    if(Math.random()<0.02){
+                        units.forEach(u=>{ u.damage+=10; if(u._baseDmg!==undefined) u._baseDmg+=10; });
+                        pdL.atkBonus=(pdL.atkBonus||0)+10;
+                        spawnParticles(this.x,this.y,'#3498db',6,3);
+                        meleeAnims.push({type:'text_pop',x:this.x,y:this.y-30,life:20,maxLife:20,color:'#3498db',text:'다같이 열심히!',big:false});
                     }
                     if(Math.random()<0.01 && !pdL.nightShift){
                         pdL.nightShift=true;
@@ -3729,6 +3813,11 @@ class Unit {
                 // ── 패시브: 만카이 스택 ──
                 if(!pdB.manKaiActive && pdB.stacks < 100){
                     pdB.stacks++;
+                    // 스택마다 공격력 +1% 실시간 반영
+                    if(!pdB._baseOrigDmg) pdB._baseOrigDmg = this._baseDmg || this.damage;
+                    const stackMult = 1 + pdB.stacks * 0.01;
+                    this._baseDmg = Math.round(pdB._baseOrigDmg * stackMult);
+                    this.damage = this._baseDmg;
                     // 스택 표시 (10단위)
                     if(pdB.stacks % 10 === 0){
                         meleeAnims.push({type:'text_pop',x:this.x,y:this.y-30,life:20,maxLife:20,color:'#ffcc00',text:`🍺${pdB.stacks}스택`,big:false});
@@ -3738,6 +3827,11 @@ class Unit {
                 if(!pdB.manKaiActive && pdB.stacks >= 100){
                     pdB.manKaiActive = true;
                     pdB.stacks = 0;
+                    // 스택 공격력 초기화 (만카이 발동 시 스택 리셋)
+                    if(pdB._baseOrigDmg){
+                        this._baseDmg = pdB._baseOrigDmg;
+                        this.damage = pdB._baseOrigDmg;
+                    }
                     this.addDmgBuff('mankai', 2); // 버프키 'mankai' - 중복불가
                     meleeAnims.push({type:'text_pop',x:this.x,y:this.y-55,life:55,maxLife:55,color:'#ff4400',text:'🍺 만카이!!!',big:true});
                     spawnParticles(this.x,this.y,'#ff4400',20,7);
@@ -4069,6 +4163,90 @@ class Unit {
                             pdS.seoulActive = false;
                         }, Math.round(15000/gameSpeedMul));
                     }
+                }
+            }
+            // ── 초월: 1등 항해사 윤병선 공격 성공 패시브/스킬 ──
+            if(this.tier==='초월' && this.passiveData && this.name==='1등 항해사 윤병선'){
+                const pdB2 = this.passiveData;
+
+                // ── 어그로 끌기 발동 중: 타겟 방향 레이저 직선 관통 공격 ──
+                if(pdB2.aggroActive){
+                    const _dx = target.x - this.x, _dy = target.y - this.y;
+                    const _dist = Math.sqrt(_dx*_dx+_dy*_dy)||1;
+                    const _normX = _dx/_dist, _normY = _dy/_dist;
+                    const lineDmg = this.damage;
+                    // 직선상 모든 적 관통 (타겟 포함, 방향벡터 기준 앞쪽 전부)
+                    for(let e of enemies){
+                        const _ex = e.x-this.x, _ey = e.y-this.y;
+                        const proj = _ex*_normX + _ey*_normY; // 직선 투영 (양수=앞쪽)
+                        const perpDist = Math.abs(_ex*_normY - _ey*_normX); // 수직 거리
+                        if(proj > 0 && perpDist < 30){ // 직선 폭 ±30
+                            e.hp -= lineDmg;
+                            meleeAnims.push({type:'damage_text',x:e.x+(Math.random()-0.5)*12,y:e.y-20,
+                                life:25,maxLife:25,color:'#e74c3c',text:lineDmg,vy:-1.5,fixed:false});
+                        }
+                    }
+                    // 레이저 라인 이펙트 (끝까지 뻗는 긴 선)
+                    const _laserLen = 800;
+                    attackLines.push({
+                        sx:this.x, sy:this.y,
+                        tx:this.x+_normX*_laserLen, ty:this.y+_normY*_laserLen,
+                        color:'#e74c3c', tier:'초월', alpha:0.9, life:10
+                    });
+                }
+                if(Math.random() < 0.05){
+                    const lieTotal = this.damage * 5; // ×5 전체 표시용
+                    const lieBonus = this.damage * 4; // 추가 데미지 (기본공격 별도)
+                    target.hp -= lieBonus;
+                    meleeAnims.push({type:'text_pop',x:target.x,y:target.y-45,life:45,maxLife:45,
+                        color:'#f1c40f',text:'난 너네가 제일 소중해~💛',big:true});
+                    // ×5 합산 수치로 표시
+                    meleeAnims.push({type:'damage_text',x:target.x+(Math.random()-0.5)*16,y:target.y-30,
+                        life:40,maxLife:40,color:'#f1c40f',text:lieTotal,vy:-2.0,fixed:false});
+                    spawnParticles(target.x, target.y, '#f1c40f', 12, 5);
+                    particles.push({type:'ring',x:target.x,y:target.y,radius:0,maxRadius:100,
+                        color:'#f1c40f',alpha:0.7,life:22,maxLife:22});
+                }
+
+                // ── 스킬2: 병선마을 건설 - 300타마다 발동 ──
+                pdB2.hitCount = (pdB2.hitCount||0) + 1;
+                if(pdB2.hitCount >= 300 && !pdB2.villageActive){
+                    pdB2.hitCount = 0;
+                    pdB2.villageActive = true;
+                    pdB2.villageFreeCount = 3;
+                    pdB2.villageFreeUsed = [];
+                    for(let u2 of units){
+                        u2.addDmgBuff('byeonseon_village', 1.3);
+                        u2._villageOrigCd = u2.maxCd;
+                        u2.maxCd = Math.max(4, Math.round(u2.maxCd / 1.3));
+                    }
+                    meleeAnims.push({type:'text_pop',x:this.x,y:this.y-60,life:60,maxLife:60,
+                        color:'#2ecc71',text:'🏘️ 병선마을 건설!',big:true});
+                    for(let i=0;i<20;i++){
+                        const ang=Math.random()*Math.PI*2, sp=2+Math.random()*4;
+                        particles.push({type:'spark',x:this.x,y:this.y,
+                            vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp-2,
+                            color:'#2ecc71',alpha:1,life:40+Math.random()*20,maxLife:60,size:4+Math.random()*4});
+                    }
+                    particles.push({type:'ring',x:this.x,y:this.y,radius:0,maxRadius:200,color:'#2ecc71',alpha:0.6,life:30,maxLife:30});
+                    showToast('🏘️ 병선마을 건설! 전체 공격력+30% 공속+30% / 무료조합 3회 (20초)','#2ecc71','#0a2d1a');
+                    // 맵에 병선마을 표시 저장
+                    pdB2._villageMarker = {x: this.x, y: this.y};
+                    const _thisB = this;
+                    setTimeout(()=>{
+                        for(let u2 of units){
+                            u2.removeDmgBuff('byeonseon_village');
+                            if(u2._villageOrigCd !== undefined){
+                                u2.maxCd = u2._villageOrigCd;
+                                delete u2._villageOrigCd;
+                            }
+                        }
+                        pdB2.villageActive = false;
+                        pdB2.villageFreeCount = 0;
+                        pdB2._villageMarker = null;
+                        meleeAnims.push({type:'text_pop',x:_thisB.x,y:_thisB.y-40,life:35,maxLife:35,
+                            color:'#888',text:'병선마을 종료',big:false});
+                    }, Math.round(20000/gameSpeedMul));
                 }
             }
             if(this.tier==='희귀' && this.passiveData){
@@ -6029,6 +6207,23 @@ function triggerLegendManaSkill(unit, lastTarget){
             break;
         }
 
+        case '1등 항해사 윤병선': {
+            const pdA = unit.passiveData;
+            if(pdA && !pdA.aggroActive){
+                pdA.aggroActive = true;
+                meleeAnims.push({type:'text_pop',x,y:y-65,life:65,maxLife:65,
+                    color:'#e74c3c',text:'⚓ 어그로 끌기!',big:true});
+                showToast('⚓ 어그로 끌기! 20초간 일자 범위공격','#e74c3c','#2d1010');
+                setTimeout(()=>{
+                    pdA.aggroActive = false;
+                    unit._manaSkillActive = false;
+                    meleeAnims.push({type:'text_pop',x:unit.x,y:unit.y-40,life:35,maxLife:35,
+                        color:'#888',text:'어그로 종료',big:false});
+                }, Math.round(20000/gameSpeedMul));
+            }
+            break;
+        }
+
         case '몸에서 돌이 떨어지는 김찬희': {
             // 지각변동: 땅 갈라지는 균열 + 전체 스턴 + 방어력-30 + 공격력×5
             const pdQ = unit.passiveData;
@@ -6856,7 +7051,7 @@ function checkKlokklEvolve() {
 // 특수유닛 랜덤 지급
 function spawnRandomSpecial(){
     // 현재 구현된 초월 재료 특수 유닛만 포함
-    const specials = ["해나","이슬이","지호","반짝 빛나는 돌"];
+    const specials = ["해나","이슬이","지호","나츠","반짝 빛나는 돌"];
     const pick = specials[Math.floor(Math.random()*specials.length)];
     spawnUnit(pick);
     return pick;
@@ -6932,7 +7127,7 @@ function setSpawnAnchor(name, x, y){
 function giveInitialUnits() {
     for(let i=0;i<11;i++) spawnUnit(randFrom(unitTiers["흔함"]));
     for(let i=0;i<2;i++)  spawnUnit(randFrom(unitTiers["안흔함"]));
-    spawnUnit("130cm래규"); // 시작 보너스 유닛
+    spawnUnit("130cm래규");
     updateInventoryUI();
 }
 
@@ -7367,6 +7562,26 @@ function gameLoop(ts) {
     // 흔함 유닛 캐시 갱신 (그리기 직전)
     updateCommonUnitCache();
     for(let u of units) u.draw();
+
+    // 🏘️ 병선마을 마커 렌더링 (병선 머리 위 따라다님)
+    for(let u of units){
+        if(u.name==='1등 항해사 윤병선' && u.passiveData && u.passiveData.villageActive){
+            ctx.save();
+            ctx.font = 'bold 66px sans-serif'; // 22px × 3배
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#2ecc71';
+            ctx.shadowBlur = 20;
+            ctx.fillText('🏘️', u.x, u.y - 70);
+            ctx.shadowBlur = 0;
+            ctx.font = 'bold 13px Noto Sans KR, sans-serif';
+            ctx.fillStyle = '#2ecc71';
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 3;
+            ctx.strokeText('병선마을', u.x, u.y - 32);
+            ctx.fillText('병선마을', u.x, u.y - 32);
+            ctx.restore();
+        }
+    }
 
     // 선택된 유닛 하이라이트 (초록 테두리)
     for(let u of selectedUnits){
@@ -8279,7 +8494,7 @@ function updateDetailUI() {
                 const tier=getTier(n);
                 const bc=getTierColor(tier);
                 // 🔒 초월 등급은 준비중 표시 (언론 조종술사 김다훈만 예외)
-                const _unlockedTranscend = ['언론 조종술사 김다훈','만카이 백승채','몸에서 돌이 떨어지는 김찬희','전설의 코딩술사 김상웅'];
+                const _unlockedTranscend = ['언론 조종술사 김다훈','만카이 백승채','몸에서 돌이 떨어지는 김찬희','전설의 코딩술사 김상웅','1등 항해사 윤병선'];
                 const isDisabledTranscend = (!ENABLE_TRANSCEND && tier==='초월' && !_unlockedTranscend.includes(n));
                 if(isDisabledTranscend){
                     craftHtml += '<div style="padding:4px 6px;margin-bottom:2px;background:#1a1a1a;border-left:2px dashed #555;border-radius:3px;cursor:not-allowed;opacity:0.5;display:flex;justify-content:space-between;align-items:center;"><span style="color:#666;font-weight:700;font-size:10px;">🔒 ['+tier+'] '+n+'</span><span style="font-size:10px;color:#888;">준비중 🔒</span></div>';
@@ -8429,7 +8644,7 @@ function updateCraftableUI() {
             let em=tierEmoji[t]||'✨';
             let isGod=(t==='갓');
             // 🔒 초월 유닛은 회색 처리 + "준비중" 표시 (언론 조종술사 김다훈만 예외)
-            let isDisabledTranscend = (!ENABLE_TRANSCEND && t==='초월' && !['언론 조종술사 김다훈','만카이 백승채','몸에서 돌이 떨어지는 김찬희','전설의 코딩술사 김상웅'].includes(r));
+            let isDisabledTranscend = (!ENABLE_TRANSCEND && t==='초월' && !['언론 조종술사 김다훈','만카이 백승채','몸에서 돌이 떨어지는 김찬희','전설의 코딩술사 김상웅','1등 항해사 윤병선'].includes(r));
             let nameStyle = isGod
                 ? `background:linear-gradient(90deg,#ff0,#f0f,#0ff,#ff0);background-size:300% 100%;-webkit-background-clip:text;color:transparent;font-weight:900;animation:rainbow-anim 2s linear infinite;`
                 : (isDisabledTranscend ? `color:#666;font-weight:900;` : `color:${c};font-weight:900;`);
@@ -8578,7 +8793,7 @@ function updateCombineUI() {
 function combineUnit(target) {
     const rec=recipes[target];
     // 🔒 초월 유닛 조합 임시 차단 (예외 허용)
-    if(!ENABLE_TRANSCEND && getTier(target)==='초월' && target !== '언론 조종술사 김다훈' && target !== '만카이 백승채' && target !== '몸에서 돌이 떨어지는 김찬희' && target !== '전설의 코딩술사 김상웅'){
+    if(!ENABLE_TRANSCEND && getTier(target)==='초월' && target !== '언론 조종술사 김다훈' && target !== '만카이 백승채' && target !== '몸에서 돌이 떨어지는 김찬희' && target !== '전설의 코딩술사 김상웅' && target !== '1등 항해사 윤병선'){
         showToast('🔒 초월 유닛은 준비중입니다 (조합 불가)', '#f1c40f', '#2a2200');
         return;
     }
@@ -8601,26 +8816,36 @@ function combineUnit(target) {
             return;
         }
     }
+    // 🏘️ 병선마을 무료 조합 체크 (희귀 이하, 재료 소모 없이 결과만 추가)
+    const _villageUnit = units.find(u => u.name==='1등 항해사 윤병선' && u.passiveData && u.passiveData.villageActive && u.passiveData.villageFreeCount > 0);
+    const _targetTierForVillage = getTier(target);
+    const _freeTiers = ['흔함','안흔함','특별','희귀','특수'];
+    // 같은 유닛은 1회만 무료조합 가능
+    const _alreadyUsed = _villageUnit && _villageUnit.passiveData.villageFreeUsed && _villageUnit.passiveData.villageFreeUsed.includes(target);
+    const _isFreeCombo = _villageUnit && _freeTiers.includes(_targetTierForVillage) && !_alreadyUsed;
+
     let mats=[];
-    for(let m in rec){
-        inventory[m]-=rec[m];
-        for(let i=0;i<rec[m];i++){
-            let idx=units.findIndex(u=>u.name===m && !u.isSummoned && !u.isLegendSummon); // 소환물 제외
-            if(idx!==-1){
-                let u=units.splice(idx,1)[0];
-                u.ox=u.x; u.oy=u.y;
-                mats.push(u);
+    if(_isFreeCombo){
+        // 무료 조합: 재료 소모 없이 결과 유닛만 추가
+        _villageUnit.passiveData.villageFreeCount--;
+        _villageUnit.passiveData.villageFreeUsed.push(target); // 사용한 유닛 기록
+        const _remaining = _villageUnit.passiveData.villageFreeCount;
+        showToast(`🏘️ 병선마을 무료조합! [${target}] (${_remaining}회 남음)`,'#2ecc71','#0a2d1a');
+        combiningAnims.push({target,tier:getTier(target),mats:[],cx:400,cy:430,p:0,speed:0.06});
+    } else {
+        for(let m in rec){
+            inventory[m]-=rec[m];
+            for(let i=0;i<rec[m];i++){
+                let idx=units.findIndex(u=>u.name===m && !u.isSummoned && !u.isLegendSummon);
+                if(idx!==-1){
+                    let u=units.splice(idx,1)[0];
+                    u.ox=u.x; u.oy=u.y;
+                    mats.push(u);
+                }
             }
         }
+        combiningAnims.push({target,tier:getTier(target),mats,cx:400,cy:430,p:0,speed:0.06});
     }
-    const su2=selectedUnits&&selectedUnits.length>0?selectedUnits[0]:null;
-    if(su2&&mats.includes(su2)){selectedUnits=selectedUnits.filter(u=>!mats.includes(u));updateDetailUI();updateCombineUI();}
-    let cx=mats.length?mats.reduce((s,u)=>s+u.ox,0)/mats.length:325;
-    let cy=mats.length?mats.reduce((s,u)=>s+u.oy,0)/mats.length:325;
-    // 조합 결과는 항상 스토리 미션 아래, 아이폰1/연필 위 고정 위치에 생성
-    cx = 400;
-    cy = 430;
-    combiningAnims.push({target,tier:getTier(target),mats,cx,cy,p:0,speed:0.06});
     // 희귀 등급 조합 시 사운드 재생
     if(getTier(target)==='희귀'){
         if(typeof playCraftSound === 'function') playCraftSound();
@@ -8758,7 +8983,7 @@ function openAllRecipeModal(){
         const tc=tierColor2[tier];
         const isGod=tier==='갓';
         // 🔒 초월 등급은 준비중 표시 (구현된 유닛 제외)
-        const _transcendUnlocked = ['언론 조종술사 김다훈','만카이 백승채','몸에서 돌이 떨어지는 김찬희','전설의 코딩술사 김상웅'];
+        const _transcendUnlocked = ['언론 조종술사 김다훈','만카이 백승채','몸에서 돌이 떨어지는 김찬희','전설의 코딩술사 김상웅','1등 항해사 윤병선'];
         const isDisabledTranscend = (!ENABLE_TRANSCEND && tier==='초월' && !recipesForTier.some(r=>_transcendUnlocked.includes(r)));
         const tierLabel = isDisabledTranscend ? `${tier} 등급 🔒 (준비중)` : `${tier} 등급`;
         html+=`<div style="margin-bottom:14px;${isDisabledTranscend?'opacity:0.5;':''}">
@@ -8911,6 +9136,502 @@ giveInitialUnits();
     },{passive:false});
 })();
 
+// =============================================
+// 📖 도감 시스템
+// =============================================
+
+let dexCurrentTier = '전체';
+let dexCurrentUnit = null;
+
+function switchRightTab(tab) {
+    const menuContent = document.getElementById('tab-content-menu');
+    const dexContent  = document.getElementById('tab-content-dex');
+    const btnMenu = document.getElementById('tab-btn-menu');
+    const btnDex  = document.getElementById('tab-btn-dex');
+
+    if (tab === 'menu') {
+        menuContent.style.display = 'block';
+        dexContent.style.display  = 'none';
+        btnMenu.style.background = '#2a2200';
+        btnMenu.style.borderColor = '#f1c40f';
+        btnMenu.style.color = '#f1c40f';
+        btnDex.style.background = '#161a22';
+        btnDex.style.borderColor = '#555';
+        btnDex.style.color = '#aaa';
+    } else {
+        menuContent.style.display = 'none';
+        dexContent.style.display  = 'block';
+        btnMenu.style.background = '#161a22';
+        btnMenu.style.borderColor = '#555';
+        btnMenu.style.color = '#aaa';
+        btnDex.style.background = '#2a2200';
+        btnDex.style.borderColor = '#f1c40f';
+        btnDex.style.color = '#f1c40f';
+        renderDexList(dexCurrentTier);
+    }
+}
+
+function dexFilter(tier) {
+    dexCurrentTier = tier;
+    // 필터 버튼 활성화 스타일
+    document.querySelectorAll('.dex-filter-btn').forEach(btn => {
+        if (btn.dataset.tier === tier) {
+            btn.style.opacity = '1';
+            btn.style.boxShadow = '0 0 8px currentColor';
+        } else {
+            btn.style.opacity = '0.5';
+            btn.style.boxShadow = 'none';
+        }
+    });
+    // 상세 패널 닫기
+    document.getElementById('dex-detail-panel').style.display = 'none';
+    dexCurrentUnit = null;
+    renderDexList(tier);
+}
+
+function getDexSkillDesc(name) {
+    const tier = getTier(name);
+    if (tier === '전설' || tier === '초월') {
+        return PASSIVE_DESC_LEGEND[name] || null;
+    }
+    if (tier === '희귀') return PASSIVE_DESC_RARE[name] || null;
+    if (tier === '특별') return PASSIVE_DESC_SPECIAL[name] || null;
+    if (tier === '안흔함') {
+        // PASSIVE_DESC 객체 우선 사용 (실제 스킬 설명)
+        if (typeof PASSIVE_DESC !== 'undefined' && PASSIVE_DESC[name]) {
+            return PASSIVE_DESC[name];
+        }
+        // 없으면 passiveData.name 폴백
+        const u = new Unit(name);
+        if (u.passiveData && u.passiveData.name) return `[패시브] ${u.passiveData.name}`;
+        return null;
+    }
+    return null;
+}
+
+function getDexStats(name) {
+    // 임시 Unit 생성해서 스탯 추출
+    const u = new Unit(name);
+    const spd = u.maxCd > 0 ? (60 / u.maxCd).toFixed(2) : '-';
+    const typeLabel = {melee:'근거리', ranged:'원거리', passive:'패시브(공격없음)'}[u.attackType] || u.attackType;
+    return { dmg: u.damage, range: u.range, spd, typeLabel };
+}
+
+function getDexRecipe(name) {
+    return recipes[name] || null;
+}
+
+function getDexGodEvolution(name) {
+    return godEvolution[name] || null;
+}
+
+// 어떤 유닛으로 만들어지는지 역방향 탐색
+function getDexUsedIn(name) {
+    const result = [];
+    for (const [target, mats] of Object.entries(recipes)) {
+        if (Object.keys(mats).includes(name)) result.push(target);
+    }
+    return result;
+}
+
+function renderDexList(tier) {
+    const list = document.getElementById('dex-unit-list');
+    list.innerHTML = '';
+
+    const tierOrder = ['흔함','안흔함','특별','희귀','전설','초월','갓','특수'];
+    let tiers = tier === '전체' ? tierOrder : [tier];
+
+    tiers.forEach(t => {
+        const units_in_tier = unitTiers[t] || [];
+        if (units_in_tier.length === 0) return;
+
+        // 등급 헤더
+        const tierColor_val = getTierColor(t);
+        const header = document.createElement('div');
+        header.style.cssText = `font-size:11px;font-weight:900;color:${tierColor_val === 'rainbow' ? '#fff' : tierColor_val};
+            padding:4px 6px;border-bottom:1px solid #2a2f3d;margin-bottom:4px;letter-spacing:1px;`;
+        header.textContent = `── ${t} (${units_in_tier.length}) ──`;
+        list.appendChild(header);
+
+        units_in_tier.forEach(uname => {
+            const row = document.createElement('div');
+            const tc = getTierColor(t);
+            const isRainbow = tc === 'rainbow';
+            row.style.cssText = `
+                display:flex;align-items:center;gap:8px;
+                padding:6px 8px;border-radius:6px;cursor:pointer;
+                background:#161a22;border:1px solid #2a2f3d;
+                transition:all 0.15s;
+            `;
+            row.onmouseenter = () => { row.style.background = '#1e2533'; row.style.borderColor = isRainbow ? '#fff' : tc; };
+            row.onmouseleave = () => {
+                if (dexCurrentUnit !== uname) {
+                    row.style.background = '#161a22';
+                    row.style.borderColor = '#2a2f3d';
+                }
+            };
+
+            // 등급 뱃지
+            const badge = document.createElement('span');
+            badge.style.cssText = `font-size:10px;font-weight:900;padding:2px 5px;border-radius:4px;
+                border:1px solid ${isRainbow ? '#fff' : tc};color:${isRainbow ? '#fff' : tc};
+                background:#0d0f14;white-space:nowrap;flex-shrink:0;`;
+            badge.textContent = t;
+
+            // 유닛 이름
+            const nameEl = document.createElement('span');
+            if (isRainbow) {
+                nameEl.style.cssText = `font-size:12px;font-weight:700;flex:1;
+                    background:linear-gradient(90deg,#ff0,#f0f,#0ff,#ff0);background-size:300% 100%;
+                    -webkit-background-clip:text;color:transparent;animation:rainbow-anim 2s linear infinite;`;
+            } else {
+                nameEl.style.cssText = `font-size:12px;font-weight:700;flex:1;color:${tc};`;
+            }
+            nameEl.textContent = uname;
+
+            // 화살표
+            const arrow = document.createElement('span');
+            arrow.style.cssText = `font-size:11px;color:#555;flex-shrink:0;`;
+            arrow.textContent = '▶';
+            arrow.id = `dex-arrow-${CSS.escape(uname)}`;
+
+            row.appendChild(badge);
+            row.appendChild(nameEl);
+            row.appendChild(arrow);
+            row.id = `dex-row-${CSS.escape(uname)}`;
+            row.onclick = () => openDexDetail(uname, t);
+            list.appendChild(row);
+        });
+    });
+}
+
+// =============================================
+// 📖 유닛 역할 태그 데이터
+// =============================================
+// 💰패뿔리기 = 영구적으로 새 유닛/위습을 획득하게 해주는 유닛
+const UNIT_ROLES = {
+    // ── 흔함 ──
+    "빈 지갑":        ["⚙️ 조합재료"],
+    "깡소주":         ["⚙️ 조합재료"],
+    "음식물 찌꺼기":  ["⚙️ 조합재료"],
+    "작은 돌맹이":    ["⚙️ 조합재료"],
+    "돛대 담배":      ["⚙️ 조합재료"],
+    "아이폰1":        ["⚙️ 조합재료"],
+    "연필":           ["⚙️ 조합재료"],
+    "주먹":           ["⚙️ 조합재료"],
+
+    // ── 안흔함 ──
+    "술채":           ["⚙️ 조합재료"],
+    "허언 병선":      ["⚙️ 조합재료", "🛡️ 방어감소"],
+    "중2병 건모":     ["⚙️ 조합재료", "🌊 라인클리어"],
+    "큰돌맹이":       ["⚙️ 조합재료", "💥 단일화력"],
+    "젖살안빠진 상웅":["⚙️ 조합재료", "🌊 라인클리어"],
+    "담쟁이넝쿨 현준":["⚙️ 조합재료", "🐌 스턴/CC"],
+    "130cm래규":      ["⚙️ 조합재료", "💰 패뿔리기"],
+    "세균 훈덕":      ["⚙️ 조합재료", "🔰 버프"],
+    "돼지병훈":       ["⚙️ 조합재료", "📈 성장형"],
+    "게이다훈":       ["⚙️ 조합재료", "👹 보스딜"],
+    "야동수":         ["⚙️ 조합재료", "🐌 스턴/CC"],
+
+    // ── 특별 ──
+    "컴공과 승채":    ["🌊 라인클리어"],
+    "영문학과 상웅":  ["📈 성장형"],
+    "군대안간 병선":  ["🛡️ 방어감소"],
+    "바위":           ["💥 단일화력"],
+    "LG현준":         ["📈 성장형"],
+    "야동보는동수":   ["🐌 스턴/CC", "🌊 라인클리어"],
+    "클오클 래규":    ["📈 성장형"],
+    "과 학회장 훈덕": ["🌊 라인클리어"],
+    "이별휴유증 건모":["🌊 라인클리어"],
+    "담배피는 병훈":  ["🌊 라인클리어"],
+    "패션안경 다훈":  ["🔰 버프"],
+
+    // ── 희귀 ──
+    "꼬장 승채":      ["🌊 라인클리어"],
+    "ROTC상웅":       ["🌊 라인클리어"],
+    "3등 항해사병선": ["🛡️ 방어감소"],
+    "뇌까지 돌이된 찬희":["💥 단일화력", "🐌 스턴/CC"],
+    "게하 장인 현준": ["💰 패뿔리기"],
+    "짐바브웨 동수":  ["💰 패뿔리기"],
+    "랭커 래규":      ["💥 단일화력", "🌊 라인클리어"],
+    "방송인 훈덕":    ["👹 보스딜", "📈 성장형"],
+    "소개팅 건모":    ["🐌 스턴/CC", "🔰 버프"],
+    "담배끊은 병훈":  ["📈 성장형", "🌊 라인클리어"],
+    "술주정 다훈":    ["🐌 스턴/CC", "🌊 라인클리어"],
+
+    // ── 전설 ──
+    "얼굴이 붉어진 승채":["🌊 라인클리어", "🐌 스턴/CC"],
+    "코딩하는 상웅":     ["🐌 스턴/CC", "🔰 버프"],
+    "2등 항해사 병선":   ["🛡️ 방어감소", "📈 성장형"],
+    "온몸이 돌이 된 찬희":["🐌 스턴/CC", "💥 단일화력", "📈 성장형"],
+    "욕쟁이 현준":       ["🌊 라인클리어", "🐌 스턴/CC"],
+    "패션왕자 동수":     ["🔰 버프", "🐌 스턴/CC"],
+    "KIA 래규":          ["🔰 버프", "🌊 라인클리어"],
+    "정신차린 훈덕":     ["🔰 버프", "👹 보스딜"],
+    "디엠티 건모":       ["📈 성장형"],
+    "연진 만난 병훈":    ["🔰 버프", "👹 보스딜"],
+    "공무원 다훈":       ["🌊 라인클리어", "🐌 스턴/CC"],
+
+    // ── 초월 ──
+    "만카이 백승채":              ["💥 단일화력", "🌊 라인클리어", "👹 보스딜"],
+    "전설의 코딩술사 김상웅":     ["🔰 버프", "🌊 라인클리어"],
+    "1등 항해사 윤병선":          ["💰 패뿔리기", "🔰 버프", "👹 보스딜"],
+    "몸에서 돌이 떨어지는 김찬희":["🌊 라인클리어", "🐌 스턴/CC", "🛡️ 방어감소"],
+    "연봉2억 삼성 김현준":        [],
+    "알파메일 차동수":            [],
+    "레오 아빠 오래규":           [],
+    "살인머신 서훈덕":            [],
+    "흑염룡을 봉인한 김건모":     [],
+    "유부남 공병훈":              [],
+    "언론 조종술사 김다훈":       ["🔰 버프", "🌊 라인클리어", "🐌 스턴/CC"],
+
+    // ── 갓 ──
+    "술의 신 백승채":   [],
+    "코딩의 신 김상웅": [],
+    "허언신 윤병선":    [],
+    "돌의 신 김찬희":   [],
+    "쌍욕의 신 김현준": [],
+    "알파의 신 차동수": [],
+    "현질의 신 오래규": [],
+    "살인의 신 서훈덕": [],
+    "폭주의 신 김건모": [],
+    "구라의 신 공병훈": [],
+    "멘탈의 신 김다훈": [],
+
+    // ── 특수 ──
+    "이슬이":          ["🔰 버프"],
+    "지호":            ["🔰 버프"],
+    "나츠":            ["🔰 버프"],
+    "반짝 빛나는 돌":  ["🔰 버프"],
+    "미스테리한 여자": ["🔰 버프"],
+    "지현":            ["🔰 버프"],
+    "해리":            ["🔰 버프"],
+    "흑색 염색체":     ["🔰 버프"],
+    "희주":            ["🔰 버프"],
+    "연진":            ["🔰 버프"],
+    "해나":            ["🔰 버프"],
+};
+
+// 태그별 배경/글자 색상
+const ROLE_COLORS = {
+    "⚙️ 조합재료":   { bg:"#1a1a1a", border:"#555",    color:"#888"    },
+    "🌊 라인클리어": { bg:"#0d1a2a", border:"#3498db",  color:"#7fb3d3" },
+    "💰 패뿔리기":   { bg:"#1a1500", border:"#f1c40f",  color:"#f9e79f" },
+    "🔰 버프":       { bg:"#0d1a0d", border:"#27ae60",  color:"#82e0aa" },
+    "🐌 스턴/CC":    { bg:"#1a0d1a", border:"#9b59b6",  color:"#c39bd3" },
+    "👹 보스딜":     { bg:"#1a0808", border:"#e74c3c",  color:"#f1948a" },
+    "🛡️ 방어감소":  { bg:"#1a1200", border:"#e67e22",  color:"#f0b27a" },
+    "💥 단일화력":   { bg:"#1a0a00", border:"#e67e22",  color:"#fad7a0" },
+    "📈 성장형":     { bg:"#0a1a1a", border:"#1abc9c",  color:"#76d7c4" },
+};
+
+// ── 스킬 설명 구조화 렌더링 ──
+// "[패시브1] 이름: 내용 | [패시브2] 이름: 내용 | [스킬] ... | [마나스킬, 마나N] ..."
+// 형태의 텍스트를 종류별 카드로 분리해서 보여줌
+function renderSkillBlock(rawDesc) {
+    // 맨 앞 이모지+공백 제거
+    const cleaned = rawDesc.replace(/^[\u{1F000}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}️\s]+/u, '').trim();
+
+    // | 로 분리 (대괄호 앞에 공백+| 또는 | 단독)
+    const parts = cleaned.split(/\s*\|\s*/);
+
+    // 카드 색상/아이콘 정의
+    const typeStyle = {
+        '패시브': { border:'#9b59b6', bg:'#1a0d1a', icon:'🛡️', label:'패시브', labelColor:'#c39bd3' },
+        '스킬':   { border:'#3498db', bg:'#0d1220', icon:'⚡', label:'스킬',   labelColor:'#7fb3d3' },
+        '마나스킬':{ border:'#f1c40f', bg:'#1a1500', icon:'💫', label:'마나스킬', labelColor:'#f9e79f' },
+    };
+
+    // 각 파트를 파싱해서 카드로 변환
+    const cards = parts.map(part => {
+        part = part.trim();
+        if (!part) return '';
+
+        // [패시브1], [패시브2], [스킬1], [스킬2], [마나스킬, 마나N] 등 추출
+        const tagMatch = part.match(/^\[([^\]]+)\]\s*/);
+        if (!tagMatch) {
+            // 태그 없는 경우 — 일반 설명으로
+            return `<div style="background:#1a1e28;border:1px solid #2a2f3d;border-radius:7px;padding:8px;margin-bottom:6px;font-size:11px;color:#ccc;line-height:1.65;">${part}</div>`;
+        }
+
+        const tagRaw = tagMatch[1].trim(); // 예: "패시브1", "스킬2", "마나스킬, 마나80"
+        const rest   = part.slice(tagMatch[0].length).trim(); // 태그 이후 텍스트
+
+        // 타입 판별
+        let type = '스킬';
+        if (tagRaw.includes('마나스킬')) type = '마나스킬';
+        else if (tagRaw.startsWith('패시브')) type = '패시브';
+
+        const s = typeStyle[type];
+
+        // 마나 비용 파싱 (마나스킬인 경우)
+        let manaCost = '';
+        const manaMatch = tagRaw.match(/마나\s*(\d+)/);
+        if (manaMatch) manaCost = `<span style="font-size:10px;color:#f1c40f;margin-left:5px;">💧마나 ${manaMatch[1]}</span>`;
+
+        // 번호 파싱 (패시브1, 스킬2 등)
+        const numMatch = tagRaw.match(/(\d+)$/);
+        const num = numMatch ? numMatch[1] : '';
+
+        // 스킬 이름 / 내용 분리 (첫 번째 콜론 기준)
+        let skillName = '', skillBody = rest;
+        const colonIdx = rest.indexOf(':');
+        if (colonIdx > 0 && colonIdx < 30) {
+            skillName = rest.slice(0, colonIdx).trim();
+            skillBody = rest.slice(colonIdx + 1).trim();
+        }
+
+        // 태그 라벨 텍스트
+        const labelText = num ? `${s.label} ${num}` : s.label;
+
+        return `
+        <div style="background:${s.bg};border:1px solid ${s.border};border-radius:7px;padding:8px 10px;margin-bottom:6px;">
+            <div style="display:flex;align-items:center;gap:5px;margin-bottom:${skillName ? 3 : 5}px;">
+                <span style="font-size:10px;">${s.icon}</span>
+                <span style="font-size:10px;font-weight:900;color:${s.labelColor};letter-spacing:0.5px;">${labelText}</span>
+                ${skillName ? `<span style="font-size:11px;font-weight:900;color:#e0e0e0;"> ${skillName}</span>` : ''}
+                ${manaCost}
+            </div>
+            <div style="font-size:11px;color:#ccc;line-height:1.65;padding-left:2px;">${skillBody}</div>
+        </div>`;
+    });
+
+    return `<div style="margin-bottom:8px;">
+        <div style="font-size:11px;font-weight:900;color:#f1c40f;margin-bottom:6px;letter-spacing:0.5px;">📜 스킬 & 패시브</div>
+        ${cards.join('')}
+    </div>`;
+}
+
+function openDexDetail(name, tier) {
+    // 이전 선택 초기화
+    if (dexCurrentUnit) {
+        const prevRow = document.getElementById(`dex-row-${CSS.escape(dexCurrentUnit)}`);
+        if (prevRow) {
+            prevRow.style.background = '#161a22';
+            prevRow.style.borderColor = '#2a2f3d';
+        }
+    }
+    // 현재 선택 강조
+    dexCurrentUnit = name;
+    const row = document.getElementById(`dex-row-${CSS.escape(name)}`);
+    const tc = getTierColor(tier);
+    if (row) {
+        row.style.background = '#1e2533';
+        row.style.borderColor = tc === 'rainbow' ? '#fff' : tc;
+    }
+
+    const panel = document.getElementById('dex-detail-panel');
+    panel.style.display = 'block';
+
+    const stats = getDexStats(name);
+    const recipe = getDexRecipe(name);
+    const skillDesc = getDexSkillDesc(name);
+    const godEvo = getDexGodEvolution(name);
+    const usedIn = getDexUsedIn(name);
+
+    const borderCol = tc === 'rainbow' ? '#fff' : tc;
+    const nameColor = tc === 'rainbow'
+        ? `style="background:linear-gradient(90deg,#ff0,#f0f,#0ff,#ff0);background-size:300% 100%;-webkit-background-clip:text;color:transparent;animation:rainbow-anim 2s linear infinite;font-weight:900;font-size:14px;"`
+        : `style="color:${tc};font-weight:900;font-size:14px;"`;
+
+    let html = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span ${nameColor}>${name}</span>
+            <span style="font-size:11px;padding:2px 7px;border-radius:10px;border:1px solid ${borderCol};color:${borderCol};font-weight:700;">${tier}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px;font-size:11px;">
+            <div style="background:#1a1e28;border-radius:5px;padding:5px 7px;">
+                <div style="color:#888;margin-bottom:2px;">⚔️ 공격력</div>
+                <div style="color:#e0e0e0;font-weight:700;">${stats.dmg.toLocaleString()}</div>
+            </div>
+            <div style="background:#1a1e28;border-radius:5px;padding:5px 7px;">
+                <div style="color:#888;margin-bottom:2px;">🎯 사거리</div>
+                <div style="color:#e0e0e0;font-weight:700;">${stats.range}</div>
+            </div>
+            <div style="background:#1a1e28;border-radius:5px;padding:5px 7px;">
+                <div style="color:#888;margin-bottom:2px;">⚡ 공격속도</div>
+                <div style="color:#e0e0e0;font-weight:700;">${stats.spd}회/초</div>
+            </div>
+            <div style="background:#1a1e28;border-radius:5px;padding:5px 7px;">
+                <div style="color:#888;margin-bottom:2px;">🗡️ 타입</div>
+                <div style="color:#e0e0e0;font-weight:700;">${stats.typeLabel}</div>
+            </div>
+        </div>`;
+
+    // 역할 태그
+    const roles = UNIT_ROLES[name];
+    if (roles && roles.length > 0) {
+        const tagHtml = roles.map(role => {
+            const rc = ROLE_COLORS[role] || { bg:'#1a1a1a', border:'#555', color:'#aaa' };
+            return `<span style="
+                display:inline-block;
+                font-size:11px;font-weight:900;
+                padding:4px 9px;border-radius:20px;
+                border:1.5px solid ${rc.border};
+                background:${rc.bg};color:${rc.color};
+                white-space:nowrap;
+            ">${role}</span>`;
+        }).join('');
+        html += `<div style="margin-bottom:10px;">
+            <div style="font-size:10px;color:#888;margin-bottom:5px;font-weight:700;letter-spacing:0.5px;">이 유닛은 어디에 좋은가?</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;">${tagHtml}</div>
+        </div>`;
+    }
+
+    // 스킬/패시브 설명 (구조화 렌더링)
+    if (skillDesc) {
+        html += renderSkillBlock(skillDesc);
+    }
+
+    // 조합 재료
+    if (recipe) {
+        html += `<div style="background:#0a0c10;border:1px solid #2a2f3d;border-radius:6px;padding:8px;margin-bottom:8px;font-size:11px;">
+            <div style="color:#27ae60;font-weight:700;margin-bottom:5px;">⚙️ 조합 재료</div>`;
+        for (const [mat, cnt] of Object.entries(recipe)) {
+            const matTier = getTier(mat);
+            const matColor = getTierColor(matTier);
+            const mc = matColor === 'rainbow' ? '#fff' : matColor;
+            html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid #1a1e28;">
+                <span style="color:${mc};font-weight:700;">${mat}</span>
+                <span style="color:#aaa;font-size:10px;">${matTier} × ${cnt}</span>
+            </div>`;
+        }
+        html += `</div>`;
+    }
+
+    // 갓 진화
+    if (godEvo) {
+        html += `<div style="background:#1a1500;border:1px solid #f1c40f;border-radius:6px;padding:7px 8px;margin-bottom:8px;font-size:11px;">
+            <div style="color:#f1c40f;font-weight:700;margin-bottom:3px;">✨ 갓 진화</div>
+            <span style="color:#fff;font-weight:700;">${godEvo}</span>
+        </div>`;
+    }
+
+    // 이 유닛이 재료로 쓰이는 곳
+    if (usedIn.length > 0) {
+        html += `<div style="background:#0a0c10;border:1px solid #2a2f3d;border-radius:6px;padding:8px;font-size:11px;">
+            <div style="color:#3498db;font-weight:700;margin-bottom:5px;">🔗 이 유닛으로 만들 수 있는 유닛</div>`;
+        usedIn.forEach(target => {
+            const tTier = getTier(target);
+            const tc2 = getTierColor(tTier);
+            const c2 = tc2 === 'rainbow' ? '#fff' : tc2;
+            html += `<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #1a1e28;">
+                <span style="color:${c2};font-weight:700;">${target}</span>
+                <span style="color:#666;font-size:10px;">${tTier}</span>
+            </div>`;
+        });
+        html += `</div>`;
+    }
+
+    // 닫기 버튼
+    html += `<button onclick="document.getElementById('dex-detail-panel').style.display='none';dexCurrentUnit=null;"
+        style="margin-top:8px;width:100%;padding:6px;font-size:11px;background:#1a1e28;border:1px solid #555;color:#aaa;border-radius:5px;cursor:pointer;">▲ 닫기</button>`;
+
+    panel.innerHTML = html;
+
+    // 패널로 스크롤
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
 
 </script>
 </body>
