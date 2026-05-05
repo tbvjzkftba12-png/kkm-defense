@@ -806,6 +806,7 @@ const PASSIVE_NAMES = {
     "몸에서 돌이 떨어지는 김찬희": {passive:"태생이돌", skill:"뇌성마비/전신낙석",     mana:"지각변동"},
     "전설의 코딩술사 김상웅":    {passive:"재택근무", skill:"뻑상웅 모드/서울 출근", mana:"해킹"},
     "1등 항해사 윤병선":         {passive:"로봇판단", skill:"허언증/병선마을 건설",   mana:"어그로 끌기"},
+    "살인머신 서훈덕":           {passive:"킬러본능", skill:"해병 살인기술/노력형인간", mana:"살인머신 모드"},
 };
 
 const PASSIVE_DESC_LEGEND = {    "얼굴이 붉어진 승채": "🍺 [패시브1] 술기운: 공격 시 5% 확률로 추가 2배 데미지(크리) | [패시브2] 만취: 공격 시 10% 확률로 주변 100 범위 50% 데미지 추가 | [마나스킬, 마나60] 술병 난사: 150×150 범위 적 최대 50마리에게 ×3 데미지 + 슬로우 3초",
@@ -823,7 +824,8 @@ const PASSIVE_DESC_LEGEND = {    "얼굴이 붉어진 승채": "🍺 [패시브1
     "만카이 백승채": "🍺 [패시브] 만카이: 공격마다 만취스택 +1 (최대 100중첩) / 스택 1개당 공격력 +1% 증가 / 100중첩 달성 시 만카이! 발동 — 5초간 공격력 2배 + 공격마다 주변 120범위 폭발 데미지 / 발동 중 스택 획득 불가, 종료 후 스택 초기화 | [스킬1] 담배한모금: 기본공격 시 0.1% 확률 발동 — 5초간 공격속도 +50%, 마나 충전속도 1.5배 (중첩불가) | [스킬2] 솔로만세: 공격 300타 누적 시 발동 — 맵 중앙으로 텔레포트, 중앙 기준 100범위 아군 200밖으로 밀어냄 + 진입불가, 이동불가, 사거리 맵 전체, 단일→3기 멀티샷, 공격력 +50% + 밀어낸 아군 1기당 +15% (10초) / 종료 후 버프해제 + 5초 이동불가 | [마나스킬, 마나80] 삼성전자 풀매수: 일반몹에게 현재 공격력 ×3 + 해당 몹 최대체력 10% 데미지 / 보스·미니보스·스토리에게 현재 공격력 ×30 데미지 / 전체 아군 공격력 +30% (15초)",
     "몸에서 돌이 떨어지는 김찬희": "🪨 [패시브] 태생이돌: 평타 시 주변 90범위 스플래시(공격력×40%) + 아머브레이크 -2 누적(최대-20) | [스킬1] 뇌성마비: 10% 확률 발동 — 다음 5타 공속 8.0회/초 | [스킬2] 전신낙석: 100타마다 캐릭터 회전 + 10초간 주변 150범위 공격력×2 고정뎀 + 돌 낙하 이펙트 | [마나스킬, 마나110] 지각변동: 전체 적 3초 스턴+방어력-30+공격력×5 + 땅 갈라지는 균열 이펙트",
     "전설의 코딩술사 김상웅": "💻 [패시브] 재택근무: 맵 내 등급 1순위→공격력×공속 2순위 기준 최강 아군 옆에 밀착, 밀착 대상 공격력+50%/사거리 공유, 새 유닛 소환 시 자동 재계산, 솔로만세 발동 시 논외로 옆 유지+사거리 동기화 | [스킬1] 뻑상웅 모드: 공격 시 5% 확률 발동 — 5초간 공격력 2배 + 빨간 이펙트 | [스킬2] 서울 출근: 200타마다 현재 라인 적 전부 15초간 '출근하는 사람'으로 변이 (이름/이모지 변경, 방어력-50, 이속-40%) | [마나스킬, 마나80] 해킹: 분신 소환 (15초, 패시브+스킬 동일 사용, 마나스킬 불가) — 분신이 본체를 밀착 대상으로 삼아 본체 공격력+50% 추가",
-    "1등 항해사 윤병선": "⚓ [패시브] 로봇판단: 항상 체력 가장 낮은 적 우선 타겟 / 타겟 최대체력 15% 미만 → 일반몹 즉시 처형, 보스/미니보스/스토리는 공격력×5 고정뎀 추가 | [스킬1] 허언증: 공격 시 5% 확률 — '난 너네가 제일 소중해~' 현재 공격력×5 데미지 | [스킬2] 병선마을 건설: 300타마다 20초간 발동 — 전체 아군 공격력+30% 공속+30% / 특수 이하 조합 시 재료 소모 없이 결과 유닛만 추가 생성 (최대 3회) | [마나스킬, 마나100] 어그로 끌기: 20초간 매 공격마다 타겟 방향 레이저 직선 관통 공격 (패시브/스킬 동시 발동)"
+    "1등 항해사 윤병선": "⚓ [패시브] 로봇판단: 항상 체력 가장 낮은 적 우선 타겟 / 타겟 최대체력 15% 미만 → 일반몹 즉시 처형, 보스/미니보스/스토리는 공격력×5 고정뎀 추가 | [스킬1] 허언증: 공격 시 5% 확률 — '난 너네가 제일 소중해~' 현재 공격력×5 데미지 | [스킬2] 병선마을 건설: 300타마다 20초간 발동 — 전체 아군 공격력+30% 공속+30% / 특수 이하 조합 시 재료 소모 없이 결과 유닛만 추가 생성 (최대 3회) | [마나스킬, 마나100] 어그로 끌기: 20초간 매 공격마다 타겟 방향 레이저 직선 관통 공격 (패시브/스킬 동시 발동)",
+    "살인머신 서훈덕": "🔪 [패시브] 킬러본능: 적 처치 시 공격력 +500 영구 / 50킬마다 강화 이펙트 / ⚡500킬 달성 시 해병살인기술 진화 (3타→2타) | [스킬1] 해병 살인기술: 같은 적 3타 시 황금 폭발 — 최대체력 20% 고정뎀 (보스/스토리: 현재 공격력×5) / 500킬 진화 후 2타마다 폭발+색상 빨간으로 변경 | [스킬2] 노력형인간: 7% 확률로 '나흑인아니다!' — 3초간 공속3배+사거리2배 (중복발동불가) | [마나스킬, 마나110] 살인머신 모드: 15초간 사거리 내 체력 낮은 TOP5 멀티샷 / 사거리 밖 자동 추격 후 원위치 복귀 (스토리 최저 우선순위)"
 };
 const PASSIVE_DESC_RARE = {
     "꼬장 승채":      "💥 꼬장: 공격 시 10% 확률로 술병 폭발 - 범위 10000 데미지 | 공격 시 10% 확률로 ROTC상웅 소환",
@@ -1704,7 +1706,7 @@ function getBossName(w) {
 // ─────────────────────────────────────────────
 // 🔧 기능 활성화 플래그 (개발/임시 차단용)
 // 향후 초월 유닛 스킬/패시브 구현 완료 시 true로 변경
-const ENABLE_TRANSCEND = false;       // 초월 유닛 조합 활성화 여부 (개별 예외 처리)
+const ENABLE_TRANSCEND = true;        // 초월 유닛 조합 활성화
 // 향후 특수 유닛 시스템 정리 완료 시 true로 변경
 const ENABLE_SPECIAL_REWARD = true;   // 특수 유닛 보상 지급 활성화 여부
 // ─────────────────────────────────────────────
@@ -2386,6 +2388,7 @@ class Unit {
             "몸에서 돌이 떨어지는 김찬희": {dmg:250000,type:"melee", range:130, cd:40}, // 공속 1.5
             "전설의 코딩술사 김상웅": {dmg:150000,type:"ranged", range:180, cd:12}, // 공속 5.0
             "1등 항해사 윤병선":      {dmg:150000,type:"ranged", range:180, cd:12}, // 공속 5.0
+            "살인머신 서훈덕":        {dmg:150000,type:"ranged", range:170, cd:12}, // 공속 5.0
         };
         if(attackTypes[name]){
             const at = attackTypes[name];
@@ -2498,6 +2501,24 @@ class Unit {
             villageFreeUsed: [],  // 무료조합 사용한 유닛 이름 목록 (중복 방지)
             aggroActive: false,
         };
+        if(name === "살인머신 서훈덕") this.passiveData = {
+            name:"킬러본능",
+            killBonus: 0,
+            hitMap: {},
+            stackAnims: {},
+            nohFlash: false,
+            nohTimer: 0,
+            _nohOrigCd: 0,
+            _nohOrigRange: 0,
+            killerModeActive: false,
+            killerTargets: [],
+            killerHomeX: 0,
+            killerHomeY: 0,
+            _returning: false,
+            _chaseHomeX: null,
+            _chaseHomeY: null,
+            _skill1Evolved: false,  // 500킬 달성 시 해병살인기술 2타로 진화
+        };
 
         // 킬 카운트
         this.kills = 0;
@@ -2528,6 +2549,7 @@ class Unit {
                 "몸에서 돌이 떨어지는 김찬희": 110,
                 "전설의 코딩술사 김상웅": 80,
                 "1등 항해사 윤병선": 100,
+                "살인머신 서훈덕": 110,
             };
             if(transcendManaMap[name]){
                 this.maxMana = transcendManaMap[name];
@@ -3082,9 +3104,56 @@ class Unit {
         }
         this.updatePassive();
 
+        // ── 살인머신 서훈덕: 살인머신 모드 이동 (쿨다운 무관하게 매프레임) ──
+        if(this.name==="살인머신 서훈덕" && this.passiveData && this.passiveData.killerModeActive){
+            const pdKM = this.passiveData;
+            // 사거리 내 적 있는지 확인 (스토리 제외)
+            const hasInRange = enemies.some(e => {
+                if(e.hp<=0||e.isDestroyed||e===mission) return false;
+                const dx=e.x-this.x, dy=e.y-this.y;
+                return Math.sqrt(dx*dx+dy*dy) <= this.range;
+            });
+            // 사거리 내 몹 없으면 → 가장 가까운 몹 추격 (일반몹 우선 → 보스/미니보스 → 스토리)
+            if(!hasInRange){
+                if(!pdKM._chaseHomeX){ pdKM._chaseHomeX=this.x; pdKM._chaseHomeY=this.y; }
+                let chaseE=null, chaseDist=Infinity;
+                // 1순위: 일반몹
+                for(let e of enemies){
+                    if(e.hp<=0||e.isDestroyed||e.isBoss||e.isMiniBoss||e===mission) continue;
+                    const dx=e.x-this.x, dy=e.y-this.y, d=Math.sqrt(dx*dx+dy*dy);
+                    if(d<chaseDist){ chaseDist=d; chaseE=e; }
+                }
+                // 2순위: 보스/미니보스 (일반몹 없을 때)
+                if(!chaseE){
+                    for(let e of enemies){
+                        if(e.hp<=0||e.isDestroyed||e===mission) continue;
+                        const dx=e.x-this.x, dy=e.y-this.y, d=Math.sqrt(dx*dx+dy*dy);
+                        if(d<chaseDist){ chaseDist=d; chaseE=e; }
+                    }
+                }
+                // 3순위: 스토리 (아무것도 없을 때)
+                if(!chaseE && mission && !mission.isDestroyed && mission.hp>0){
+                    chaseE = mission;
+                }
+                if(chaseE){
+                    const dx=chaseE.x-this.x, dy=chaseE.y-this.y, d=Math.sqrt(dx*dx+dy*dy)||1;
+                    if(d>this.range*0.6){
+                        this.x+=(dx/d)*12; this.y+=(dy/d)*12;
+                        this.x=Math.max(30,Math.min(WORLD_W-30,this.x));
+                        this.y=Math.max(30,Math.min(WORLD_H-30,this.y));
+                    }
+                }
+            } else if(pdKM._chaseHomeX){
+                // 사거리 내 몹 생기면 → 원위치 복귀
+                const dx=pdKM._chaseHomeX-this.x, dy=pdKM._chaseHomeY-this.y;
+                const d=Math.sqrt(dx*dx+dy*dy)||1;
+                if(d>8){ this.x+=(dx/d)*5; this.y+=(dy/d)*5; }
+                else { this.x=pdKM._chaseHomeX; this.y=pdKM._chaseHomeY; pdKM._chaseHomeX=null; pdKM._chaseHomeY=null; }
+            }
+        }
+
         if(this.cd>0){
-            // 패션안경 다훈 버프: 공격속도 20% 증가 (cd 0.8배 속도로 감소)
-            if(this.fashionBuff) this.cd -= 0.2; // 추가 0.2씩 감소 = 20% 빠름
+            if(this.fashionBuff) this.cd -= 0.2;
             this.cd--;
             return;
         }
@@ -3104,6 +3173,16 @@ class Unit {
         }
         if(bossTarget) target=bossTarget;
         else if(miniBossTarget) target=miniBossTarget;
+        // 살인머신 모드 중엔 사거리 내 체력 낮은 적 1위를 메인 타겟으로
+        if(this.name==="살인머신 서훈덕" && this.passiveData && this.passiveData.killerModeActive){
+            let lowestHp=null, lowestHpVal=Infinity;
+            for(let e of enemies){
+                if(e.hp<=0||e.isDestroyed||e===mission) continue;
+                const dx=e.x-this.x, dy=e.y-this.y;
+                if(Math.sqrt(dx*dx+dy*dy)<=this.range && e.hp<lowestHpVal){ lowestHpVal=e.hp; lowestHp=e; }
+            }
+            if(lowestHp) target=lowestHp;
+        }
 
         // ── 1등 항해사 윤병선: 로봇 판단 - 체력 가장 낮은 적 우선 타겟 ──
         if(this.name==='1등 항해사 윤병선' && this.passiveData){
@@ -3280,7 +3359,7 @@ class Unit {
                 }
             }
             // [버그수정] 마나 충전 (초월 유닛) - 스토리/일반 공격 모두 충전
-            if(this.tier==='초월' && this.maxMana && !this._manaSkillActive){
+            if(this.tier==='초월' && this.maxMana && !this._manaSkillActive && !(this.passiveData && this.passiveData.killerModeActive)){
                 // 담배한모금 발동 중이면 1.5배 충전
                 const manaGain = (this.passiveData && this.passiveData._smokeManaBoost) ? 1.5 : 1;
                 this.mana = Math.min(this.maxMana, (this.mana||0) + manaGain);
@@ -3330,6 +3409,24 @@ class Unit {
                 spawnRareAttackEffect(this.name, this.x, this.y, target.x, target.y, this);
             } else if(this.tier==='초월'){
                 spawnTranscendAttackEffect(this.name, this.x, this.y, target.x, target.y, this);
+                // ── 살인머신 모드: 사거리 내 체력 낮은 TOP5 멀티샷 ──
+                if(this.name==='살인머신 서훈덕' && this.passiveData && this.passiveData.killerModeActive){
+                    const inRangeAll = enemies.filter(e => {
+                        if(e.hp<=0||e.isDestroyed||e===target||e===mission) return false;
+                        const dx=e.x-this.x, dy=e.y-this.y;
+                        return Math.sqrt(dx*dx+dy*dy) <= this.range;
+                    });
+                    inRangeAll.sort((a,b)=>a.hp-b.hp);
+                    const top4 = inRangeAll.slice(0,4); // 메인 타겟 제외 최대 4마리
+                    for(let kt of top4){
+                        kt.hp -= finalDmg;
+                        attackLines.push({sx:this.x,sy:this.y,tx:kt.x,ty:kt.y,
+                            color:'#f1c40f',tier:'초월',alpha:0.85,life:12});
+                        meleeAnims.push({type:'damage_text',x:kt.x+(Math.random()-0.5)*12,y:kt.y-20,
+                            life:30,maxLife:30,color:'#f1c40f',text:finalDmg,vy:-1.6,fixed:false});
+                        spawnParticles(kt.x,kt.y,'#f1c40f',4,3);
+                    }
+                }
             } else {
                 attackLines.push({
                     sx:this.x,sy:this.y,tx:target.x,ty:target.y,
@@ -4249,6 +4346,89 @@ class Unit {
                     }, Math.round(20000/gameSpeedMul));
                 }
             }
+            // ── 초월: 살인머신 서훈덕 공격 성공 패시브/스킬 ──
+            if(this.tier==='초월' && this.passiveData && this.name==='살인머신 서훈덕'){
+                const pdS = this.passiveData;
+
+                // ── 스킬1: 해병 살인기술 - 3타 스택 폭발 (살인머신 모드 중에도 발동) ──
+                {
+                    const eid = enemies.indexOf(target);
+                    if(eid !== -1){
+                        pdS.hitMap = pdS.hitMap || {};
+                        const prev = pdS.hitMap[eid] || 0;
+                        pdS.hitMap[eid] = prev + 1;
+                        const stacks = pdS.hitMap[eid];
+                        // 스택 표시 (방송인 훈덕과 동일 방식)
+                        if(!pdS.stackAnims) pdS.stackAnims = {};
+                        pdS.stackAnims[eid] = {stacks, x:target.x, y:target.y+18, life:55};
+                        // 500킬 진화 시 2타로 단축
+                        const triggerStack = (pdS._skill1Evolved) ? 2 : 3;
+                        if(stacks >= triggerStack){
+                            pdS.hitMap[eid] = 0;
+                            delete pdS.stackAnims[eid];
+                            // 보스/미션: 현재 공격력 ×5 고정뎀
+                            const isBossType = target===mission || target.isBoss || target.isMini;
+                            const bonusDmg = isBossType
+                                ? this.damage * 5
+                                : Math.round(target.maxHp * 0.2);
+                            target.hp -= bonusDmg;
+                            // ── 초월급 황금 폭발 이펙트 ──
+                            // 1) 황금 충격파 링 3겹
+                            for(let k=0;k<3;k++) setTimeout(()=>{
+                                particles.push({type:'ring',x:target.x,y:target.y,
+                                    radius:k*10,maxRadius:70+k*25,
+                                    color:'#f1c40f',alpha:0.9,life:22,maxLife:22});
+                            }, Math.round(k*50/gameSpeedMul));
+                            // 2) 황금+흰 불꽃 파티클 대폭발
+                            spawnParticles(target.x, target.y, '#f1c40f', 20, 7);
+                            spawnParticles(target.x, target.y, '#fff176', 10, 5);
+                            spawnParticles(target.x, target.y, '#ff6600', 8, 6);
+                            // 3) 방사형 황금 광선 8방향
+                            for(let r=0;r<8;r++){
+                                const ang = (r/8)*Math.PI*2;
+                                const len = 80 + Math.random()*40;
+                                attackLines.push({
+                                    sx:target.x, sy:target.y,
+                                    tx:target.x+Math.cos(ang)*len, ty:target.y+Math.sin(ang)*len,
+                                    color:'#f1c40f', tier:'초월', alpha:1, life:18
+                                });
+                            }
+                            // 4) 💥 이모지 + 데미지 수치
+                            meleeAnims.push({type:'text_pop',x:target.x,y:target.y-30,life:40,maxLife:40,
+                                color:'#f1c40f',text:'💥 해병 폭발!',big:true});
+                            meleeAnims.push({type:'damage_text',x:target.x+(Math.random()-0.5)*16,y:target.y-45,
+                                life:45,maxLife:45,color:'#f1c40f',text:bonusDmg,vy:-2.2,fixed:true});
+                            // 5) 화면 흔들림 + 플래시
+                            // screenFlash 제거
+                        }
+                    }
+                }
+
+                // ── 스킬2: 노력형인간 - 5% 확률로 "나흑인아니다" + 공속3배/사거리2배 5초 ──
+                if(!pdS.nohFlash && Math.random() < 0.07){
+                    pdS.nohFlash = true;
+                    // 원본값은 발동 최초 1회만 저장 (중복 방지)
+                    pdS._nohOrigCd = this.maxCd;
+                    pdS._nohOrigRange = this.range;
+                    this.maxCd = Math.max(4, Math.round(pdS._nohOrigCd / 3));
+                    this.range = Math.round(pdS._nohOrigRange * 2);
+                    meleeAnims.push({type:'text_pop',x:this.x,y:this.y-55,life:60,maxLife:60,
+                        color:'#fff',text:'나흑인아니다!!',big:true});
+                    spawnParticles(this.x, this.y, '#ffffff', 15, 6);
+                    spawnParticles(this.x, this.y, '#f1c40f', 10, 5);
+                    particles.push({type:'ring',x:this.x,y:this.y,radius:0,maxRadius:120,
+                        color:'#ffffff',alpha:0.6,life:20,maxLife:20});
+                    showToast('⚡ 나흑인아니다!! 공속3배/사거리2배 3초','#fff','#1a1a2e');
+                    const _thisS = this;
+                    setTimeout(()=>{
+                        _thisS.maxCd = pdS._nohOrigCd;
+                        _thisS.range = pdS._nohOrigRange;
+                        pdS.nohFlash = false;
+                        meleeAnims.push({type:'text_pop',x:_thisS.x,y:_thisS.y-35,life:25,maxLife:25,
+                            color:'#888',text:'노력형인간 종료',big:false});
+                    }, Math.round(3000/gameSpeedMul));
+                }
+            }
             if(this.tier==='희귀' && this.passiveData){
                 const pd3=this.passiveData;
                 // 꼬장 승채: 10% 폭발 범위뎀 3000
@@ -4520,6 +4700,35 @@ class Unit {
                 // 방송인 훈덕: 킬카운트 (passiveData 동기화)
                 if(this.name==="방송인 훈덕" && this.passiveData){
                     this.passiveData.killCount = this.kills; // this.kills와 동기화
+                }
+                // 살인머신 서훈덕: 킬러본능 - 처치마다 공격력 영구 +500
+                if(this.name==="살인머신 서훈덕" && this.passiveData){
+                    this.damage += 500;
+                    this._baseDmg = (this._baseDmg||this.damage) + 500;
+                    this.passiveData.killBonus = (this.passiveData.killBonus||0) + 500;
+                    meleeAnims.push({type:'damage_text',x:this.x+(Math.random()-0.5)*20,y:this.y-40,
+                        life:35,maxLife:35,color:'#f1c40f',text:'+500',vy:-1.8,fixed:false});
+                    // 50킬마다 특수 효과
+                    if(this.kills % 50 === 0){
+                        spawnParticles(this.x, this.y, '#f1c40f', 12, 5);
+                        meleeAnims.push({type:'text_pop',x:this.x,y:this.y-55,life:40,maxLife:40,
+                            color:'#f1c40f',text:`🔪 ${this.kills}킬! 킬러 강화!`,big:true});
+                    }
+                    // 500킬 달성 → 해병살인기술 진화 (3타→2타)
+                    if(this.kills >= 500 && !this.passiveData._skill1Evolved){
+                        this.passiveData._skill1Evolved = true;
+                        // 진화 연출
+                        meleeAnims.push({type:'text_pop',x:this.x,y:this.y-75,life:80,maxLife:80,
+                            color:'#ff4400',text:'🔥 해병살인기술 진화! (3타→2타)',big:true});
+                        showToast('🔥 해병살인기술 진화! 500킬 달성 — 이제 2타마다 황금 폭발!','#ff4400','#2d0a00');
+                        for(let k=0;k<5;k++) setTimeout(()=>{
+                            particles.push({type:'ring',x:this.x,y:this.y,
+                                radius:k*20,maxRadius:180+k*30,
+                                color:'#ff4400',alpha:0.8,life:30,maxLife:30});
+                        }, Math.round(k*60/gameSpeedMul));
+                        spawnParticles(this.x, this.y, '#ff4400', 25, 8);
+                        spawnParticles(this.x, this.y, '#f1c40f', 15, 6);
+                    }
                 }
                 // 돼지병훈: 처치 시 영구 데미지 +5 + 이빨 아이콘 + 크기 증가
                 if(this.name==="돼지병훈" && this.passiveData){
@@ -5081,6 +5290,55 @@ function renderVainStacks(){
                 ctx.fillStyle='rgba(232,232,232,0.3)';
                 ctx.beginPath(); ctx.arc(s.x+ox,s.y,7,0,Math.PI*2); ctx.fill();
             }
+            ctx.shadowBlur=0; ctx.restore();
+        }
+    }
+}
+
+// 살인머신 서훈덕 해병 살인기술 스택 렌더
+function renderKillerStacks(){
+    for(let u of units){
+        if(u.name!=='살인머신 서훈덕' || !u.passiveData || !u.passiveData.stackAnims) continue;
+        const sa = u.passiveData.stackAnims;
+        for(let eid in sa){
+            const s=sa[eid]; if(!s) continue;
+            s.life--;
+            if(s.life<=0){ delete sa[eid]; continue; }
+            // 몹 위치 업데이트
+            const e=parseInt(eid)<enemies.length?enemies[parseInt(eid)]:null;
+            if(e){ s.x=e.x; s.y=e.y+20; }
+            ctx.save(); ctx.globalAlpha=Math.min(1, s.life/20);
+            const _evolved = u.passiveData && u.passiveData._skill1Evolved;
+            const _maxStack = _evolved ? 2 : 3;
+            for(let k=0;k<s.stacks && k<_maxStack;k++){
+                const ox=(k-1)*18;
+                // 황금 육각형 스택 (초월급 이펙트) - 진화 시 빨간 색으로 변경
+                ctx.save();
+                ctx.translate(s.x+ox, s.y);
+                const stackColor = _evolved ? '#ff4400' : '#f1c40f';
+                ctx.strokeStyle=stackColor; ctx.lineWidth=2;
+                ctx.shadowColor=stackColor; ctx.shadowBlur=10;
+                ctx.fillStyle=_evolved ? 'rgba(255,68,0,0.25)' : 'rgba(241,196,15,0.25)';
+                // 육각형 그리기
+                ctx.beginPath();
+                for(let i=0;i<6;i++){
+                    const ang = (i/6)*Math.PI*2 - Math.PI/6;
+                    const px = Math.cos(ang)*8, py = Math.sin(ang)*8;
+                    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+                }
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                // 중앙 점
+                ctx.fillStyle=stackColor;
+                ctx.beginPath(); ctx.arc(0,0,2,0,Math.PI*2); ctx.fill();
+                ctx.shadowBlur=0; ctx.restore();
+            }
+            // 스택 숫자 표시
+            ctx.fillStyle = _evolved ? '#ff4400' : '#f1c40f';
+            ctx.font='bold 11px Noto Sans KR';
+            ctx.textAlign='center';
+            ctx.shadowColor='#000'; ctx.shadowBlur=4;
+            ctx.fillText(s.stacks+'/'+_maxStack, s.x, s.y-14);
             ctx.shadowBlur=0; ctx.restore();
         }
     }
@@ -6224,6 +6482,58 @@ function triggerLegendManaSkill(unit, lastTarget){
             break;
         }
 
+        case '살인머신 서훈덕': {
+            const pdKill = unit.passiveData;
+            if(pdKill && !pdKill.killerModeActive){
+                pdKill.killerModeActive = true;
+                pdKill.killerTargets = [];
+
+                // ── 발동 이펙트 ──
+                meleeAnims.push({type:'text_pop',x,y:y-70,life:70,maxLife:70,
+                    color:'#f1c40f',text:'🔪 살인머신 모드!',big:true});
+                showToast('🔪 살인머신 모드! 15초간 사거리 내 체력 낮은 TOP5 멀티샷','#f1c40f','#1a1200');
+                // 황금 충격파 링 5겹
+                for(let k=0;k<5;k++) setTimeout(()=>{
+                    particles.push({type:'ring',x:unit.x,y:unit.y,
+                        radius:k*15,maxRadius:150+k*30,
+                        color:'#f1c40f',alpha:0.8,life:28,maxLife:28});
+                }, Math.round(k*60/gameSpeedMul));
+                // 황금+붉은 파티클 폭발
+                spawnParticles(unit.x, unit.y, '#f1c40f', 25, 8);
+                spawnParticles(unit.x, unit.y, '#ff6600', 12, 6);
+                spawnParticles(unit.x, unit.y, '#ffffff', 8, 5);
+                // 방사형 황금 광선 12방향
+                for(let r=0;r<12;r++){
+                    const ang=(r/12)*Math.PI*2;
+                    const len=120+Math.random()*60;
+                    attackLines.push({sx:unit.x,sy:unit.y,
+                        tx:unit.x+Math.cos(ang)*len,ty:unit.y+Math.sin(ang)*len,
+                        color:'#f1c40f',tier:'초월',alpha:1,life:25});
+                }
+
+                // 15초 후 강제 종료
+                setTimeout(()=>{
+                    if(pdKill.killerModeActive){
+                        pdKill.killerModeActive = false;
+                        pdKill.killerTargets = [];
+                        unit._manaSkillActive = false;
+                        meleeAnims.push({type:'text_pop',x:unit.x,y:unit.y-40,life:35,maxLife:35,
+                            color:'#888',text:'살인머신 모드 종료',big:false});
+                        // 저장된 홈 위치로 복귀 (추격 중이었으면 복귀, 없으면 현재 위치 유지)
+                        if(pdKill._chaseHomeX !== null){
+                            gatherAnims.push({unit:unit,
+                                startX:unit.x, startY:unit.y,
+                                targetX:pdKill._chaseHomeX, targetY:pdKill._chaseHomeY,
+                                p:0});
+                        }
+                        pdKill._chaseHomeX = null;
+                        pdKill._chaseHomeY = null;
+                    }
+                }, Math.round(15000/gameSpeedMul));
+            }
+            break;
+        }
+
         case '몸에서 돌이 떨어지는 김찬희': {
             // 지각변동: 땅 갈라지는 균열 + 전체 스턴 + 방어력-30 + 공격력×5
             const pdQ = unit.passiveData;
@@ -7051,7 +7361,7 @@ function checkKlokklEvolve() {
 // 특수유닛 랜덤 지급
 function spawnRandomSpecial(){
     // 현재 구현된 초월 재료 특수 유닛만 포함
-    const specials = ["해나","이슬이","지호","나츠","반짝 빛나는 돌"];
+    const specials = ["해나","이슬이","지호","나츠","반짝 빛나는 돌","흑색 염색체"];
     const pick = specials[Math.floor(Math.random()*specials.length)];
     spawnUnit(pick);
     return pick;
@@ -7430,8 +7740,8 @@ function gameLoop(ts) {
         }
     }
     if(screenShake && screenShake.duration>0){
-        shakeX = (Math.random()-0.5)*screenShake.intensity*2;
-        shakeY = (Math.random()-0.5)*screenShake.intensity*2;
+        shakeX = 0; // 진동 비활성화
+        shakeY = 0;
     }
 
     // 카메라 변환 적용 (월드→스크린 + 흔들기)
@@ -7551,7 +7861,14 @@ function gameLoop(ts) {
         let t=1-(1-g.p)*(1-g.p)*(1-g.p); // ease out cubic
         g.unit.x=g.startX+(g.targetX-g.startX)*t;
         g.unit.y=g.startY+(g.targetY-g.startY)*t;
-        if(g.p>=1) gatherAnims.splice(i,1);
+        if(g.p>=1){
+            // 살인머신 모드 중 직접 이동 시 복귀 위치를 새 위치로 갱신
+            if(g.unit.name==='살인머신 서훈덕' && g.unit.passiveData && g.unit.passiveData.killerModeActive){
+                g.unit.passiveData._chaseHomeX = g.targetX;
+                g.unit.passiveData._chaseHomeY = g.targetY;
+            }
+            gatherAnims.splice(i,1);
+        }
     }
 
     // 유닛 업데이트 (게임 속도 적용)
@@ -7669,6 +7986,7 @@ function gameLoop(ts) {
     }
     renderGirlSummons();
     renderVainStacks();
+    renderKillerStacks();
 
     // 보스 등장 연출
     updateBossIntro();
@@ -7973,7 +8291,7 @@ function startGame() {
     if(isPlaying) return;
     isPlaying=true;
     document.getElementById('startBtn').style.display='none';
-    // 카메라 고정 (맵이 뷰와 동일 크기)
+
     camX = 0; camY = 0;
     _bgDrawn = false; // 배경 캐시 리셋
     // 캔버스 크기 조정
@@ -9380,7 +9698,7 @@ const UNIT_ROLES = {
     "연봉2억 삼성 김현준":        [],
     "알파메일 차동수":            [],
     "레오 아빠 오래규":           [],
-    "살인머신 서훈덕":            [],
+    "살인머신 서훈덕":            ["📈 성장형", "👹 보스딜", "💥 단일화력"],
     "흑염룡을 봉인한 김건모":     [],
     "유부남 공병훈":              [],
     "언론 조종술사 김다훈":       ["🔰 버프", "🌊 라인클리어", "🐌 스턴/CC"],
